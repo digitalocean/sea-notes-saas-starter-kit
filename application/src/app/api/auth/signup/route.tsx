@@ -6,7 +6,7 @@ import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../../../settings';
 import { DatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
 import { createBillingService } from 'services/billing/billingFactory';

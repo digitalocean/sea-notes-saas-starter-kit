@@ -70,7 +70,17 @@ export class ResendEmailService extends EmailService {
 
     try {
       // Prepare email data
-      const emailData: Record<string, unknown> = {
+      const emailData: {
+        from: string;
+        to: string[];
+        subject: string;
+        react: React.ReactNode;
+        attachments?: Array<{
+          filename: string;
+          content: string;
+          contentType: string;
+        }>;
+      } = {
         from: this.fromEmail,
         to: [to],
         subject,

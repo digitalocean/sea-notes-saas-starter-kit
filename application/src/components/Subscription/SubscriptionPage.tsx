@@ -146,11 +146,10 @@ const Subscription: React.FC = () => {
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 Have your latest invoice emailed to you:
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 0.25 }}>
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', mt: 0.25 }}>
                 <GetInvoiceButton 
                   variant="outlined"
                   size="medium"
-                  sx={{ mt: 0 }}
                 />
                 <DownloadInvoiceButton 
                   variant="outlined"

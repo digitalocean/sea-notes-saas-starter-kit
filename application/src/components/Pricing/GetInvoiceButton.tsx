@@ -10,7 +10,7 @@ interface GetInvoiceButtonProps {
   variant?: 'text' | 'outlined' | 'contained';
   fullWidth?: boolean;
   size?: 'small' | 'medium' | 'large';
-  sx?: Record<string, unknown>;
+  sx?: React.CSSProperties;
 }
 
 /**
@@ -85,7 +85,6 @@ export default function GetInvoiceButton({
         disabled={loading || status === 'loading'}
         startIcon={loading ? <CircularProgress size={20} /> : <EmailIcon />}
         sx={{
-          mt: 2,
           '&:hover': {
             backgroundColor: 'transparent',
             color: 'inherit'

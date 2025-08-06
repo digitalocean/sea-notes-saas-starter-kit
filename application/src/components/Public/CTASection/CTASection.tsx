@@ -4,7 +4,9 @@ import CTAButtons from 'components/Public/CTAButtons/CTAButtons';
 import { DIMENSIONS } from 'constants/landing';
 
 /**
- * CTASection component
+ * CTASection component that displays a call-to-action section with title,
+ * description, and action buttons for getting started with the SaaS template.
+ * @returns {JSX.Element} The CTA section component
  */
 const CTASection = () => {
   return (

@@ -24,7 +24,9 @@ const featureIcons = {
 };
 
 /**
- * FeatureCards component
+ * FeatureCards component that displays a grid of feature cards showcasing
+ * the key features and capabilities of the SaaS template.
+ * @returns {JSX.Element} The feature cards component
  */
 const FeatureCards = () => {
   return (

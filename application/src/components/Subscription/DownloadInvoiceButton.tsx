@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import DownloadIcon from '@mui/icons-material/Download';
 import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
 
 interface InvoiceResponse {
   success: boolean;
@@ -98,7 +97,7 @@ const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = ({
   };
 
   return (
-    <Box>
+    <>
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -121,7 +120,7 @@ const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = ({
       >
         {loading ? 'Generating...' : 'Download Invoice'}
       </Button>
-    </Box>
+    </>
   );
 };
 

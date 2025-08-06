@@ -7,7 +7,9 @@ import CheckIcon from '@mui/icons-material/Check';
 import { TERMINAL, DIMENSIONS } from 'constants/landing';
 
 /**
- * TerminalMockup component
+ * TerminalMockup component that displays a terminal interface mockup with
+ * deployment commands and copy functionality.
+ * @returns {JSX.Element} The terminal mockup component
  */
 const TerminalMockup = () => {
   const [copied, setCopied] = useState(false);

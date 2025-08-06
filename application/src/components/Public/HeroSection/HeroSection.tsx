@@ -5,7 +5,9 @@ import CTAButtons from 'components/Public/CTAButtons/CTAButtons';
 import { DIMENSIONS } from 'constants/landing';
 
 /**
- * HeroSection component
+ * HeroSection component that displays the main hero section of the landing page
+ * with title, subtitle, description, and call-to-action buttons.
+ * @returns {JSX.Element} The hero section component
  */
 const HeroSection = () => {
   return (

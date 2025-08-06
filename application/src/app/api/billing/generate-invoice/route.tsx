@@ -9,7 +9,7 @@ import { prepareInvoiceData } from 'services/invoice/invoiceUtlis';
 import { InvoiceEmail } from 'services/email/templates/InvoiceEmail';
 import { pdfService } from 'services/pdf/pdfService';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../../../settings';
 
 /**
  * API endpoint to generate and send an invoice for the user's current subscription.

@@ -1,4 +1,4 @@
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../settings';
 import { BillingService } from './billing';
 
 /**

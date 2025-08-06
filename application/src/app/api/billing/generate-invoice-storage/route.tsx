@@ -188,7 +188,4 @@ async function generateInvoiceStorageHandler(
   }
 }
 
-export const POST = withAuth(generateInvoiceStorageHandler);
-
-// Export for testing
-export { generateInvoiceStorageHandler }; 
+export const POST = withAuth(generateInvoiceStorageHandler); 

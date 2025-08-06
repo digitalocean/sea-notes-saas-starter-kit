@@ -89,7 +89,4 @@ async function downloadInvoiceHandler(
   }
 }
 
-export const GET = withAuth(downloadInvoiceHandler);
-
-// Export for testing
-export { downloadInvoiceHandler }; 
+export const GET = withAuth(downloadInvoiceHandler); 

@@ -4,7 +4,7 @@ import { createDatabaseService } from 'services/database/databaseFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
 import { HTTP_STATUS } from 'lib/api/http';
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../../settings';
 
 /**
  * API route handler for requesting a password reset email.
