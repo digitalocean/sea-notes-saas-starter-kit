@@ -84,7 +84,7 @@ export class PDFService {
   /**
    * Convert HTML content to PDF with custom CSS for better invoice formatting
    */
-  async generateInvoicePDF(html: string, filename?: string): Promise<Buffer> {
+  async generateInvoicePDF(html: string): Promise<Buffer> {
     // Ensure we have a complete HTML document
     let completeHTML = html;
     
@@ -461,7 +461,7 @@ ${html}
       await page.setContent('<html><body><h1>Test</h1></body></html>');
       await page.close();
       return true;
-    } catch (error) {
+    } catch {
       console.error('PDF service not available');
       return false;
     }

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Alert, Snackbar } from '@mui/material';
+import { Button, Alert, Snackbar, CircularProgress } from '@mui/material';
+import EmailIcon from '@mui/icons-material/Email';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -9,6 +10,7 @@ interface GetInvoiceButtonProps {
   variant?: 'text' | 'outlined' | 'contained';
   fullWidth?: boolean;
   size?: 'small' | 'medium' | 'large';
+  sx?: React.CSSProperties;
 }
 
 /**
@@ -18,7 +20,8 @@ interface GetInvoiceButtonProps {
 export default function GetInvoiceButton({ 
   variant = 'contained',
   fullWidth = false,
-  size = 'medium'
+  size = 'medium',
+  sx = {}
 }: GetInvoiceButtonProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -58,7 +61,7 @@ export default function GetInvoiceButton({
           text: data.error || 'Failed to generate invoice'
         });
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: 'error',
         text: 'Network error. Please try again.'
@@ -80,17 +83,16 @@ export default function GetInvoiceButton({
         size={size}
         onClick={handleGetInvoice}
         disabled={loading || status === 'loading'}
+        startIcon={loading ? <CircularProgress size={20} /> : <EmailIcon />}
         sx={{
-          mt: 2,
-          bgcolor: variant === 'contained' ? 'primary.main' : 'transparent',
-          color: variant === 'contained' ? 'white' : 'primary.main',
-          '&:hover': { 
-            bgcolor: variant === 'contained' ? 'primary.dark' : 'primary.light',
-            color: variant === 'contained' ? 'white' : 'primary.dark'
+          '&:hover': {
+            backgroundColor: 'transparent',
+            color: 'inherit'
           },
+          ...sx
         }}
       >
-        {loading ? 'Generating Invoice...' : 'Email Latest Invoice'}
+        {loading ? 'Generating...' : 'Email Invoice'}
       </Button>
 
       <Snackbar

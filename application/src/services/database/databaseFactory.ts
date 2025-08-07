@@ -1,5 +1,5 @@
 import { DatabaseClient } from './database';
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../settings';
 
 // Database provider types
 export type DatabaseProvider = 'Postgres';

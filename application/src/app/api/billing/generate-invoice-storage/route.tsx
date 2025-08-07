@@ -2,27 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from 'lib/auth/withAuth';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createInvoiceService } from 'services/invoice/invoiceFactory';
-import { createEmailService } from 'services/email/emailFactory';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
+import { createStorageService } from 'services/storage/storageFactory';
 import { prepareInvoiceData } from 'services/invoice/invoiceUtlis';
-import { InvoiceEmail } from 'services/email/templates/InvoiceEmail';
 import { pdfService } from 'services/pdf/pdfService';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import { serverConfig } from '../../../../settings';
 
 /**
- * API endpoint to generate and send an invoice for the user's current subscription.
- * Requires authentication and automatically detects the user's current plan.
- * Creates a FREE subscription if none exists.
- * Automatically attaches PDF version to the email.
+ * API endpoint to generate an invoice and upload it to DigitalOcean storage.
+ * Returns a downloadable URL for the invoice.
  * 
  * Response:
- *   - 200: { success: true, message: string }
+ *   - 200: { success: true, invoiceUrl: string, invoiceNumber: string }
  *   - 400: { error: string }
  *   - 500: { error: string }
  */
-async function generateInvoiceHandler(
+async function generateInvoiceStorageHandler(
   req: NextRequest,
   user: { id: string; role: string; email: string }
 ): Promise<Response> {
@@ -124,77 +120,72 @@ async function generateInvoiceHandler(
       );
     }
 
+    // Check storage service configuration
+    const storageService = await createStorageService();
+    const storageConfig = await storageService.checkConfiguration();
+    
+    if (!storageConfig.configured || !storageConfig.connected) {
+      return NextResponse.json(
+        { error: 'Storage service not configured or connected' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
+
     // Prepare invoice data using the actual subscription ID
     const invoiceData = prepareInvoiceData(userDetails, selectedPlan, subscription.id);
     
     // Generate invoice
     const generatedInvoice = await invoiceService.generateInvoice(invoiceData);
     
-    // Generate PDF for email attachment
+    // Generate PDF for storage
     let pdfBuffer: Buffer | null = null;
-    let pdfFilename: string | null = null;
     
     try {
       const pdfAvailable = await pdfService.isAvailable();
       
       if (pdfAvailable) {
         pdfBuffer = await pdfService.generateInvoicePDF(generatedInvoice.html);
-        pdfFilename = `invoice-${invoiceData.invoiceNumber}-${userDetails.name.replace(/\s+/g, '-')}.pdf`;
       }
-    } catch {
-      // PDF generation failed, continue without attachment
-    }
-    
-    // Send invoice via email with PDF attachment
-    const emailService = await createEmailService();
-    
-    if (emailService.isEmailEnabled()) {
-      // Prepare email attachments
-      const attachments = [];
-      
-      if (pdfBuffer && pdfFilename) {
-        attachments.push({
-          filename: pdfFilename,
-          content: pdfBuffer,
-          contentType: 'application/pdf'
-        });
-      }
-      
-      await emailService.sendReactEmail(
-        userDetails.email,
-        generatedInvoice.subject,
-        <InvoiceEmail
-          invoiceHtml={generatedInvoice.html}
-          customerName={userDetails.name}
-          planName={selectedPlan.name}
-          amount={selectedPlan.amount}
-          invoiceNumber={invoiceData.invoiceNumber}
-          fromEmail={serverConfig.Resend.fromEmail || 'support@seanotes.com'}
-        />,
-        attachments
-      );
-      
-      return NextResponse.json({
-        success: true,
-        message: `Invoice generated and sent to ${userDetails.email}`,
-        invoiceNumber: invoiceData.invoiceNumber,
-        planName: selectedPlan.name,
-        amount: selectedPlan.amount,
-        pdfAttached: !!pdfBuffer
-      });
-    } else {
+    } catch (pdfError) {
+      console.error('PDF generation failed:', pdfError);
       return NextResponse.json(
-        { error: 'Email service is disabled' },
+        { error: 'Failed to generate PDF invoice' },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       );
     }
+
+    if (!pdfBuffer) {
+      return NextResponse.json(
+        { error: 'PDF generation failed' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
+
+    // Upload PDF to storage with a unique path
+    const fileName = `invoices/${user.id}/${invoiceData.invoiceNumber}.pdf`;
     
-  } catch {
+    // Convert Buffer to File-like object for storage service
+    const file = new File([pdfBuffer], `${invoiceData.invoiceNumber}.pdf`, {
+      type: 'application/pdf'
+    });
+
+    await storageService.uploadFile(user.id, fileName, file, { ACL: 'private' });
+
+    return NextResponse.json({
+      success: true,
+      invoiceNumber: invoiceData.invoiceNumber,
+      planName: selectedPlan.name,
+      amount: selectedPlan.amount,
+      message: 'Invoice generated and stored successfully. Use the download button to access it.'
+    });
+    
+  } catch (error) {
+    console.error('Failed to generate and upload invoice:', error);
     return NextResponse.json(
-      { error: 'Failed to generate invoice' },
+      { error: 'Failed to generate and upload invoice' },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
 }
 
-export const POST = withAuth(generateInvoiceHandler); 
+export const POST = withAuth(generateInvoiceStorageHandler); 

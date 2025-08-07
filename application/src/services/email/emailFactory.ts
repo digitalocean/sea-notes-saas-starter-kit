@@ -1,5 +1,5 @@
 import { EmailService } from './email';
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../settings';
 
 // Email provider types
 export type EmailProvider = 'Resend';

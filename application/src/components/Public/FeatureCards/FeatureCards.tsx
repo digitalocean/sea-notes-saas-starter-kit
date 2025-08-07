@@ -23,6 +23,11 @@ const featureIcons = {
   'System Health Monitoring': <MonitorHeartIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[8].color }} />,
 };
 
+/**
+ * FeatureCards component that displays a grid of feature cards showcasing
+ * the key features and capabilities of the SaaS template.
+ * @returns {JSX.Element} The feature cards component
+ */
 const FeatureCards = () => {
   return (
     <Box component="section" py={DIMENSIONS.spacing.section} bgcolor="background.default" aria-labelledby="features-title">
@@ -30,7 +35,7 @@ const FeatureCards = () => {
         <Stack spacing={DIMENSIONS.spacing.card}>
           <Box component="header">
             <Typography variant="h4" component="h3" id="features-title" fontWeight="bold" textAlign="center">
-              What's included
+              What&apos;s included
             </Typography>
           </Box>
           <Box

@@ -49,11 +49,15 @@ STORAGE_PROVIDER=Spaces
 # These are used to authenticate API requests to DigitalOcean Spaces
 SPACES_KEY_ID=your-access-key-id-here
 SPACES_KEY_SECRET=your-access-key-secret-here
+SPACES_KEY_ID=your-access-key-id-here
+SPACES_KEY_SECRET=your-access-key-secret-here
 
 # Spaces configuration
 # These define which bucket and region your files will be stored in
+SPACES_REGION=blr1                # Your selected datacenter region (blr1 for Bangalore)
+SPACES_BUCKET_NAME=sea-notes-storage 
 SPACES_REGION=nyc3                # Your selected datacenter region (e.g., nyc3, sfo2)
-SPACES_BUCKET_NAME=my-app-bucket  # Name of your Spaces bucket
+SPACES_BUCKET_NAME=my-app-bucket  # Name of your Spaces bucket 
 
 # ====================
 # EMAIL CONFIGURATION (Resend)

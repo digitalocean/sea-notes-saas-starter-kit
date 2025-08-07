@@ -8,7 +8,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService } from './storage';
 import { ServiceConfigStatus } from '../status/serviceConfigStatus';
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../settings';
 
 /**
  * Service for interacting with DigitalOcean Spaces storage using the AWS S3 API.
@@ -44,10 +44,10 @@ export class SpacesStorageService extends StorageService {
    */
   private initializeClient(): void {
     try {
-      const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
-      const secretAccessKey = serverConfig.Spaces.SPACES_SECRET_KEY;
-      const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;
-      const region = serverConfig.Spaces.SPACES_REGION;
+    const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
+    const secretAccessKey = serverConfig.Spaces.SPACES_SECRET_KEY;
+    const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;
+    const region = serverConfig.Spaces.SPACES_REGION;
       const endpoint = `https://${region}.digitaloceanspaces.com`;
 
       // Check for missing configuration

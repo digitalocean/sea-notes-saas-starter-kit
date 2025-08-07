@@ -28,7 +28,7 @@ export function InvoiceEmail({
   fromEmail
 }: InvoiceEmailProps) {
   // Before rendering, replace the contact button with a table-based, inline-styled button for email compatibility
-  let safeInvoiceHtml = invoiceHtml.replace(
+  const safeInvoiceHtml = invoiceHtml.replace(
     /<a[^>]*class=['"]contact-button['"][^>]*href=['"]mailto:([^'"]*)['"][^>]*>.*?<\/a>/gi,
     (_, emailAddress) => `<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 16px auto;">
       <tr>

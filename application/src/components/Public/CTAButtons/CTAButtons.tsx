@@ -5,6 +5,11 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { COLORS, URLS, DIMENSIONS } from 'constants/landing';
 
+/**
+ * CTAButtons component that displays call-to-action buttons for GitHub repository
+ * and DigitalOcean deployment links.
+ * @returns {JSX.Element} The CTA buttons component
+ */
 const CTAButtons = () => {
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={DIMENSIONS.spacing.small} justifyContent="center">

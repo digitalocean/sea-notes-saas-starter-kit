@@ -6,6 +6,11 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import { TERMINAL, DIMENSIONS } from 'constants/landing';
 
+/**
+ * TerminalMockup component that displays a terminal interface mockup with
+ * deployment commands and copy functionality.
+ * @returns {JSX.Element} The terminal mockup component
+ */
 const TerminalMockup = () => {
   const [copied, setCopied] = useState(false);
 
@@ -14,7 +19,7 @@ const TerminalMockup = () => {
       await navigator.clipboard.writeText(TERMINAL.commands);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch {
       // Fallback for browsers that don't support clipboard API or when permissions are denied
       const textArea = document.createElement('textarea');
       textArea.value = TERMINAL.commands;

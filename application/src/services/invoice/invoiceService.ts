@@ -165,7 +165,7 @@ export class InvoiceService implements ConfigurableService {
     } catch (error) {
       console.error('Error generating invoice with AI:', error);
       if (error instanceof Error && 'response' in error) {
-        const axiosError = error as any;
+        const axiosError = error as { response?: { status?: number; data?: unknown } };
         console.error('Response status:', axiosError.response?.status);
         console.error('Response data:', JSON.stringify(axiosError.response?.data, null, 2));
       }

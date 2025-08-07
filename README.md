@@ -27,7 +27,7 @@ You can use SeaNotes in two ways:
 1. As a **starter kit** to build your own SaaS application by replacing the notes functionality with your business logic
 2. As a **reference app** by pointing your LLMs (like ChatGPT or Claude) to this codebase to understand how to implement similar features in your own projects
 
-![alt text](docs/images/launch_your_saas_on_digitalocean.png)
+![alt text](docs/images/application-preview.png)
 
 ## Quick Deploy
 
@@ -315,7 +315,7 @@ To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and a
 
    After creating your Spaces bucket and access key, you'll need to add the following values to your `.env` file:
 
-   - **SPACES_REGION**: This is your selected datacenter region (e.g., nyc3, sfo2, etc.)
+   - **SEANOTES_SPACES_REGION**: This is your selected datacenter region (e.g., nyc3, sfo2, etc.)
 
    - **SPACES_BUCKET_NAME**: This is simply the name you gave your Spaces bucket when you created it
 

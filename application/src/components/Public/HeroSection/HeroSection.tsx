@@ -1,9 +1,14 @@
 import React from 'react';
-import { Typography, Box, Container, Stack } from '@mui/material';
+import { Typography, Box, Container } from '@mui/material';
 import TerminalMockup from 'components/Public/TerminalMockup/TerminalMockup';
 import CTAButtons from 'components/Public/CTAButtons/CTAButtons';
 import { DIMENSIONS } from 'constants/landing';
 
+/**
+ * HeroSection component that displays the main hero section of the landing page
+ * with title, subtitle, description, and call-to-action buttons.
+ * @returns {JSX.Element} The hero section component
+ */
 const HeroSection = () => {
   return (
     <Box component="section" bgcolor="background.default" py={DIMENSIONS.spacing.section} aria-labelledby="hero-title">

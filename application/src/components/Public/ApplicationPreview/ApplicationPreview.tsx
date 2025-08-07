@@ -3,6 +3,11 @@ import { Typography, Box, Container, Stack, Card } from '@mui/material';
 import { Button } from '@mui/material';
 import { DIMENSIONS } from 'constants/landing';
 
+/**
+ * ApplicationPreview component that displays a mockup of the SeaNotes application interface.
+ * Shows the main dashboard layout with sidebar navigation and notes grid.
+ * @returns {JSX.Element} The application preview component
+ */
 const ApplicationPreview = () => {
   return (
     <Box component="section" py={DIMENSIONS.spacing.section} bgcolor="background.default" aria-labelledby="preview-title">

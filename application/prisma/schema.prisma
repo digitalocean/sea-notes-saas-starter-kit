@@ -8,39 +8,36 @@ datasource db {
 }
 
 model User {
-  id             String         @id @default(uuid())
-  name           String
-  email          String         @unique
-  passwordHash   String
-  image          String?
-
-  role           Role           @default(USER)
-  createdAt      DateTime       @default(now())
-
-  subscription   Subscription?  @relation("UserSubscription")
-  notes          Note[]
-
-  verificationToken String? // Token for email verification
-  emailVerified     Boolean @default(false) // Email verification status
+  id                String        @id @default(uuid())
+  name              String
+  email             String        @unique
+  passwordHash      String
+  image             String?
+  role              Role          @default(USER)
+  createdAt         DateTime      @default(now())
+  emailVerified     Boolean       @default(false)
+  verificationToken String?
+  notes             Note[]
+  subscription      Subscription? @relation("UserSubscription")
 }
 
 model Subscription {
-  id         String   @id @default(uuid())
-  user       User     @relation("UserSubscription", fields: [userId], references: [id])
-  userId     String   @unique
+  id         String              @id @default(uuid())
+  userId     String              @unique
   status     SubscriptionStatus?
   plan       SubscriptionPlan?
+  createdAt  DateTime            @default(now())
   customerId String?
-  createdAt  DateTime @default(now())
+  user       User                @relation("UserSubscription", fields: [userId], references: [id])
 }
 
 model Note {
-  id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
-  title      String
-  content    String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {

@@ -12,6 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Link as MuiLink } from '@mui/material';
 import Link from 'next/link';
 import GetInvoiceButton from 'components/Pricing/GetInvoiceButton';
+import DownloadInvoiceButton from './DownloadInvoiceButton';
 
 /**
  * Main component for managing user subscriptions.
@@ -134,21 +135,32 @@ const Subscription: React.FC = () => {
             </Button>
           )}
 
-          {/* Get Invoice Button for all active subscriptions */}
+          {/* Invoice Section */}
           <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid #e0e0e0', width: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Invoice
+              Invoice Management
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Click the button below to have your latest invoice for your current subscription emailed to you.
-            </Typography>
-            <GetInvoiceButton 
-              variant="outlined"
-              size="medium"
-            />
+            
+            {/* Email Invoice Option */}
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Have your latest invoice emailed to you:
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', mt: 0.25 }}>
+                <GetInvoiceButton 
+                  variant="outlined"
+                  size="medium"
+                />
+                <DownloadInvoiceButton 
+                  variant="outlined"
+                  size="medium"
+                />
+              </Box>
+            </Box>
+
             <Box sx={{ mt: 2, p: 2, bgcolor: '#f5f7fa', borderRadius: 2, border: '1px solid #e0e0e0' }}>
               <Typography variant="body2" color="text.secondary">
-                <strong>Note for developers:</strong> Invoice details (plan, amount, etc.) are fetched live from Stripe, and a professional invoice is generated and sent to the user via email.
+              <strong>Note for developers:</strong> Invoice details (plan, amount, etc.) are fetched live from Stripe, and a professional invoice is generated and sent to the user via email and can also be downloaded.
               </Typography>
             </Box>
           </Box>
