@@ -13,6 +13,10 @@ export interface ServerConfig {
     url?: string;
   };
   Spaces: {
+    SPACES_KEY_ID?: string;
+    SPACES_SECRET_KEY?: string;
+    SPACES_BUCKET_NAME?: string;
+    SPACES_REGION?: string;
     SEANOTES_SPACES_KEY_ID?: string;
     SEANOTES_SPACES_KEY_SECRET?: string;
     SEANOTES_SPACES_BUCKET_NAME?: string;
@@ -46,6 +50,10 @@ export const serverConfig: ServerConfig = {
     url: process.env.DATABASE_URL,
   },
   Spaces: {
+    SPACES_KEY_ID: process.env.SPACES_KEY_ID,
+    SPACES_SECRET_KEY: process.env.SPACES_SECRET_KEY,
+    SPACES_BUCKET_NAME: process.env.SPACES_BUCKET_NAME,
+    SPACES_REGION: process.env.SPACES_REGION,
     SEANOTES_SPACES_KEY_ID: process.env.SEANOTES_SPACES_KEY_ID,
     SEANOTES_SPACES_KEY_SECRET: process.env.SEANOTES_SPACES_KEY_SECRET,
     SEANOTES_SPACES_BUCKET_NAME: process.env.SEANOTES_SPACES_BUCKET_NAME,

@@ -25,13 +25,13 @@ export class SpacesStorageService extends StorageService {
   private static readonly serviceName = 'Storage (DigitalOcean Spaces)';
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    SEANOTES_SPACES_KEY_ID: { envVar: 'SEANOTES_SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
-    SEANOTES_SPACES_KEY_SECRET: {
-      envVar: 'SEANOTES_SPACES_KEY_SECRET',
+    SPACES_KEY_ID: { envVar: 'SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
+    SPACES_SECRET_KEY: {
+      envVar: 'SPACES_SECRET_KEY',
       description: 'DigitalOcean Spaces Secret Key',
     },
-    SEANOTES_SPACES_BUCKET_NAME: { envVar: 'SEANOTES_SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
-    SEANOTES_SPACES_REGION: { envVar: 'SEANOTES_SPACES_REGION', description: 'DigitalOcean Spaces region' },
+    SPACES_BUCKET_NAME: { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
+    SPACES_REGION: { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' },
   };
   constructor() {
     super();
@@ -44,10 +44,10 @@ export class SpacesStorageService extends StorageService {
    */
   private initializeClient(): void {
     try {
-    const accessKeyId = serverConfig.Spaces.SEANOTES_SPACES_KEY_ID;
-    const secretAccessKey = serverConfig.Spaces.SEANOTES_SPACES_KEY_SECRET;
-    const bucketName = serverConfig.Spaces.SEANOTES_SPACES_BUCKET_NAME;
-    const region = serverConfig.Spaces.SEANOTES_SPACES_REGION;
+    const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
+    const secretAccessKey = serverConfig.Spaces.SPACES_SECRET_KEY;
+    const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;
+    const region = serverConfig.Spaces.SPACES_REGION;
       const endpoint = `https://${region}.digitaloceanspaces.com`;
 
       // Check for missing configuration

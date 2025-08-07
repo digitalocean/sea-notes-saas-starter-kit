@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { StatusService } from './statusService';
-import { serverConfig } from 'settings';
+import { serverConfig } from '../../settings';
 import { StorageService } from '../storage/storage';
 import { EmailService } from '../email/email';
 import { DatabaseClient } from '../database/database';
