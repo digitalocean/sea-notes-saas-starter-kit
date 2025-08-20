@@ -64,6 +64,13 @@ async function downloadInvoiceHandler(
       // Get signed URL for download (expires in 1 hour)
       const downloadUrl = await storageService.getFileUrl(user.id, fileName, 3600);
       
+      console.log('Download URL generated successfully:', {
+        userId: user.id,
+        invoiceNumber,
+        fileName,
+        downloadUrl: downloadUrl.substring(0, 100) + '...' // Log partial URL for security
+      });
+      
       return NextResponse.json({
         success: true,
         invoiceUrl: downloadUrl,
@@ -72,7 +79,12 @@ async function downloadInvoiceHandler(
       });
     } catch (storageError) {
       // If file doesn't exist or user doesn't have access, return 404
-      console.error('Storage error:', storageError);
+      console.error('Storage error details:', {
+        userId: user.id,
+        invoiceNumber,
+        fileName,
+        error: storageError instanceof Error ? storageError.message : String(storageError)
+      });
       return NextResponse.json(
         { error: 'Invoice not found or access denied' },
         { status: HTTP_STATUS.NOT_FOUND }

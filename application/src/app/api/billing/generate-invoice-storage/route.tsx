@@ -92,17 +92,33 @@ async function generateInvoiceStorageHandler(
     // Get plan details from billing service
     const billingService = await createBillingService();
     const plans = await billingService.getProducts();
+    console.log('Available plans:', plans.map(p => ({ name: p.name, priceId: p.priceId })));
+    console.log('User subscription plan:', subscription.plan);
+    console.log('Environment variables:', {
+      STRIPE_FREE_PRICE_ID: process.env.STRIPE_FREE_PRICE_ID,
+      STRIPE_PRO_PRICE_ID: process.env.STRIPE_PRO_PRICE_ID
+    });
     
     // Find the plan that matches the user's subscription
     let selectedPlan;
     
     if (subscription.plan === 'FREE') {
       selectedPlan = plans.find(plan => plan.priceId === process.env.STRIPE_FREE_PRICE_ID);
+      console.log('Looking for FREE plan with priceId:', process.env.STRIPE_FREE_PRICE_ID);
     } else if (subscription.plan === 'PRO') {
       selectedPlan = plans.find(plan => plan.priceId === process.env.STRIPE_PRO_PRICE_ID);
+      console.log('Looking for PRO plan with priceId:', process.env.STRIPE_PRO_PRICE_ID);
     }
     
+    console.log('Selected plan:', selectedPlan);
+    
     if (!selectedPlan) {
+      console.error('Plan not found for subscription:', {
+        userPlan: subscription.plan,
+        availablePlans: plans,
+        freePriceId: process.env.STRIPE_FREE_PRICE_ID,
+        proPriceId: process.env.STRIPE_PRO_PRICE_ID
+      });
       return NextResponse.json(
         { error: 'Plan details not found' },
         { status: HTTP_STATUS.NOT_FOUND }
@@ -112,8 +128,10 @@ async function generateInvoiceStorageHandler(
     // Check invoice service configuration
     const invoiceService = await createInvoiceService();
     const invoiceConfig = await invoiceService.checkConfiguration();
+    console.log('Invoice service config:', invoiceConfig);
     
     if (!invoiceConfig.configured || !invoiceConfig.connected) {
+      console.error('Invoice service not properly configured:', invoiceConfig);
       return NextResponse.json(
         { error: 'Invoice service not configured or connected' },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
@@ -123,8 +141,11 @@ async function generateInvoiceStorageHandler(
     // Check storage service configuration
     const storageService = await createStorageService();
     const storageConfig = await storageService.checkConfiguration();
+    console.log('Storage service config:', storageConfig);
     
     if (!storageConfig.configured || !storageConfig.connected) {
+      console.error('Storage service not properly configured:', storageConfig);
+      console.error('Check if SPACES_KEY_SECRET is set in your .env file');
       return NextResponse.json(
         { error: 'Storage service not configured or connected' },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
@@ -133,21 +154,37 @@ async function generateInvoiceStorageHandler(
 
     // Prepare invoice data using the actual subscription ID
     const invoiceData = prepareInvoiceData(userDetails, selectedPlan, subscription.id);
+    console.log('Invoice data prepared:', {
+      invoiceNumber: invoiceData.invoiceNumber,
+      customerName: invoiceData.customerName,
+      planName: invoiceData.planName
+    });
     
     // Generate invoice
+    console.log('Generating invoice using AI service...');
     const generatedInvoice = await invoiceService.generateInvoice(invoiceData);
+    console.log('Invoice generated successfully, HTML length:', generatedInvoice.html?.length || 0);
     
     // Generate PDF for storage
     let pdfBuffer: Buffer | null = null;
     
     try {
+      console.log('Checking PDF service availability...');
       const pdfAvailable = await pdfService.isAvailable();
+      console.log('PDF service available:', pdfAvailable);
       
       if (pdfAvailable) {
+        console.log('Generating PDF invoice...');
         pdfBuffer = await pdfService.generateInvoicePDF(generatedInvoice.html);
+        console.log('PDF generated successfully, size:', pdfBuffer?.length || 0);
+      } else {
+        console.log('PDF service not available, cannot generate PDF');
       }
     } catch (pdfError) {
-      console.error('PDF generation failed:', pdfError);
+      console.error('PDF generation failed:', {
+        error: pdfError instanceof Error ? pdfError.message : String(pdfError),
+        stack: pdfError instanceof Error ? pdfError.stack : undefined
+      });
       return NextResponse.json(
         { error: 'Failed to generate PDF invoice' },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
@@ -155,8 +192,9 @@ async function generateInvoiceStorageHandler(
     }
 
     if (!pdfBuffer) {
+      console.error('PDF buffer is null or empty');
       return NextResponse.json(
-        { error: 'PDF generation failed' },
+        { error: 'PDF generation failed - no PDF content generated' },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       );
     }
@@ -164,12 +202,28 @@ async function generateInvoiceStorageHandler(
     // Upload PDF to storage with a unique path
     const fileName = `invoices/${user.id}/${invoiceData.invoiceNumber}.pdf`;
     
+    console.log('Attempting to upload invoice to storage:', {
+      userId: user.id,
+      fileName,
+      pdfBufferSize: pdfBuffer?.length || 0
+    });
+    
     // Convert Buffer to File-like object for storage service
     const file = new File([pdfBuffer], `${invoiceData.invoiceNumber}.pdf`, {
       type: 'application/pdf'
     });
 
-    await storageService.uploadFile(user.id, fileName, file, { ACL: 'private' });
+    try {
+      await storageService.uploadFile(user.id, fileName, file, { ACL: 'private' });
+      console.log('Invoice uploaded successfully to storage');
+    } catch (uploadError) {
+      console.error('Failed to upload invoice to storage:', {
+        userId: user.id,
+        fileName,
+        error: uploadError instanceof Error ? uploadError.message : String(uploadError)
+      });
+      throw uploadError;
+    }
 
     return NextResponse.json({
       success: true,

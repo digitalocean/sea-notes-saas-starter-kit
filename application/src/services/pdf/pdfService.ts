@@ -23,18 +23,28 @@ export class PDFService {
    */
   private async getBrowser(): Promise<puppeteer.Browser> {
     if (!this.browser) {
-      this.browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--disable-gpu'
-        ]
-      });
+      try {
+        console.log('Launching Puppeteer browser...');
+        this.browser = await puppeteer.launch({
+          headless: true,
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu'
+          ]
+        });
+        console.log('Puppeteer browser launched successfully');
+      } catch (error) {
+        console.error('Failed to launch Puppeteer browser:', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        throw error;
+      }
     }
     return this.browser;
   }
@@ -404,12 +414,14 @@ ${html}
     const page = await browser.newPage();
 
     try {
+      console.log('Setting page content...');
       // Set content and wait for it to load
       await page.setContent(completeHTML, {
         waitUntil: ['networkidle0', 'domcontentloaded'],
         timeout: 30000
       });
 
+      console.log('Setting viewport...');
       // Set viewport for consistent rendering
       await page.setViewport({
         width: 1200,
@@ -417,9 +429,11 @@ ${html}
         deviceScaleFactor: 2 // Higher resolution for better quality
       });
 
+      console.log('Waiting for content to render...');
       // Wait a bit more for any dynamic content to render
       await new Promise(res => setTimeout(res, 2000));
 
+      console.log('Generating PDF...');
       // Generate PDF with options
       const pdfBuffer = await page.pdf({
         format: 'A4',
@@ -434,8 +448,17 @@ ${html}
         displayHeaderFooter: false
       });
 
+      console.log('PDF generated, converting to Buffer...');
       // Convert Uint8Array to Buffer for Puppeteer v24
-      return Buffer.from(pdfBuffer);
+      const result = Buffer.from(pdfBuffer);
+      console.log('PDF Buffer created, size:', result.length);
+      return result;
+    } catch (error) {
+      console.error('Error during PDF generation:', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      throw error;
     } finally {
       await page.close();
     }
