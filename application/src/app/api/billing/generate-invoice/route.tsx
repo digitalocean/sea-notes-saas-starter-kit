@@ -130,36 +130,13 @@ async function generateInvoiceHandler(
     // Generate invoice
     const generatedInvoice = await invoiceService.generateInvoice(invoiceData);
     
-    // Generate PDF for email attachment
-    let pdfBuffer: Buffer | null = null;
-    let pdfFilename: string | null = null;
+    // Note: PDF generation is now handled client-side for better production compatibility
+    // Server-side PDF generation with Puppeteer doesn't work reliably in serverless environments
     
-    try {
-      const pdfAvailable = await pdfService.isAvailable();
-      
-      if (pdfAvailable) {
-        pdfBuffer = await pdfService.generateInvoicePDF(generatedInvoice.html);
-        pdfFilename = `invoice-${invoiceData.invoiceNumber}-${userDetails.name.replace(/\s+/g, '-')}.pdf`;
-      }
-    } catch {
-      // PDF generation failed, continue without attachment
-    }
-    
-    // Send invoice via email with PDF attachment
+    // Send invoice via email (HTML only - users can convert to PDF client-side if needed)
     const emailService = await createEmailService();
     
     if (emailService.isEmailEnabled()) {
-      // Prepare email attachments
-      const attachments = [];
-      
-      if (pdfBuffer && pdfFilename) {
-        attachments.push({
-          filename: pdfFilename,
-          content: pdfBuffer,
-          contentType: 'application/pdf'
-        });
-      }
-      
       await emailService.sendReactEmail(
         userDetails.email,
         generatedInvoice.subject,
@@ -170,8 +147,7 @@ async function generateInvoiceHandler(
           amount={selectedPlan.amount}
           invoiceNumber={invoiceData.invoiceNumber}
           fromEmail={serverConfig.Resend.fromEmail || 'support@seanotes.com'}
-        />,
-        attachments
+        />
       );
       
       return NextResponse.json({
@@ -180,7 +156,8 @@ async function generateInvoiceHandler(
         invoiceNumber: invoiceData.invoiceNumber,
         planName: selectedPlan.name,
         amount: selectedPlan.amount,
-        pdfAttached: !!pdfBuffer
+        pdfAttached: false,
+        note: 'PDF generation is now handled client-side for better reliability. Use the download button to generate PDFs.'
       });
     } else {
       return NextResponse.json(

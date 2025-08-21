@@ -1,11 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import DownloadIcon from '@mui/icons-material/Download';
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
+import { Button, Box, Alert, CircularProgress } from '@mui/material';
+import { Download as DownloadIcon } from '@mui/icons-material';
 
 interface InvoiceResponse {
   success: boolean;
@@ -31,7 +28,8 @@ interface DownloadInvoiceButtonProps {
 }
 
 /**
- * Simple button component for downloading invoices
+ * Button component for downloading invoices via signed URL
+ * Uses browser navigation to the signed URL to avoid CORS issues
  */
 const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = ({
   variant = 'outlined',
@@ -46,7 +44,7 @@ const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = ({
     setError(null);
 
     try {
-      // Step 1: Generate invoice
+      // Step 1: Generate invoice in storage
       const generateResponse = await fetch('/api/billing/generate-invoice-storage', {
         method: 'POST',
         headers: {
@@ -64,7 +62,7 @@ const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = ({
         throw new Error('Invalid response from invoice generation');
       }
 
-      // Step 2: Get download URL
+      // Step 2: Request signed download URL for the generated PDF
       const downloadResponse = await fetch(`/api/billing/download-invoice/${generateData.invoiceNumber}`, {
         method: 'GET',
         headers: {
@@ -82,7 +80,7 @@ const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = ({
         throw new Error('Invalid response from download service');
       }
 
-      // Step 3: Trigger download
+      // Step 3: Trigger browser navigation to the signed URL (no CORS for navigation)
       const link = document.createElement('a');
       link.href = downloadData.invoiceUrl;
       link.download = `invoice-${generateData.invoiceNumber}.pdf`;
@@ -106,20 +104,15 @@ const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = ({
       )}
       
       <Button
-        onClick={handleDownload}
-        disabled={loading}
         variant={variant}
         size={size}
         color={color}
+        onClick={handleDownload}
+        disabled={loading}
         startIcon={loading ? <CircularProgress size={20} /> : <DownloadIcon />}
-        sx={{
-          '&:hover': {
-            backgroundColor: 'transparent',
-            color: 'inherit'
-          }
-        }}
+        fullWidth
       >
-        {loading ? 'Generating...' : 'Download Invoice'}
+        {loading ? 'Generating Invoice...' : 'Download Invoice'}
       </Button>
     </Box>
   );
