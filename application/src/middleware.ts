@@ -19,7 +19,13 @@ export async function middleware(request: NextRequest) {
   const isLoggedIn = !!session?.user;
   const role = session?.user?.role as UserRole;
 
+  // Redirect authenticated users from root to their dashboard
   if (pathname === '/' && isLoggedIn && role) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  // Redirect authenticated users from /dashboard to their role-based dashboard
+  if (pathname === '/dashboard' && isLoggedIn && role) {
     return NextResponse.redirect(new URL(ROLE_HOME_URL[role], request.url));
   }
 
@@ -28,14 +34,14 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isLoggedIn && role && (pathname === '/login' || pathname === '/signup')) {
-    return NextResponse.redirect(new URL(ROLE_HOME_URL[role] ?? '/', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   if (pathname.startsWith('/admin') && role !== USER_ROLES.ADMIN) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', request.url));
     } else {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }
 
