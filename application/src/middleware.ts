@@ -13,9 +13,8 @@ const ROLE_HOME_URL: Record<UserRole, string> = {
  * @returns A NextResponse object for redirection or continuation.
  */
 export async function middleware(request: NextRequest) {
-  const session = await auth();
   const { pathname } = request.nextUrl;
-
+  const session = await auth();
   const isLoggedIn = !!session?.user;
   const role = session?.user?.role as UserRole;
 
@@ -54,5 +53,6 @@ export const config = {
     '/system-status',
     '/api/system-status',
     '/api/health',
+    '/api/billing/:path*',
   ],
 };

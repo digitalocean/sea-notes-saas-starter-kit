@@ -74,7 +74,10 @@ export function InvoiceEmail({
           <Hr style={{ margin: '24px 0' }} />
           
           <Text style={{ fontSize: 14, color: '#666', textAlign: 'center', margin: '24px 0 0 0' }}>
-            A PDF version of this invoice is attached to this email for your records.
+            This invoice is sent as HTML for better compatibility across email clients.
+          </Text>
+          <Text style={{ fontSize: 14, color: '#666', textAlign: 'center', margin: '8px 0 0 0' }}>
+            To download a PDF version, use the "Download Invoice" button in your dashboard.
           </Text>
           <Text style={{ fontSize: 14, color: '#666', textAlign: 'center', margin: '8px 0 0 0' }}>
             If you have any questions about this invoice, please contact us at {fromEmail}.
