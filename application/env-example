@@ -99,8 +99,8 @@ STRIPE_PORTAL_CONFIG_ID=          # ID for customer portal configuration
 # ====================
 # General application settings that affect multiple components
 
-# Invoice Generation (DigitalOcean GradientAI)
-# Uses the same DO_INFERENCE_API_KEY as AI title generation
+# Invoice Generation (DigitalOcean Gradient™ AI Platform)
+# Uses the same GRADIENT_AI_INFERENCE_KEY as AI title generation
 INVOICE_PROVIDER=DigitalOcean GradientAI
 
 
@@ -116,7 +116,7 @@ BASE_URL=
 # When configured: Users only enter note content, titles are auto-generated
 # When not configured: Users enter both title and content (traditional flow)
 # In the app: Used by src/services/ai/titleGenerationService.ts for server-side generation
-DO_INFERENCE_API_KEY=             # Your DigitalOcean Inference API key
+GRADIENT_AI_INFERENCE_KEY=             # Your DigitalOcean Inference API key
 
 # Client-side flag to enable DigitalOcean Gradient AI features in the UI
 # Set to 'true' when you want to enable AI-powered content generation

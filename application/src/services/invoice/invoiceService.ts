@@ -39,7 +39,7 @@ export class InvoiceService implements ConfigurableService {
 
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    doInferenceApiKey: { envVar: 'DO_INFERENCE_API_KEY', description: 'DigitalOcean GradientAI Serverless Inference API Key' },
+    doInferenceApiKey: { envVar: 'GRADIENT_AI_INFERENCE_KEY', description: 'DigitalOcean GradientAI Serverless Inference API Key' },
   };
 
   constructor() {
@@ -59,7 +59,7 @@ export class InvoiceService implements ConfigurableService {
       });
     } else {
       this.isConfigured = false;
-      this.lastConnectionError = 'DO_INFERENCE_API_KEY not configured';
+      this.lastConnectionError = 'GRADIENT_AI_INFERENCE_KEY not configured';
     }
   }
 
