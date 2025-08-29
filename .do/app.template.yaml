@@ -58,9 +58,8 @@ services:
         value: "__APP_URL_BIND__"
       - key: "ENABLE_EMAIL_INTEGRATION"
         value: "false"
-      - key: "DO_INFERENCE_API_KEY"
-        value: "${DO_INFERENCE_API_KEY}"
-        type: "SECRET"
+      - key: "GRADIENT_AI_INFERENCE_KEY"
+        value: "${GRADIENT_AI_INFERENCE_KEY}"
       - key: "NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED"
         value: "true"
 
