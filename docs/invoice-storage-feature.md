@@ -78,7 +78,7 @@ SPACES_REGION=blr1
 SPACES_BUCKET_NAME=sea-notes-storage
 
 # AI Service (for invoice generation)
-DO_INFERENCE_API_KEY=your-do-inference-api-key
+GRADIENT_AI_INFERENCE_KEY=your-do-inference-api-key
 
 # PDF Service (for PDF generation)
 # (Depends on your PDF service configuration)
@@ -191,7 +191,7 @@ Potential improvements for the future:
 
 2. **"Invoice service not configured"**
    - Check AI service configuration
-   - Verify DO_INFERENCE_API_KEY is set
+   - Verify GRADIENT_AI_INFERENCE_KEY is set
 
 3. **"PDF generation failed"**
    - Check PDF service configuration

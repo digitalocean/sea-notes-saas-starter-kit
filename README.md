@@ -46,7 +46,7 @@ This is a production-ready SaaS Starter Kit for developers who want to build and
 - ✅ File uploads to DigitalOcean Spaces  
 - ✅ PostgreSQL via Prisma ORM  
 - ✅ Next.js + Material UI frontend  
-- ✅ DigitalOcean GradientAI Serverless Inference API 
+- ✅ DigitalOcean Gradient™ AI Serverless Inference API 
 - ✅ Admin dashboard for managing users and subscriptions 
 - ✅ One-click deploy to DO App Platform
 
@@ -56,7 +56,7 @@ The included notes app functionality serves as a practical example of how to bui
 
 > "Build me something like this, but for [my idea]"  
 
-....and it'll scaffold your app using similar patterns — auth, billing, storage, GradientAI Serverless Inference API, etc., all running on DigitalOcean.
+....and it'll scaffold your app using similar patterns — auth, billing, storage, Gradient™ AI Serverless Inference API, etc., all running on DigitalOcean.
 
 ## Technical Stack
 
@@ -69,7 +69,7 @@ The included notes app functionality serves as a practical example of how to bui
 - **Email**: Resend.com
 - **File Storage**: DigitalOcean Spaces
 - **Payments**: Stripe
-- **AI**: DigitalOcean GradientAI Serverless Inference API
+- **AI**: DigitalOcean Gradient™ AI Serverless Inference API
 - **Deployment**: DigitalOcean App Platform
 
 ## Who It's For
@@ -450,12 +450,12 @@ SeaNotes includes AI-powered features that enhance the note-taking experience us
    Update the following values in your `.env` file with your actual API key:
 
    ```
-   DO_INFERENCE_API_KEY=your-digitalocean-inference-api-key
+   GRADIENT_AI_INFERENCE_KEY=your-digitalocean-inference-api-key
    NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED=true
    ```
 
-   - `DO_INFERENCE_API_KEY`: Your DigitalOcean Inference API key (server-side)
-   - `NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED`: Enables DigitalOcean Gradient AI features in the frontend (client-side)
+   - `GRADIENT_AI_INFERENCE_KEY`: Your DigitalOcean Inference API key (server-side)
+   - `NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED`: Enables Gradient™ AI features in the frontend (client-side)
 
 3. **Restart Your Development Server**
 
