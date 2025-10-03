@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
-const OpenAI = require('openai');
+const { Gradient } = require('@digitalocean/gradient');
 
 // DigitalOcean Serverless Inference configuration
 const apiKey = process.env.DO_INFERENCE_API_KEY;
@@ -15,22 +15,26 @@ if (!apiKey) {
   process.exit(1);
 }
 
-const client = new OpenAI({
-  apiKey: apiKey,
-  baseURL: "https://inference.do-ai.run/v1",
-  timeout: 30000, 
-  maxRetries: 3
+const client = new Gradient({
+  accessToken:  apiKey,
+  timeout: 30000,
+  maxRetries: 3,
+  baseURL: 'https://inference.do-ai.run/v1',
 });
 
 
 async function testConnection() {
   try {
     console.log('🔍 Testing connection to DigitalOcean Serverless Inference...');
-    const models = await client.models.list();
-    console.log('✅ Connection successful! Available models:');
-    for (const model of models.data) {
-      console.log(`   - ${model.id}`);
-    }
+    //const models = await client.models.list(); this won't work with gradient inference
+    const response = await client.chat.completions.create({
+      model: "llama3-8b-instruct", // 
+      messages: [{ role: "user", content: "ping" }],
+      max_tokens: 5,
+    });
+
+    console.log('✅ Connection successful! Test output:', response.choices?.[0]?.message?.content || "<no content>");
+
     return true;
   } catch (error) {
     console.error('❌ Connection test failed:', error.message);

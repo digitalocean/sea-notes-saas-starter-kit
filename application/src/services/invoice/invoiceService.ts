@@ -5,7 +5,7 @@
 
 import { ConfigurableService, ServiceConfigStatus } from '../status/serviceConfigStatus';
 import { serverConfig } from '../../settings';
-import OpenAI from 'openai';
+import { Gradient } from '@digitalocean/gradient';
 
 export interface InvoiceData {
   customerName: string;
@@ -35,7 +35,7 @@ export class InvoiceService implements ConfigurableService {
   private isConfigured: boolean = false;
   private lastConnectionError: string = '';
   private description: string = 'The following features are impacted: automatic invoice generation and emailing';
-  private client: OpenAI | null = null;
+  private client: Gradient | null = null;
 
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
@@ -51,11 +51,11 @@ export class InvoiceService implements ConfigurableService {
     
     if (apiKey) {
       this.isConfigured = true;
-      this.client = new OpenAI({
-        apiKey: apiKey,
-        baseURL: 'https://inference.do-ai.run/v1',
+      this.client = new Gradient({
+         accessToken:  apiKey,
         timeout: 30000, // 30 second timeout
-        maxRetries: 3
+        maxRetries: 3,
+        baseURL: 'https://inference.do-ai.run/v1',
       });
     } else {
       this.isConfigured = false;
@@ -76,17 +76,23 @@ export class InvoiceService implements ConfigurableService {
     }
 
     try {
-      // Test connection by listing models
+      // Test connection by pinging
       if (this.client) {
-        await this.client.models.list();
-        return {
+       // await this.client.models.list(); this doesn't work with inference
+        const response = await this.client.chat.completions.create({
+        model: "llama3-8b-instruct", // pick your default model
+        messages: [{ role: "user", content: "ping" }],
+        max_tokens: 1,
+      });
+      console.log('✅ Connection successful! Test output:', response.choices?.[0]?.message?.content || "<no content>");        
+      return {
           name: InvoiceService.serviceName,
           configured: true,
           connected: true,
           description: this.description,
         };
       } else {
-        throw new Error('OpenAI client not initialized');
+        throw new Error('Gradient client not initialized');
       }
     } catch (error) {
       this.lastConnectionError = error instanceof Error ? error.message : 'Unknown error';
@@ -131,8 +137,8 @@ export class InvoiceService implements ConfigurableService {
         temperature: 0.1
       });
 
-      // The response should be a proper OpenAI response object
-      if (response && response.choices && response.choices.length > 0) {
+      // The response should be a proper Gradient response object
+      if (response?.choices?.length > 0) {
         const aiResponse = response.choices[0].message.content;
         
         // Parse the AI response to extract JSON
@@ -412,7 +418,7 @@ Return the response as a JSON object with html, text, and subject fields.`;
               <div class="features">
                 <strong>Features included:</strong>
                 <ul>
-                  ${invoiceData.features.map(feature => `<li>${feature}</li>`).join('')}
+                  ${invoiceData.features.map((feature) => `<li>${feature}</li>`).join('')}
                 </ul>
               </div>
               <div class="total">
@@ -482,15 +488,15 @@ If you have any questions, please contact our support team at support@seanotes.c
     }
 
     try {
-      // The checkConnection logic needs to be updated to use the OpenAI client
+      // The checkConnection logic needs to be updated to use the Gradient client
       // For now, we'll keep the original axios-based check, but it might need
-      // to be refactored if the OpenAI client is the primary means of communication.
+      // to be refactored if the Gradient client is the primary means of communication.
       // The original axios check was for a specific inference endpoint.
-      // With OpenAI, we might just check if the client is initialized.
+      // With Gradient, we might just check if the client is initialized.
       if (this.client) {
         return true; // Assuming if client is initialized, connection is good
       } else {
-        this.lastConnectionError = 'OpenAI client not initialized';
+        this.lastConnectionError = 'Gradient client not initialized';
         return false;
       }
     } catch (error) {

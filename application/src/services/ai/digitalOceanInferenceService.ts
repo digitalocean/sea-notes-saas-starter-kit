@@ -1,26 +1,26 @@
 /**
  * DigitalOcean AI Inference Service
- * 
- * Provides AI-powered title and content generation using DigitalOcean's Inference API
- * with OpenAI-compatible interface.
+ *
+ * Provides AI-powered title and content generation using DigitalOcean's Gradient AI SDK.
  */
 
-import OpenAI from 'openai';
+import { Gradient } from '@digitalocean/gradient';
 import { serverConfig } from '../../settings';
 
 /**
  * DigitalOcean unified inference service for both title and content generation
  */
 export class DigitalOceanInferenceService {
-  private client: OpenAI;
+  private readonly client: Gradient;
 
   constructor() {
     if (!serverConfig.GradientAI.doInferenceApiKey) {
       throw new Error('DigitalOcean Inference API key is not configured');
     }
 
-    this.client = new OpenAI({
-      apiKey: serverConfig.GradientAI.doInferenceApiKey,
+    this.client = new Gradient({
+      accessToken:  serverConfig.GradientAI.doInferenceApiKey,
+      //logLevel: 'debug',
       baseURL: 'https://inference.do-ai.run/v1',
     });
   }
@@ -100,7 +100,7 @@ export class DigitalOceanInferenceService {
 
   /**
    * Parse the AI response and extract content
-   * @param completion - The completion response from OpenAI
+   * @param completion - The completion response from Gradient SDK
    * @returns The extracted content string
    */
   private parseResponse(completion: unknown): string {
