@@ -424,7 +424,7 @@ SeaNotes includes AI-powered features that enhance the note-taking experience us
 
 ### AI Features Included:
 
-- **AI Integration Demo** - Users can click "Generate Note with AI" to see how DigitalOcean's Inference API works (demonstrates AI integration patterns)
+- **AI Integration Demo** - Users can click "Generate Note with GradientAI" to see how DigitalOcean's Inference API works (demonstrates AI integration patterns)
 - **Automatic Title Generation** - When users create notes without titles, the system generates relevant titles in the background
 - **Graceful Fallbacks** - If AI services are unavailable, the app continues working normally with timestamp-based titles
 
@@ -467,7 +467,7 @@ SeaNotes includes AI-powered features that enhance the note-taking experience us
 
 4. **Test the AI Features**
 
-   - **Content Generation**: When creating a new note, look for the "Generate Note with AI" button
+   - **Content Generation**: When creating a new note, look for the "Generate Note with GradientAI" button
    - **Auto-Title Generation**: Create a note without a title and watch as an AI-generated title appears automatically
    - **System Status**: Check [http://localhost:3000/system-status](http://localhost:3000/system-status) to confirm AI services are connected
 
