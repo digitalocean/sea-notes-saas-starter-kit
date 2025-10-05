@@ -19,7 +19,7 @@ export class DigitalOceanInferenceService {
     }
 
     this.client = new Gradient({
-      accessToken:  serverConfig.GradientAI.doInferenceApiKey,
+      accessToken: serverConfig.GradientAI.doInferenceApiKey,
       //logLevel: 'debug',
       baseURL: 'https://inference.do-ai.run/v1',
     });

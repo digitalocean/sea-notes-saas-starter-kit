@@ -52,7 +52,7 @@ export class InvoiceService implements ConfigurableService {
     if (apiKey) {
       this.isConfigured = true;
       this.client = new Gradient({
-         accessToken:  apiKey,
+        accessToken: apiKey,
         timeout: 30000, // 30 second timeout
         maxRetries: 3,
         baseURL: 'https://inference.do-ai.run/v1',
@@ -78,7 +78,6 @@ export class InvoiceService implements ConfigurableService {
     try {
       // Test connection by pinging
       if (this.client) {
-       // await this.client.models.list(); this doesn't work with inference
         const response = await this.client.chat.completions.create({
         model: "llama3-8b-instruct", // pick your default model
         messages: [{ role: "user", content: "ping" }],

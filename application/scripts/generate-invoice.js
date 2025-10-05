@@ -16,7 +16,7 @@ if (!apiKey) {
 }
 
 const client = new Gradient({
-  accessToken:  apiKey,
+  accessToken: apiKey,
   timeout: 30000,
   maxRetries: 3,
   baseURL: 'https://inference.do-ai.run/v1',
@@ -26,7 +26,6 @@ const client = new Gradient({
 async function testConnection() {
   try {
     console.log('🔍 Testing connection to DigitalOcean Serverless Inference...');
-    //const models = await client.models.list(); this won't work with gradient inference
     const response = await client.chat.completions.create({
       model: "llama3-8b-instruct", // 
       messages: [{ role: "user", content: "ping" }],
