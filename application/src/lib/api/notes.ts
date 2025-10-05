@@ -21,6 +21,20 @@ export interface PaginatedNotes {
   total: number;
 }
 
+export interface NoteSource {
+  noteId: string;
+  title: string;
+  snippet: string;
+  score: number;
+  chunkId: string;
+}
+
+export interface NoteQuestionResponse {
+  answer: string;
+  sources: NoteSource[];
+  usedFallback: boolean;
+}
+
 /**
  * API client for managing notes
  * This client provides methods to interact with the notes API, including fetching, creating, updating, and deleting notes.
@@ -87,5 +101,24 @@ export class NotesApiClient {
   async deleteNote(id: string): Promise<void> {
     const res = await fetch(`${this.baseURL}/${id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Failed to delete note');
+  }
+
+  // Ask an AI question across a user's notes
+  async askQuestion(question: string): Promise<NoteQuestionResponse> {
+    const res = await fetch(`${this.baseURL}/query`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+
+    if (!res.ok) {
+      const errorMessage = await res
+        .json()
+        .then(data => data?.error || 'Failed to process question')
+        .catch(() => 'Failed to process question');
+      throw new Error(errorMessage);
+    }
+
+    return res.json();
   }
 }

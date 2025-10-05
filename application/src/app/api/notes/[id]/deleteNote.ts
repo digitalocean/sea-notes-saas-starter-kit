@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { NoteIntelligenceService } from 'services/notes/noteIntelligenceService';
 
 /**
  * Deletes a note by its ID.
@@ -30,6 +31,8 @@ export const deleteNote = async (
     }
 
     await dbClient.note.delete(noteId);
+
+    await NoteIntelligenceService.deleteNoteEmbeddings(noteId);
 
     return NextResponse.json({ success: true }, { status: HTTP_STATUS.OK });
   } catch (error) {

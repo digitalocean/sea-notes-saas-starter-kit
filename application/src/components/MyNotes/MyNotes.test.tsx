@@ -8,6 +8,7 @@ jest.mock('lib/api/notes', () => {
   const mockCreateNote = jest.fn();
   const mockUpdateNote = jest.fn();
   const mockDeleteNote = jest.fn();
+  const mockAskQuestion = jest.fn();
 
   return {
     Note: jest.requireActual('lib/api/notes').Note,
@@ -16,12 +17,14 @@ jest.mock('lib/api/notes', () => {
       createNote: mockCreateNote,
       updateNote: mockUpdateNote,
       deleteNote: mockDeleteNote,
+      askQuestion: mockAskQuestion,
     })),
     // Export mocks for test access
     __mockGetNotes: mockGetNotes,
     __mockCreateNote: mockCreateNote,
     __mockUpdateNote: mockUpdateNote,
     __mockDeleteNote: mockDeleteNote,
+    __mockAskQuestion: mockAskQuestion,
   };
 });
 

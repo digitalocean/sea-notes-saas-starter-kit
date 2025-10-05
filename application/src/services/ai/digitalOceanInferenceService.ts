@@ -6,7 +6,8 @@
  */
 
 import OpenAI from 'openai';
-import { serverConfig } from '../../settings';
+import { serverConfig } from 'settings';
+import { getGradientAIClient, gradientAIModels, isGradientAIConfigured } from './gradientAIClient';
 
 /**
  * DigitalOcean unified inference service for both title and content generation
@@ -15,14 +16,11 @@ export class DigitalOceanInferenceService {
   private client: OpenAI;
 
   constructor() {
-    if (!serverConfig.GradientAI.doInferenceApiKey) {
+    if (!isGradientAIConfigured()) {
       throw new Error('DigitalOcean Inference API key is not configured');
     }
 
-    this.client = new OpenAI({
-      apiKey: serverConfig.GradientAI.doInferenceApiKey,
-      baseURL: 'https://inference.do-ai.run/v1',
-    });
+    this.client = getGradientAIClient();
   }
 
   /**
@@ -79,7 +77,7 @@ export class DigitalOceanInferenceService {
    */
   private async makeCompletion(messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>, options: Record<string, unknown> = {}): Promise<string> {
     const defaultOptions = {
-      model: 'anthropic-claude-3-opus',
+      model: gradientAIModels.chatModel,
       max_tokens: 100,
       temperature: 0.7,
     };

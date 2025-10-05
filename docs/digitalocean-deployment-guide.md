@@ -96,6 +96,7 @@ configuration
 > - `RESEND_API_KEY`, `RESEND_EMAIL_SENDER`: Your email service configuration
 > - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_FREE_PRICE_ID`, `STRIPE_PRO_PRICE_ID`, `STRIPE_PRO_GIFT_PRICE_ID`, `STRIPE_PORTAL_CONFIG_ID`: Your Stripe configuration
 > - `BASE_URL`: Will be set after deployment (used for callbacks)
+> - `DO_INFERENCE_CHAT_MODEL`, `DO_INFERENCE_EMBEDDING_MODEL`, `NOTES_QA_MAX_CONTEXT_CHUNKS`, `NOTES_QA_MAX_CONTEXT_CHARS`, `NOTES_QA_MIN_SIMILARITY`: Optional overrides for the notes Q&A assistant
 
 **Prefer using the DigitalOcean dashboard instead?**
 You can also deploy your app directly through the console by following [How to Create Apps in App Platform](https://docs.digitalocean.com/products/app-platform/how-to/create-apps/). Just make sure to also add your environment variables manually as explained in [How to Use Environment Variables in App Platform](https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/).

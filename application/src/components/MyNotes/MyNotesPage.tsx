@@ -12,6 +12,8 @@ import ConfirmationDialog from './ConfirmationDialog/ConfirmationDialog';
 import Toast from '../Common/Toast/Toast';
 import Pagination from '../Common/Pagination/Pagination';
 import { useNotesSSE } from '../../hooks/useNotesSSE';
+import NotesAssistant from './NotesAssistant/NotesAssistant';
+import { hasDigitalOceanGradientAIEnabled } from 'settings';
 
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
@@ -253,6 +255,8 @@ const MyNotes: React.FC = () => {
     // Don't fetch notes here - only refresh when actual updates are made
   };
 
+  const isAssistantEnabled = hasDigitalOceanGradientAIEnabled;
+
   return (
     <PageContainer title="My Notes">
       {/* Header and Controls */}
@@ -265,6 +269,9 @@ const MyNotes: React.FC = () => {
         onViewModeChange={setViewMode}
         onCreateNote={() => setIsCreateModalOpen(true)}
       />
+      {isAssistantEnabled && (
+        <NotesAssistant apiClient={apiClient} onSourceSelect={handleViewNote} />
+      )}
 
       {/* Notes Display */}
       {viewMode === 'list' ? (
