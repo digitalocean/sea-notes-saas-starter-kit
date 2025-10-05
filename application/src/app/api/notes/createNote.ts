@@ -1,9 +1,10 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
-import { generateTimestampTitle } from '../../../services/ai/digitalOceanInferenceService';
-import { triggerBackgroundTitleGeneration } from '../../../services/ai/backgroundTitleService';
-import { hasAIConfiguredServer } from '../../../settings';
+import { generateTimestampTitle } from 'services/ai/digitalOceanInferenceService';
+import { triggerBackgroundTitleGeneration } from 'services/ai/backgroundTitleService';
+import { hasAIConfiguredServer } from 'settings';
+import { NoteIntelligenceService } from 'services/notes/noteIntelligenceService';
 
 /**
  * Create a new note
@@ -41,6 +42,17 @@ export const createNote = async (
     // Trigger background title generation if no title provided and AI configured
     if (!title && hasAIConfiguredServer) {
       triggerBackgroundTitleGeneration(note.id, content, userId);
+    }
+
+    // Fire-and-forget embedding synchronization so creation is not blocked by AI latency
+    if (hasAIConfiguredServer) {
+      void NoteIntelligenceService.syncNoteEmbeddings({
+        id: note.id,
+        userId,
+        content,
+      }).catch(error => {
+        console.error('Failed to sync embeddings for new note', note.id, error);
+      });
     }
 
     return NextResponse.json(note, { status: HTTP_STATUS.CREATED });

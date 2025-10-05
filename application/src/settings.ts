@@ -8,6 +8,8 @@ export interface ServerConfig {
   baseURL?: string;
   GradientAI: {
     doInferenceApiKey?: string;
+    chatModel?: string;
+    embeddingModel?: string;
   };
   Database: {
     url?: string;
@@ -65,6 +67,8 @@ export const serverConfig: ServerConfig = {
   },
   GradientAI: {
     doInferenceApiKey: process.env.DO_INFERENCE_API_KEY,
+    chatModel: process.env.DO_INFERENCE_CHAT_MODEL,
+    embeddingModel: process.env.DO_INFERENCE_EMBEDDING_MODEL,
   },
 };
 

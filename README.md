@@ -426,6 +426,7 @@ SeaNotes includes AI-powered features that enhance the note-taking experience us
 
 - **AI Integration Demo** - Users can click "Generate Note with AI" to see how DigitalOcean's Inference API works (demonstrates AI integration patterns)
 - **Automatic Title Generation** - When users create notes without titles, the system generates relevant titles in the background
+- **Natural-Language Q&A Assistant** - Ask "What did I write about X?" or "List my action items from last week" and get answers grounded in your personal notes
 - **Graceful Fallbacks** - If AI services are unavailable, the app continues working normally with timestamp-based titles
 
 ### Setup Steps:
@@ -452,12 +453,30 @@ SeaNotes includes AI-powered features that enhance the note-taking experience us
    ```
    DO_INFERENCE_API_KEY=your-digitalocean-inference-api-key
    NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED=true
+   # Optional: override models used for chat answers and embeddings
+    DO_INFERENCE_CHAT_MODEL=
+    DO_INFERENCE_EMBEDDING_MODEL=
+   # Optional: tune Q&A context window sizes
+    # NOTES_QA_MAX_CONTEXT_CHUNKS=6
+    # NOTES_QA_MAX_CONTEXT_CHARS=6000
+    # NOTES_QA_MIN_SIMILARITY=0.12
    ```
 
    - `DO_INFERENCE_API_KEY`: Your DigitalOcean Inference API key (server-side)
    - `NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED`: Enables DigitalOcean Gradient AI features in the frontend (client-side)
+   - `DO_INFERENCE_CHAT_MODEL` / `DO_INFERENCE_EMBEDDING_MODEL`: Advanced overrides if you want to use different models provided by Gradient AI
 
-3. **Restart Your Development Server**
+3. **Update the Database Schema**
+
+   Generate the new `NoteChunk` table to store embeddings used by the assistant:
+
+   ```bash
+   npx prisma migrate dev --name add_note_chunks
+   ```
+
+   > When deploying, run `npx prisma migrate deploy` instead.
+
+4. **Restart Your Development Server**
 
    After updating your `.env`, restart the server:
 
@@ -465,16 +484,18 @@ SeaNotes includes AI-powered features that enhance the note-taking experience us
    npm run dev
    ```
 
-4. **Test the AI Features**
+5. **Test the AI Features**
 
    - **Content Generation**: When creating a new note, look for the "Generate Note with AI" button
    - **Auto-Title Generation**: Create a note without a title and watch as an AI-generated title appears automatically
+   - **Notes Assistant Q&A**: On the "My Notes" page, use the "Ask your notes" panel to run natural-language searches over your private knowledge base
    - **System Status**: Check [http://localhost:3000/system-status](http://localhost:3000/system-status) to confirm AI services are connected
 
 ### How It Works:
 
 - **User-Triggered**: Content generation only happens when users click the AI button
 - **Background Processing**: Title generation happens automatically but doesn't block note creation
+- **Contextual Answers**: The assistant builds embeddings for each note, fetches the most relevant context, and prompts a Gradient AI model to answer while citing the source note
 - **Smart Fallbacks**: If AI generation fails, the app uses timestamp-based titles instead
 - **No Dependencies**: Your app continues to work normally even if AI features are disabled
 

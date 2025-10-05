@@ -1,6 +1,8 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { NoteIntelligenceService } from 'services/notes/noteIntelligenceService';
+import { hasAIConfiguredServer } from 'settings';
 
 /**
  * Handles the editing of a note.
@@ -41,6 +43,16 @@ export const editNote = async (
       title,
       content,
     });
+
+    if (typeof content === 'string' && hasAIConfiguredServer) {
+      void NoteIntelligenceService.syncNoteEmbeddings({
+        id: updatedNote.id,
+        userId,
+        content: updatedNote.content,
+      }).catch(error => {
+        console.error('Failed to sync embeddings after note update', updatedNote.id, error);
+      });
+    }
 
     return NextResponse.json(updatedNote, { status: HTTP_STATUS.OK });
   } catch (error) {

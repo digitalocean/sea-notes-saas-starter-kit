@@ -19,6 +19,7 @@ model User {
 
   subscription   Subscription?  @relation("UserSubscription")
   notes          Note[]
+  noteChunks     NoteChunk[]
 
   verificationToken String? // Token for email verification
   emailVerified     Boolean @default(false) // Email verification status
@@ -41,6 +42,23 @@ model Note {
   title      String
   content    String
   createdAt  DateTime @default(now())
+  chunks     NoteChunk[]
+}
+
+model NoteChunk {
+  id        String   @id @default(uuid())
+  note      Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  noteId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  content   String
+  position  Int
+  embedding Float[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([noteId])
 }
 
 model VerificationToken {

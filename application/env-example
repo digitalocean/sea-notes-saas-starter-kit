@@ -118,6 +118,15 @@ BASE_URL=
 # In the app: Used by src/services/ai/titleGenerationService.ts for server-side generation
 DO_INFERENCE_API_KEY=             # Your DigitalOcean Inference API key
 
+# Optional model overrides for Gradient AI (defaults: anthropic-claude-3-opus / text-embedding-3-small)
+DO_INFERENCE_CHAT_MODEL=
+DO_INFERENCE_EMBEDDING_MODEL=
+
+# Notes intelligence tuning (optional)
+# NOTES_QA_MAX_CONTEXT_CHUNKS=6
+# NOTES_QA_MAX_CONTEXT_CHARS=6000
+# NOTES_QA_MIN_SIMILARITY=0.12
+
 # Client-side flag to enable DigitalOcean Gradient AI features in the UI
 # Set to 'true' when you want to enable AI-powered content generation
 NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED=true
