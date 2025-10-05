@@ -233,7 +233,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
                   size="small"
                   data-testid="generate-content-button"
                 >
-                  {isGenerating ? 'Generating...' : 'Generate Note with GradientAI'}
+                  {isGenerating ? 'Generating...' : 'Generate Note with AI'}
                 </Button>
               ) : (
                 <Box /> // Empty box to maintain spacing
