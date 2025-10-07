@@ -14,7 +14,7 @@
 
 **SeaNotes** is a SaaS Starter Kit — a simple, production-ready notes app built with modern tools and fully integrated with DigitalOcean services.
 
-This repository gives you everything you need to build and launch a real SaaS app on DigitalOcean App Platform. It’s designed to help you get started fast — whether you’re developing locally or deploying to the cloud. SeaNotes includes a complete implementation of a notes app to show how common SaaS features like auth, billing, and storage come together using DO’s infrastructure.
+This repository gives you everything you need to build and launch a real SaaS app on DigitalOcean App Platform. It’s designed to help you get started fast — whether you’re developing locally or deploying to the cloud. SeaNotes includes a complete implementation of a notes app to demonstrate how common SaaS features, such as authentication, billing, and storage, come together using DO’s infrastructure.
 
 SeaNotes comes pre-integrated with:
 - **Stripe** for subscription billing and payments
@@ -25,7 +25,7 @@ SeaNotes comes pre-integrated with:
 
 You can use SeaNotes in two ways:
 1. As a **starter kit** to build your own SaaS application by replacing the notes functionality with your business logic
-2. As a **reference app** by pointing your LLMs (like ChatGPT or Claude) to this codebase to understand how to implement similar features in your own projects
+2. As a **reference app**, by pointing your LLMs (like ChatGPT or Claude) to this codebase to understand how to implement similar features in your own projects
 
 ![alt text](docs/images/application-preview.png)
 
@@ -229,7 +229,7 @@ The basic version of SeaNotes is now set up locally on your computer! You can st
 
 By default, email functionality is disabled for local development, allowing you to sign up and log in without setting up an email provider. However, features like password reset and magic links won't work until email is configured.
 
-This starter kit comes with [Resend](https://resend.com) integration built-in. All you need to do is get your API key and a verified sender email address from Resend, and add them to your `.env` file.
+This starter kit comes with [Resend](https://resend.com) integration built in. All you need to do is get your API key and a verified sender email address from Resend, and add them to your `.env` file.
 
 ### Email Features
 
