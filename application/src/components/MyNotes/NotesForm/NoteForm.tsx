@@ -154,6 +154,26 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
     }
   };
 
+  const handleClearSummary = async () => {
+    if (!noteId) return;
+    
+    try {
+      const response = await fetch(`/api/notes/${noteId}/generate-summary`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear summary');
+      }
+
+      setSummary('');
+      showToastMessage('Summary cleared successfully!');
+    } catch (error) {
+      console.error('Clear summary failed:', error);
+      showToastMessage('Failed to clear summary. Please try again.', 'error');
+    }
+  };
+
   const generateAIContent = async () => {
     setIsGenerating(true);
     try {
@@ -271,17 +291,25 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
                 {summary && (
                   <Card sx={{ mt: 2, bgcolor: 'action.hover' }}>
                     <CardContent>
-                      <Typography variant="subtitle2" color="primary" gutterBottom>
-                        TL;DR Summary
-                      </Typography>
+                      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                        <Typography variant="subtitle2" color="primary">
+                          TL;DR Summary
+                        </Typography>
+                        <Button
+                          size="small"
+                          startIcon="✕"
+                          onClick={handleClearSummary}
+                          data-testid="clear-summary-button"
+                        >
+                          Clear
+                        </Button>
+                      </Box>
                       <Typography variant="body2">
                         {summary}
                       </Typography>
                     </CardContent>
                   </Card>
                 )}
-              </Box>
-            )}
 
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
               {/* AI Content Generation Button - only show in create mode when AI configured */}
