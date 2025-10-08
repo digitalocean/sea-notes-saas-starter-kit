@@ -1,333 +1,240 @@
 #!/usr/bin/env node
 
-// Load environment variables from .env file
-require('dotenv').config();
+/**
+ * 🧾 Professional Invoice Generator
+ * ---------------------------------
+ * Generates HTML and plain-text invoices using
+ * DigitalOcean Serverless Inference (OpenAI-compatible API).
+ *
+ * Author: Vansh Verma
+ * Version: 2.0.0
+ */
 
-const fs = require('fs');
-const path = require('path');
-const OpenAI = require('openai');
+import fs from "fs";
+import path from "path";
+import chalk from "chalk";
+import { config } from "dotenv";
+import OpenAI from "openai";
 
-// DigitalOcean Serverless Inference configuration
-const apiKey = process.env.DO_INFERENCE_API_KEY;
+// Load .env configuration
+config();
 
-if (!apiKey) {
-  console.error('❌ Error: API key not found. Please set the DO_INFERENCE_API_KEY environment variable.');
+const API_KEY = process.env.DO_INFERENCE_API_KEY;
+const BASE_URL = "https://inference.do-ai.run/v1";
+
+if (!API_KEY) {
+  console.error(chalk.red("❌ Missing DO_INFERENCE_API_KEY in environment variables."));
   process.exit(1);
 }
 
 const client = new OpenAI({
-  apiKey: apiKey,
-  baseURL: "https://inference.do-ai.run/v1",
-  timeout: 30000, 
-  maxRetries: 3
+  apiKey: API_KEY,
+  baseURL: BASE_URL,
+  timeout: 30_000,
+  maxRetries: 3,
 });
 
+// -----------------------------------------------------------------------------
+// 🧠 Utility Functions
+// -----------------------------------------------------------------------------
+
+/** Generates a unique invoice number with timestamp */
+function generateInvoiceNumber() {
+  const date = new Date();
+  const formattedDate = date.toISOString().split("T")[0].replace(/-/g, "");
+  const randomDigits = Math.floor(Math.random() * 9000 + 1000);
+  return `INV-${formattedDate}-${randomDigits}`;
+}
+
+/** Ensures a directory exists before writing */
+function ensureDir(dirPath) {
+  if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
+}
+
+/** Writes both HTML and text files to output */
+function saveInvoiceFiles(invoice) {
+  const outputDir = path.join(process.cwd(), "output");
+  ensureDir(outputDir);
+
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const htmlPath = path.join(outputDir, `invoice-${timestamp}.html`);
+  const txtPath = path.join(outputDir, `invoice-${timestamp}.txt`);
+
+  fs.writeFileSync(htmlPath, invoice.html);
+  fs.writeFileSync(txtPath, invoice.text);
+
+  console.log(chalk.green("\n💾 Invoice saved:"));
+  console.log("   HTML →", chalk.blue(htmlPath));
+  console.log("   Text →", chalk.blue(txtPath));
+}
+
+/** Builds the LLM prompt for invoice generation */
+function buildInvoicePrompt(data) {
+  return `
+Generate a professional HTML invoice for the following subscription details.
+
+Customer Information:
+- Name: ${data.customerName}
+- Email: ${data.customerEmail}
+
+Plan:
+- Name: ${data.planName}
+- Description: ${data.planDescription}
+- Price: $${data.amount}
+- Interval: ${data.interval}
+- Features: ${data.features.join(", ")}
+
+Invoice Info:
+- Invoice #: ${data.invoiceNumber}
+- Date: ${data.invoiceDate.toLocaleDateString()}
+- Subscription ID: ${data.subscriptionId}
+
+Requirements:
+1. Include "SeaNotes" header branding.
+2. Use professional, responsive design with blue theme (#0061EB).
+3. Display plan, customer, and invoice details clearly.
+4. Return valid JSON with: { html, text, subject }.
+`;
+}
+
+/** Generates fallback invoice if AI call fails */
+function generateFallbackInvoice(data) {
+  const html = `
+  <html><head><meta charset="utf-8"/><title>Invoice ${data.invoiceNumber}</title>
+  <style>
+  body { font-family: Arial; margin: 2rem; background: #f8f9fa; }
+  .header { background: #0061EB; color: white; padding: 20px; border-radius: 8px; text-align: center; }
+  .details, .item { margin-top: 20px; }
+  .item { border-top: 1px solid #ddd; padding-top: 10px; }
+  .total { font-weight: bold; margin-top: 10px; }
+  </style></head>
+  <body>
+    <div class="header"><h1>SeaNotes</h1><h2>Invoice</h2></div>
+    <div class="details">
+      <p><strong>${data.customerName}</strong><br>${data.customerEmail}</p>
+      <p><strong>Invoice #:</strong> ${data.invoiceNumber}<br>
+      <strong>Date:</strong> ${data.invoiceDate.toLocaleDateString()}</p>
+    </div>
+    <div class="item">
+      <h3>${data.planName}</h3>
+      <p>${data.planDescription}</p>
+      <ul>${data.features.map(f => `<li>${f}</li>`).join("")}</ul>
+      <p class="total">Total: $${data.amount} (${data.interval})</p>
+    </div>
+  </body></html>
+  `;
+
+  const text = `
+INVOICE #${data.invoiceNumber}
+SeaNotes
+
+Customer: ${data.customerName} (${data.customerEmail})
+Date: ${data.invoiceDate.toLocaleDateString()}
+Plan: ${data.planName}
+Description: ${data.planDescription}
+Features:
+${data.features.map(f => `- ${f}`).join("\n")}
+Total: $${data.amount} (${data.interval})
+
+Thank you for your business!
+  `.trim();
+
+  return {
+    html,
+    text,
+    subject: `Invoice #${data.invoiceNumber} - ${data.planName}`,
+  };
+}
+
+// -----------------------------------------------------------------------------
+// 🤖 Core Functions
+// -----------------------------------------------------------------------------
 
 async function testConnection() {
   try {
-    console.log('🔍 Testing connection to DigitalOcean Serverless Inference...');
+    console.log(chalk.cyan("🔍 Testing DigitalOcean connection..."));
     const models = await client.models.list();
-    console.log('✅ Connection successful! Available models:');
-    for (const model of models.data) {
-      console.log(`   - ${model.id}`);
-    }
+    console.log(chalk.green("✅ Connection successful! Models:"));
+    models.data.forEach(m => console.log("   -", m.id));
     return true;
-  } catch (error) {
-    console.error('❌ Connection test failed:', error.message);
-    if (error.response) {
-      console.error('Response status:', error.response.status);
-      console.error('Response data:', JSON.stringify(error.response.data, null, 2));
-    }
+  } catch (err) {
+    console.error(chalk.red("❌ Connection test failed:"), err.message);
     return false;
   }
 }
 
 /**
- * Generates a professional invoice using DigitalOcean's serverless inference
+ * Generates a professional invoice using LLM, with fallback.
+ * @param {Object} invoiceData - invoice fields
+ * @returns {Promise<{html: string, text: string, subject: string}>}
  */
 async function generateInvoice(invoiceData) {
+  console.log(chalk.cyan("\n🤖 Generating invoice for:"), chalk.bold(invoiceData.customerName));
+
+  if (!(await testConnection())) {
+    console.log(chalk.yellow("⚠️ Connection failed. Using fallback generator."));
+    return generateFallbackInvoice(invoiceData);
+  }
+
+  const prompt = buildInvoicePrompt(invoiceData);
+
   try {
-    console.log('🤖 Generating invoice with DigitalOcean Serverless Inference...');
-
-    // First test the connection
-    const connectionTest = await testConnection();
-    if (!connectionTest) {
-      console.log('⚠️ Connection test failed, using fallback invoice generation');
-      return generateFallbackInvoice(invoiceData);
-    }
-
-    const prompt = buildInvoicePrompt(invoiceData);
-
     const response = await client.chat.completions.create({
-      model: "llama3-8b-instruct", 
+      model: "llama3-8b-instruct",
       messages: [
         {
           role: "system",
-          content: `You are a professional invoice generator. You create beautiful, professional invoices in HTML format that are suitable for email delivery. 
-          Always include proper styling, company branding, and all necessary invoice details. 
-          Return your response as a JSON object with three fields: html (the full HTML invoice), text (plain text version), and subject (email subject line).
-          Make sure the JSON is properly formatted and valid.`
+          content: "You are a professional invoice generator that outputs valid JSON {html, text, subject}.",
         },
-        {
-          role: "user",
-          content: prompt
-        }
+        { role: "user", content: prompt },
       ],
-      max_tokens: 2000, 
-      temperature: 0.1
+      max_tokens: 2000,
+      temperature: 0.2,
     });
 
-    console.log('✅ Received response from serverless inference');
+    const content = response.choices?.[0]?.message?.content || "";
+    const match = content.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error("No valid JSON in AI response");
 
-    if (response && response.choices && response.choices.length > 0) {
-      const aiResponse = response.choices[0].message.content;
-      
-      // Parse the AI response to extract JSON
-      try {
-        const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          return {
-            html: parsed.html || generateFallbackInvoice(invoiceData).html,
-            text: parsed.text || generateFallbackInvoice(invoiceData).text,
-            subject: parsed.subject || generateFallbackInvoice(invoiceData).subject
-          };
-        } else {
-          throw new Error('No JSON found in AI response');
-        }
-      } catch (parseError) {
-        console.error('❌ Error parsing AI response:', parseError);
-        console.log('AI response (first 500 chars):', aiResponse.substring(0, 500));
-        return generateFallbackInvoice(invoiceData);
-      }
-    }
-
-    // If no valid response, return fallback
-    console.log('⚠️ No valid response received, using fallback');
-    return generateFallbackInvoice(invoiceData);
-
-  } catch (error) {
-    console.error('❌ Error generating invoice:', error.message);
-    if (error.response) {
-      console.error('Response status:', error.response.status);
-      console.error('Response data:', JSON.stringify(error.response.data, null, 2));
-    }
-    if (error.status === 500) {
-      console.error('💡 500 error troubleshooting:');
-      console.error('   - Check if your API key is valid');
-      console.error('   - Verify the model name is correct');
-      console.error('   - Try reducing the prompt length');
-      console.error('   - Check if there are any rate limits');
-    }
+    const parsed = JSON.parse(match[0]);
+    return parsed;
+  } catch (err) {
+    console.error(chalk.red("❌ Invoice generation failed:"), err.message);
     return generateFallbackInvoice(invoiceData);
   }
 }
 
-function buildInvoicePrompt(invoiceData) {
-  return `Generate a professional invoice for the following subscription:
+// -----------------------------------------------------------------------------
+// 🚀 Main
+// -----------------------------------------------------------------------------
 
-Customer Information:
-- Name: ${invoiceData.customerName}
-- Email: ${invoiceData.customerEmail}
-
-Plan Details:
-- Plan Name: ${invoiceData.planName}
-- Description: ${invoiceData.planDescription}
-- Amount: $${invoiceData.amount}
-- Billing Interval: ${invoiceData.interval || 'one-time'}
-- Features: ${invoiceData.features.join(', ')}
-
-Invoice Details:
-- Invoice Number: ${invoiceData.invoiceNumber}
-- Invoice Date: ${invoiceData.invoiceDate.toLocaleDateString()}
-- Subscription ID: ${invoiceData.subscriptionId}
-
-Please create a professional invoice with:
-1. Company header with "SeaNotes" branding
-2. Customer and invoice details clearly displayed
-3. Itemized breakdown of the subscription
-4. Professional styling with blue color scheme (#0061EB)
-5. Mobile-responsive design
-6. Clear call-to-action for payment or support
-
-Return the response as a valid JSON object with three fields:
-- html: the complete HTML invoice
-- text: plain text version of the invoice
-- subject: email subject line
-
-Make sure the JSON is properly formatted and escaped.`;
-}
-
-function generateFallbackInvoice(invoiceData) {
-  console.log('⚠️ Using fallback invoice generation');
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Invoice - ${invoiceData.invoiceNumber}</title>
-      <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .header { background: #0061EB; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { padding: 30px; }
-        .invoice-details { display: flex; justify-content: space-between; margin-bottom: 30px; }
-        .customer-info, .invoice-info { flex: 1; }
-        .invoice-info { text-align: right; }
-        .item { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .total { font-size: 18px; font-weight: bold; margin-top: 20px; padding-top: 20px; border-top: 2px solid #0061EB; }
-        .features { margin-top: 15px; }
-        .features ul { margin: 5px 0; padding-left: 20px; }
-        @media (max-width: 600px) {
-          .invoice-details { flex-direction: column; }
-          .invoice-info { text-align: left; margin-top: 20px; }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>SeaNotes</h1>
-          <h2>Invoice</h2>
-        </div>
-        <div class="content">
-          <div class="invoice-details">
-            <div class="customer-info">
-              <h3>Bill To:</h3>
-              <p><strong>${invoiceData.customerName}</strong><br>
-              ${invoiceData.customerEmail}</p>
-            </div>
-            <div class="invoice-info">
-              <h3>Invoice Details:</h3>
-              <p><strong>Invoice #:</strong> ${invoiceData.invoiceNumber}<br>
-              <strong>Date:</strong> ${invoiceData.invoiceDate.toLocaleDateString()}<br>
-              <strong>Subscription ID:</strong> ${invoiceData.subscriptionId}</p>
-            </div>
-          </div>
-          
-          <div class="item">
-            <h3>${invoiceData.planName}</h3>
-            <p>${invoiceData.planDescription}</p>
-            <div class="features">
-              <strong>Features included:</strong>
-              <ul>
-                ${invoiceData.features.map(feature => `<li>${feature}</li>`).join('')}
-              </ul>
-            </div>
-            <div class="total">
-              <strong>Total: $${invoiceData.amount}</strong>
-              ${invoiceData.interval ? `<br><small>Billed ${invoiceData.interval}ly</small>` : ''}
-            </div>
-          </div>
-          
-          <div style="margin-top: 30px; text-align: center; color: #666;">
-            <p>Thank you for your subscription!</p>
-            <p>If you have any questions, please contact our support team.</p>
-          </div>
-        </div>
-      </div>
-    </body>
-    </html>
-  `;
-
-  const text = `
-INVOICE - ${invoiceData.invoiceNumber}
-SeaNotes
-
-Invoice Date: ${invoiceData.invoiceDate.toLocaleDateString()}
-
-Bill To:
-${invoiceData.customerName}
-${invoiceData.customerEmail}
-
-Subscription ID: ${invoiceData.subscriptionId}
-
-ITEM:
-${invoiceData.planName}
-${invoiceData.planDescription}
-
-Features included:
-${invoiceData.features.map(feature => `- ${feature}`).join('\n')}
-
-TOTAL: $${invoiceData.amount}
-${invoiceData.interval ? `Billed ${invoiceData.interval}ly` : ''}
-
-Thank you for your subscription!
-If you have any questions, please contact our support team.
-  `;
-
-  return {
-    html,
-    text,
-    subject: `Invoice #${invoiceData.invoiceNumber} - ${invoiceData.planName} Subscription`
-  };
-}
-
-function generateInvoiceNumber() {
-  const date = new Date();
-  const dateStr = date.getFullYear().toString() + 
-    (date.getMonth() + 1).toString().padStart(2, '0') + 
-    date.getDate().toString().padStart(2, '0');
-  const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-  return `INV-${dateStr}-${randomNum}`;
-}
-
-// Example usage
 async function main() {
   const invoiceData = {
-    customerName: 'John Doe',
-    customerEmail: 'john.doe@example.com',
-    planName: 'Pro Plan',
-    planDescription: 'Advanced features for power users',
-    amount: 12.00,
-    interval: 'month',
-    features: ['Unlimited notes', 'Real-time sync', 'Version history', 'Priority support'],
-    subscriptionId: 'sub_123456789',
+    customerName: "John Doe",
+    customerEmail: "john.doe@example.com",
+    planName: "Pro Plan",
+    planDescription: "Advanced features for professional users",
+    amount: 12.0,
+    interval: "monthly",
+    features: ["Unlimited notes", "Sync", "Version history", "Priority support"],
+    subscriptionId: "sub_12345",
     invoiceDate: new Date(),
     invoiceNumber: generateInvoiceNumber(),
   };
 
-  console.log('📄 Generating invoice for:', invoiceData.customerName);
-  console.log('📋 Plan:', invoiceData.planName);
-  console.log('💰 Amount: $' + invoiceData.amount);
-  console.log('📅 Invoice #:', invoiceData.invoiceNumber);
-  console.log('');
-
   const invoice = await generateInvoice(invoiceData);
+  saveInvoiceFiles(invoice);
 
-  console.log('✅ Invoice generated successfully!');
-  console.log('📧 Subject:', invoice.subject);
-  console.log('');
-
-  // Save the invoice to files
-  const outputDir = path.join(__dirname, 'output');
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const htmlFile = path.join(outputDir, `invoice-${timestamp}.html`);
-  const textFile = path.join(outputDir, `invoice-${timestamp}.txt`);
-
-  fs.writeFileSync(htmlFile, invoice.html);
-  fs.writeFileSync(textFile, invoice.text);
-
-  console.log('💾 Invoice saved to:');
-  console.log('   HTML:', htmlFile);
-  console.log('   Text:', textFile);
-  console.log('');
-  console.log('📄 Invoice preview (first 500 chars):');
-  console.log(invoice.text.substring(0, 500) + '...');
+  console.log(chalk.green("\n✅ Invoice generated successfully!"));
+  console.log(chalk.magentaBright("📧 Subject:"), invoice.subject);
+  console.log("\n📄 Preview:\n" + invoice.text.slice(0, 300) + "...");
 }
 
-// Run the script
-if (require.main === module) {
-  main().catch(error => {
-    console.error('❌ Script failed:', error.message);
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch(err => {
+    console.error(chalk.red("💥 Fatal error:"), err.message);
     process.exit(1);
   });
 }
 
-module.exports = { generateInvoice, generateInvoiceNumber };
+export { generateInvoice, generateInvoiceNumber };
