@@ -15,6 +15,7 @@ import Link from 'next/link';
 import FormButton from 'components/Public/FormButton/FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
+import SocialLogin from '../SocialLogin/SocialLogin';
 
 /**
  * Login form.
@@ -123,6 +124,11 @@ const LoginForm: React.FC = () => {
                   </Box>
                 </Stack>
               </Box>
+
+               <SocialLogin
+                setError={setError}
+                setNavigating={setNavigating}
+              />
               {/* Links */}
               <Stack spacing={2} alignItems="center">
                 <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">

@@ -15,6 +15,7 @@ import Link from 'next/link';
 import FormButton from 'components/Public/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
+import SocialLogin from '../SocialLogin/SocialLogin';
 
 /**
  * User registration form.
@@ -89,6 +90,7 @@ const SignUpForm: React.FC = () => {
                   </Typography>
                 </Stack>
               ) : (
+                <>
                 <Box
                   component="form"
                   onSubmit={handleSubmit}
@@ -169,6 +171,12 @@ const SignUpForm: React.FC = () => {
                     </Box>
                   </Stack>
                 </Box>
+
+                               <SocialLogin
+                                setError={setError}
+                                setNavigating={setNavigating}
+                              />
+                </>
               )}
 
               {/* Links */}
