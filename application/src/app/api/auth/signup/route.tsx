@@ -11,7 +11,19 @@ import { DatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
 import { createBillingService } from 'services/billing/billingFactory';
 
-const createSubscription = async (db: DatabaseClient, user: User) => {
+/**
+ * Creates a subscription for the user if they don't already have one.
+ * 
+ * This function ensures that a user has an active subscription in the system.
+ * If the user does not already have a subscription, it will create a new subscription
+ * and associate it with the user.
+ *
+ * @param {DatabaseClient} db - The database client used to interact with the database.
+ * @param {User} user - The user for whom the subscription is being created.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the subscription has been created.
+ */
+export const createSubscription = async (db: DatabaseClient, user: User) => {
   const billingService = await createBillingService();
 
   const configurationCheck = await billingService.checkConfiguration();
