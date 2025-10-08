@@ -8,6 +8,10 @@ import { verifyPassword } from 'helpers/hash';
 import { User, UserRole } from 'types';
 import { InvalidCredentialsError } from './errors';
 import { serverConfig } from 'settings';
+import GoogleProvider from 'next-auth/providers/google';
+import GitHubProvider from 'next-auth/providers/github';
+import { USER_ROLES } from './roles';
+import { createSubscription } from 'app/api/auth/signup/route';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -76,6 +80,18 @@ const providers: Provider[] = [
       }
     },
   }),
+
+  // Google OAuth Provider
+  GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID as string,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+  }),
+
+  // GitHub OAuth Provider
+  GitHubProvider({
+    clientId: process.env.GITHUB_CLIENT_ID as string,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+  }),
 ];
 
 process.env.AUTH_URL = process.env.BASE_URL;
@@ -86,6 +102,50 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
   providers,
   callbacks: {
+   async signIn({ user, account }) {
+    // Allow OAuth login if account already linked
+    if (account?.provider && account?.providerAccountId) {
+      const existingAccount = await prisma.account.findUnique({
+        where: {
+          provider_providerAccountId: {
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+          },
+        },
+      });
+
+      // Account already linked -> proceed
+      if (existingAccount) return true;
+
+      // Check if there's an existing user with same email
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email! },
+      });
+
+      // If exists, link OAuth account manually
+      if (existingUser) {
+        await prisma.account.create({
+          data: {
+            userId: existingUser.id,
+            type: account.type,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            access_token: account.access_token,
+            refresh_token: account.refresh_token,
+            expires_at: account.expires_at,
+            token_type: account.token_type,
+            scope: account.scope,
+            id_token: account.id_token,
+            session_state: account.session_state,
+          },
+        });
+        return true;
+      }
+    }
+
+    return true;
+  },
+
     async jwt({ token, user, trigger, session }) {
       if (user && hasRole(user)) {
         token.id = user.id;

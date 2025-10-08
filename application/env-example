@@ -126,3 +126,11 @@ NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED=true
 # Controls the verbosity of application logs
 # Valid values: error, warn, info, debug
 # LOG_LEVEL=info
+
+
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
