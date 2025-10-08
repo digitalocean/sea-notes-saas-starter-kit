@@ -71,6 +71,34 @@ export class DigitalOceanInferenceService {
     return this.makeCompletion(messages, { max_tokens: 150, temperature: 0.8 });
   }
 
+
+  /**
+   * Generate a concise summary/TL;DR from note content using AI
+   * @param content - The note content to summarize
+   * @returns Promise that resolves to a 1-3 sentence summary
+   * @throws Error if content is empty or AI generation fails
+   */
+  async generateSummary(content: string): Promise<string> {
+    if (!content || content.trim().length === 0) {
+      throw new Error('Content is required to generate a summary');
+    }
+
+    const messages = [
+      {
+        role: 'system' as const,
+        content: 'You are a helpful assistant that generates concise summaries (TL;DR) for notes. Create a summary that is 1-3 sentences long and captures the key points. Return only the summary, no quotes, labels, or additional text.',
+      },
+      {
+        role: 'user' as const,
+        content: `Generate a TL;DR summary for this note: ${content}`,
+      },
+    ];
+
+    return this.makeCompletion(messages, { max_tokens: 150, temperature: 0.5 });
+  }
+
+  
+
   /**
    * Shared completion method for all AI operations
    * @param messages - The messages to send to the AI
