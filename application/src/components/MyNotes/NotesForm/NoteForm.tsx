@@ -49,6 +49,11 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState<'success' | 'error'>('success');
 
+  // Summary generation states
+  const [summary, setSummary] = useState('');
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+
+
   // Ref for content field to enable auto-focus
   const contentFieldRef = useRef<HTMLInputElement>(null);
 
@@ -62,6 +67,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
           setTitle(noteData.title);
           setContent(noteData.content);
           setCreatedAt(noteData.createdAt);
+          setSummary(noteData.summary || '');
           setError(null);
         } catch (err) {
           console.error('Error fetching note:', err);
@@ -121,6 +127,31 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
   const confirmReplaceContent = async () => {
     setShowConfirmDialog(false);
     await generateAIContent();
+  };
+
+  const handleGenerateSummary = async () => {
+    if (!noteId) return;
+    
+    setIsGeneratingSummary(true);
+    try {
+      const response = await fetch(`/api/notes/${noteId}/generate-summary`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error('Summary generation failed');
+      }
+
+      const { summary: generatedSummary } = await response.json();
+      setSummary(generatedSummary);
+      showToastMessage('Summary generated successfully!');
+    } catch (error) {
+      console.error('Summary generation failed:', error);
+      showToastMessage('Failed to generate summary. Please try again.', 'error');
+    } finally {
+      setIsGeneratingSummary(false);
+    }
   };
 
   const generateAIContent = async () => {
@@ -222,6 +253,36 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
               inputRef={contentFieldRef}
               data-testid="note-content-input"
             />{' '}
+
+            /* AI Summary Generation - show in edit/view modes when content exists */
+            {(mode === 'edit' || mode === 'view') && content && hasDigitalOceanGradientAIEnabled && (
+              <Box mt={2}>
+                <Button
+                  variant="outlined"
+                  startIcon={isGeneratingSummary ? <CircularProgress size={16} /> : '📝'}
+                  onClick={handleGenerateSummary}
+                  disabled={isGeneratingSummary}
+                  size="small"
+                  data-testid="generate-summary-button"
+                >
+                  {isGeneratingSummary ? 'Generating Summary...' : 'Generate Summary'}
+                </Button>
+                
+                {summary && (
+                  <Card sx={{ mt: 2, bgcolor: 'action.hover' }}>
+                    <CardContent>
+                      <Typography variant="subtitle2" color="primary" gutterBottom>
+                        TL;DR Summary
+                      </Typography>
+                      <Typography variant="body2">
+                        {summary}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
+              </Box>
+            )}
+
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
               {/* AI Content Generation Button - only show in create mode when AI configured */}
               {mode === 'create' && hasDigitalOceanGradientAIEnabled ? (
