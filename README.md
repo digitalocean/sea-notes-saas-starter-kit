@@ -225,6 +225,21 @@ The basic version of SeaNotes is now set up locally on your computer! You can st
 
 > **Note:** Email and file storage are not set up by default. Configure these features using the documentation below.
 
+
+### OAuth Setup
+1. [Visit Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create an OAuth 2.0 Client ID for a Web Application.
+3. Add authorized redirect URIs: `http://localhost:3000/api/auth/callback/google`
+4. Copy the Client ID and Client Secret into your `.env` file.
+
+### GitHub
+
+1. [Visit GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers)
+2. Create a new OAuth App with:
+   - Homepage URL: `http://localhost:3000`
+   - Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
+3. Copy the Client ID and Client Secret into your `.env` file.
+
 ## Part 2: Set Up Email Provider (Resend)
 
 By default, email functionality is disabled for local development, allowing you to sign up and log in without setting up an email provider. However, features like password reset and magic links won't work until email is configured.
