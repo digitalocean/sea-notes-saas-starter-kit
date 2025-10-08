@@ -10,11 +10,15 @@ import {
   Container,
   Stack,
   Link as MuiLink,
+  Divider,
+  Button,
 } from '@mui/material';
 import Link from 'next/link';
 import FormButton from 'components/Public/FormButton/FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
+import { FcGoogle } from 'react-icons/fc';
+import { FaGithub } from 'react-icons/fa';
 
 /**
  * Login form.
@@ -46,6 +50,27 @@ const LoginForm: React.FC = () => {
       navigate('/dashboard/my-notes');
     }
   };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn('google', {
+        callbackUrl: '/dashboard/my-notes',
+      });
+    } catch (err) {
+      console.error('Google sign-in failed:', err);
+    }
+  };
+
+  const handleGithubSignIn = async () => {
+    try {
+      await signIn('github', {
+        callbackUrl: '/dashboard/my-notes',
+      });
+    } catch (err) {
+      console.error('GitHub sign-in failed:', err);
+    }
+  };
+
   return (
     <Container maxWidth="sm">
       <Box
@@ -123,6 +148,36 @@ const LoginForm: React.FC = () => {
                   </Box>
                 </Stack>
               </Box>
+              <Stack spacing={3} alignItems="center">
+                <Divider flexItem>or</Divider>
+                <Button
+                  onClick={handleGoogleSignIn}
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<FcGoogle />}
+                  sx={{
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    py: 1.2,
+                  }}
+                >
+                  Sign in with Google
+                </Button>
+                <Button
+                  onClick={handleGithubSignIn}
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<FaGithub />}
+                  sx={{
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    py: 1.2,
+                    svg: { color: '#24292f' },
+                  }}
+                >
+                  Sign in with GitHub
+                </Button>
+              </Stack>
               {/* Links */}
               <Stack spacing={2} alignItems="center">
                 <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">

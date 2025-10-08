@@ -34,10 +34,11 @@
     "bcryptjs": "^3.0.2",
     "next": "15.4.4",
     "next-auth": "^5.0.0-beta.28",
-    "puppeteer": "^24.10.2",
     "openai": "^5.9.0",
+    "puppeteer": "^24.10.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
     "resend": "^4.5.2",
     "stripe": "^18.1.1",
     "uuid": "^11.1.0"

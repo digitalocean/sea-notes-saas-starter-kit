@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     );
   }
   // Mark email as verified and clear the token
-  await db.user.update(user.id, { emailVerified: true, verificationToken: null });
+  await db.user.update(user.id, { emailVerified: new Date(), verificationToken: null });
 
   try {
     await createSubscription(db, user);

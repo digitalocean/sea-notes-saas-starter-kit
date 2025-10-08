@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
       passwordHash: hashedPassword,
       role: isFirstUser ? USER_ROLES.ADMIN : USER_ROLES.USER,
       verificationToken,
-      emailVerified: !isEmailEnabled,
+      emailVerified: !isEmailEnabled ? new Date() : null,
     });
 
     // Skip email sending if email verification is disabled

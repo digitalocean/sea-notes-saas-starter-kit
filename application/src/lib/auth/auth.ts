@@ -1,5 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
+import GitHubProvider from 'next-auth/providers/github';
 import type { Provider } from 'next-auth/providers';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { PrismaAdapter } from '@auth/prisma-adapter';
@@ -61,7 +63,7 @@ const providers: Provider[] = [
           throw new Error('User not found or password hash is missing');
         }
 
-        if (user.emailVerified === false && serverConfig.enableEmailIntegration) {
+        if (user.emailVerified === null && serverConfig.enableEmailIntegration) {
           throw new Error('Email not verified');
         }
 
@@ -75,6 +77,16 @@ const providers: Provider[] = [
         throw new InvalidCredentialsError((error as Error).message);
       }
     },
+  }),
+  GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    allowDangerousEmailAccountLinking: true,
+  }),
+  GitHubProvider({
+    clientId: process.env.GITHUB_CLIENT_ID!,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    allowDangerousEmailAccountLinking: true,
   }),
 ];
 

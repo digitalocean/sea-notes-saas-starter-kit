@@ -12,7 +12,7 @@ export interface User {
   createdAt: Date;
 
   verificationToken?: string | null;
-  emailVerified: boolean;
+  emailVerified: Date | null;
 }
 
 // Subscription type
