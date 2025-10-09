@@ -38,6 +38,20 @@ POSTGRES_PORT=5432
 AUTH_SECRET=your-AUTH-secret
 
 # ====================
+# OAUTH CONFIGURATION
+# ====================
+# These credentials allow users to log in using Google or GitHub.
+# Get them from:
+# - Google: https://console.cloud.google.com/apis/credentials
+# - GitHub: https://github.com/settings/developers
+# ---- Google OAuth ----
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+# ---- GitHub OAuth ----
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# ====================
 # FILE STORAGE (DigitalOcean Spaces)
 # ====================
 # File storage is used for user uploads like profile pictures and note attachments

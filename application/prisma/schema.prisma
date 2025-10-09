@@ -11,7 +11,7 @@ model User {
   id             String         @id @default(uuid())
   name           String
   email          String         @unique
-  passwordHash   String
+  passwordHash   String?
   image          String?
 
   role           Role           @default(USER)
@@ -21,7 +21,40 @@ model User {
   notes          Note[]
 
   verificationToken String? // Token for email verification
-  emailVerified     Boolean @default(false) // Email verification status
+  emailVerified     DateTime? // Email verification status
+
+  accounts       Account[]
+  sessions       Session[]
+}
+
+model Account {
+  id                String   @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Subscription {
