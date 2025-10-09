@@ -80,8 +80,11 @@ const SignUpForm: React.FC = () => {
         callbackUrl: '/dashboard/my-notes',
       });
     } catch (err) {
-      console.error('GitHub sign-in failed:', err);
-    }
+      if (err instanceof Error) {
+        console.error('GitHub sign-in failed:', err.message, err.stack);
+      } else {
+        console.error('GitHub sign-in failed:', err);
+      }
   };
 
   return (
