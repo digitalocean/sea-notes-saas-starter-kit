@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// ============================================================================
-// RATE LIMITING CORE LOGIC
-// ============================================================================
-
 interface RateLimitOptions {
-  windowMs: number; // Time window in milliseconds
-  max: number; // Maximum number of requests per window
+  windowMs: number;
+  max: number;
   message?: string;
   keyGenerator?: (req: NextRequest) => string;
 }
@@ -18,29 +14,22 @@ interface RateLimitStore {
   };
 }
 
-// In-memory store (in production, use Redis)
 const store: RateLimitStore = {};
 
-/**
- * Creates a rate limiter function
- */
 export function createRateLimit(options: RateLimitOptions) {
   const { windowMs, max, message = 'Too many requests, please try again later.', keyGenerator } = options;
 
   return async (req: NextRequest): Promise<NextResponse | null> => {
     const now = Date.now();
     
-    // Generate key for rate limiting (default: IP address)
     const key = keyGenerator ? keyGenerator(req) : getClientIP(req);
 
-    // Clean up expired entries
     Object.keys(store).forEach(k => {
       if (store[k].resetTime < now) {
         delete store[k];
       }
     });
 
-    // Get or create entry for this key
     if (!store[key]) {
       store[key] = {
         count: 0,
@@ -50,16 +39,13 @@ export function createRateLimit(options: RateLimitOptions) {
 
     const entry = store[key];
 
-    // Check if window has expired
     if (entry.resetTime < now) {
       entry.count = 0;
       entry.resetTime = now + windowMs;
     }
 
-    // Increment counter
     entry.count++;
 
-    // Check if limit exceeded
     if (entry.count > max) {
       const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
       
@@ -83,14 +69,10 @@ export function createRateLimit(options: RateLimitOptions) {
       );
     }
 
-    // Rate limit passed
     return null;
   };
 }
 
-/**
- * Extract client IP address from request
- */
 function getClientIP(req: NextRequest): string {
   const forwarded = req.headers.get('x-forwarded-for');
   if (forwarded) {
@@ -99,18 +81,11 @@ function getClientIP(req: NextRequest): string {
   return req.ip || 'unknown';
 }
 
-// ============================================================================
-// HIGHER-ORDER FUNCTION FOR API ROUTES
-// ============================================================================
-
 type Handler = (
   req: NextRequest,
   context?: any
 ) => Promise<NextResponse>;
 
-/**
- * Higher-order function to wrap API route handlers with rate limiting
- */
 export function withRateLimit(
   handler: Handler,
   options: RateLimitOptions
@@ -118,22 +93,15 @@ export function withRateLimit(
   const rateLimiter = createRateLimit(options);
 
   return async (req: NextRequest, context?: any): Promise<NextResponse> => {
-    // Apply rate limiting
     const rateLimitResponse = await rateLimiter(req);
     
     if (rateLimitResponse) {
-      // Rate limit exceeded, return the rate limit response
       return rateLimitResponse;
     }
 
-    // Rate limit passed, continue with the original handler
     return await handler(req, context);
   };
 }
-
-// ============================================================================
-// FRONTEND ERROR HANDLING
-// ============================================================================
 
 export interface RateLimitError {
   error: string;
@@ -143,16 +111,10 @@ export interface RateLimitError {
   resetTime?: string;
 }
 
-/**
- * Checks if a response is a rate limiting error (429)
- */
 export function isRateLimitError(response: Response): boolean {
   return response.status === 429;
 }
 
-/**
- * Extracts rate limiting information from a 429 response
- */
 export async function getRateLimitError(response: Response): Promise<RateLimitError> {
   try {
     const data = await response.json();
@@ -170,9 +132,6 @@ export async function getRateLimitError(response: Response): Promise<RateLimitEr
   }
 }
 
-/**
- * Formats a user-friendly rate limiting error message
- */
 export function formatRateLimitMessage(error: RateLimitError): string {
   const { error: message, retryAfter } = error;
   
@@ -188,10 +147,6 @@ export function formatRateLimitMessage(error: RateLimitError): string {
   return message;
 }
 
-/**
- * Handles API responses and extracts appropriate error messages
- * Specifically handles rate limiting (429) errors with user-friendly messages
- */
 export async function handleApiResponse(response: Response): Promise<{
   success: boolean;
   message?: string;
@@ -205,7 +160,6 @@ export async function handleApiResponse(response: Response): Promise<{
     };
   }
 
-  // Handle rate limiting specifically
   if (isRateLimitError(response)) {
     const rateLimitError = await getRateLimitError(response);
     return {
@@ -214,7 +168,6 @@ export async function handleApiResponse(response: Response): Promise<{
     };
   }
 
-  // Handle other errors
   try {
     const data = await response.json();
     return {
@@ -229,24 +182,20 @@ export async function handleApiResponse(response: Response): Promise<{
   }
 }
 
-// ============================================================================
-// PREDEFINED RATE LIMITERS
-// ============================================================================
-
 export const generalRateLimit = createRateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // 10 requests per minute
+  windowMs: 1 * 60 * 1000,
+  max: 10,
   message: 'Too many API requests, please try again later.'
 });
 
 export const strictRateLimit = createRateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // 10 requests per minute
+  windowMs: 1 * 60 * 1000,
+  max: 10,
   message: 'Rate limit exceeded, please slow down.'
 });
 
 export const passwordResetRateLimit = createRateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 5, // 5 password reset attempts per minute
+  windowMs: 60 * 1000,
+  max: 5,
   message: 'Too many password reset attempts, please try again later.'
 });
