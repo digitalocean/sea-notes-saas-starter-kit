@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Button } from '@mui/material';
 import FormButton from 'components/Public/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
+import { handleApiResponse } from 'lib/rateLimit';
 
 /**
  * Forgot Password form.
@@ -28,11 +29,13 @@ const ForgotPasswordForm: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setError(data.error || 'Something went wrong, please try again later.');
-      } else {
+      
+      const result = await handleApiResponse(res);
+      
+      if (result.success) {
         setSuccess('If your email exists in our system, a reset link has been sent.');
+      } else {
+        setError(result.error || 'Something went wrong, please try again later.');
       }
     } catch (err) {
       setError(
@@ -48,17 +51,21 @@ const ForgotPasswordForm: React.FC = () => {
     setNavigating(true);
     e.preventDefault();
     setMagicLinkSuccess(null);
+    setError(null);
+    
     try {
       const res = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setError(data.error || 'Something went wrong, please try again later.');
-      } else {
+      
+      const result = await handleApiResponse(res);
+      
+      if (result.success) {
         setMagicLinkSuccess('Magic link sent! Please check your email inbox.');
+      } else {
+        setError(result.error || 'Something went wrong, please try again later.');
       }
     } catch (err) {
       setError(

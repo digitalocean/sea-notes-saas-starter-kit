@@ -15,6 +15,7 @@ import Link from 'next/link';
 import FormButton from 'components/Public/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
+import { handleApiResponse } from 'lib/rateLimit';
 
 /**
  * User registration form.
@@ -46,11 +47,13 @@ const SignUpForm: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name: USER_ROLES.USER }),
       });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setError(data.error || 'Something went wrong');
+      
+      const result = await handleApiResponse(res);
+      
+      if (result.success) {
+        setSuccess(result.message || 'Account created.');
       } else {
-        setSuccess(data.message || 'Account created.');
+        setError(result.error || 'Something went wrong');
       }
     } catch (err) {
       console.error('Signup error:', err);

@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { NotesApiClient } from 'lib/api/notes';
 import { hasDigitalOceanGradientAIEnabled } from '../../../settings';
+import { handleApiResponse } from 'lib/rateLimit';
 
 const apiClient = new NotesApiClient();
 
@@ -132,13 +133,16 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
         body: JSON.stringify({}),
       });
 
-      if (!response.ok) {
-        throw new Error('Content generation failed. Please try again.');
-      }
+      const result = await handleApiResponse(response);
 
-      const { content: generatedContent } = await response.json();
-      setContent(generatedContent);
-      showToastMessage('Content generated successfully!');
+      if (result.success) {
+        const { content: generatedContent } = await response.json();
+        setContent(generatedContent);
+        showToastMessage('Content generated successfully!');
+      } else {
+        // Show rate limiting or other error messages
+        showToastMessage(result.error || 'Content generation failed. Please try again.', 'error');
+      }
     } catch (error) {
       console.error('Content generation failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Content generation temporarily unavailable.';

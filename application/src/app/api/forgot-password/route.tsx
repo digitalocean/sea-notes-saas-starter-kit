@@ -5,13 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
 import { HTTP_STATUS } from 'lib/api/http';
 import { serverConfig } from 'settings';
+import { withRateLimit } from 'lib/rateLimit';
 
 /**
  * API route handler for requesting a password reset email.
  * If the user exists, generates a reset token, stores it, and sends a reset email.
  * Always returns success for security, even if the user does not exist.
  */
-export async function POST(req: NextRequest) {
+async function forgotPasswordHandler(req: NextRequest) {
   try {
     const emailService = await createEmailService();
 
@@ -77,3 +78,10 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// Apply rate limiting: 5 password reset requests per minute per IP
+export const POST = withRateLimit(forgotPasswordHandler, {
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // 5 password reset requests per minute
+  message: 'Too many password reset attempts. Please try again later.'
+});

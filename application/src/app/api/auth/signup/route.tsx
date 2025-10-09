@@ -68,7 +68,7 @@ const createSubscription = async (db: DatabaseClient, user: User) => {
  *   - 409: { error: string }
  *   - 500: { error: string }
  */
-export async function POST(req: NextRequest) {
+async function signupHandler(req: NextRequest) {
   try {
     const { name, email, password } = await req.json();
     if (!email || !password || !name) {
@@ -137,3 +137,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// No rate limiting applied to signup
+export const POST = signupHandler;

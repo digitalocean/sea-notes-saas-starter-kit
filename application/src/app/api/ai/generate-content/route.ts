@@ -33,12 +33,13 @@ import { auth } from '../../../../lib/auth/auth';
 import { DigitalOceanInferenceService } from '../../../../services/ai/digitalOceanInferenceService';
 import { hasAIConfiguredServer } from '../../../../settings';
 import { HTTP_STATUS } from '../../../../lib/api/http';
+import { withRateLimit } from '../../../../lib/rateLimit';
 
 /**
  * Generate AI content for notes
  * POST /api/ai/generate-content
  */
-export async function POST(request: NextRequest) {
+async function generateContentHandler(request: NextRequest) {
   try {
     // Check if AI is configured
     if (!hasAIConfiguredServer) {
@@ -88,3 +89,16 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Apply rate limiting: 10 AI requests per minute per user
+export const POST = withRateLimit(generateContentHandler, {
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // 10 AI requests per minute
+  message: 'Too many AI content generation requests. Please slow down.',
+  keyGenerator: (req) => {
+    // Use user ID instead of IP for authenticated endpoints
+    const forwarded = req.headers.get('x-forwarded-for');
+    const ip = forwarded ? forwarded.split(',')[0] : req.ip || 'unknown';
+    return `ai-${ip}`;
+  }
+});

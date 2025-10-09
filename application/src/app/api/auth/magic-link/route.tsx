@@ -5,6 +5,7 @@ import { createEmailService } from 'services/email/emailFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
 import { serverConfig } from 'settings';
+import { withRateLimit } from 'lib/rateLimit';
 
 /**
  * API endpoint to send a magic link for user login.
@@ -19,7 +20,7 @@ import { serverConfig } from 'settings';
  *   - 404: { error: 'User not found' }
  *   - 500: { error: string }
  */
-export async function POST(request: NextRequest) {
+async function magicLinkHandler(request: NextRequest) {
   try {
     const emailService = await createEmailService();
 
@@ -79,3 +80,10 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Apply rate limiting: 5 magic link requests per minute per IP
+export const POST = withRateLimit(magicLinkHandler, {
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // 5 magic link requests per minute
+  message: 'Too many magic link requests. Please try again later.'
+});
