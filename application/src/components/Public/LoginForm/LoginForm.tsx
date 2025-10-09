@@ -62,6 +62,10 @@ const LoginForm: React.FC = () => {
       } else {
         console.error('Google sign-in failed:', JSON.stringify(err));
       }
+        console.error('Google sign-in failed:', err.message, err.stack);
+      } else {
+        console.error('Google sign-in failed:', JSON.stringify(err));
+      }
     }
   };
 
