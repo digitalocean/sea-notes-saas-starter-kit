@@ -67,7 +67,11 @@ const LoginForm: React.FC = () => {
         callbackUrl: '/dashboard/my-notes',
       });
     } catch (err) {
-      console.error('GitHub sign-in failed:', err);
+      console.error('GitHub sign-in failed:', {
+        error: err,
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
     }
   };
 
