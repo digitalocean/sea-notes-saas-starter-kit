@@ -3,17 +3,20 @@ export interface Note {
   userId: string;
   title: string;
   content: string;
+  summary?: string | null;
   createdAt: string;
 }
 
 export interface CreateNoteData {
   title?: string;
   content: string;
+  summary?: string;
 }
 
 export interface UpdateNoteData {
   title?: string;
   content?: string;
+  summary?: string | null;
 }
 
 export interface PaginatedNotes {

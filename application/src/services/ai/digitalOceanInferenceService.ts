@@ -72,6 +72,31 @@ export class DigitalOceanInferenceService {
   }
 
   /**
+   * Generate a short summary (1-2 sentence) for the provided content
+   * @param content - The note content to summarize
+   * @returns Promise that resolves to the generated summary
+   */
+  async generateSummary(content: string): Promise<string> {
+    if (!content || content.trim().length === 0) {
+      throw new Error('Content is required to generate a summary');
+    }
+
+    const messages = [
+      {
+        role: 'system' as const,
+        content:
+          'You are a helpful assistant that summarizes note content in 1-2 concise sentences. Return only the summary text, without quotes or extra commentary.',
+      },
+      {
+        role: 'user' as const,
+        content: `Summarize the following note content in 1-2 sentences: ${content}`,
+      },
+    ];
+
+    return this.makeCompletion(messages, { max_tokens: 60, temperature: 0.5 });
+  }
+
+  /**
    * Shared completion method for all AI operations
    * @param messages - The messages to send to the AI
    * @param options - Options for the completion

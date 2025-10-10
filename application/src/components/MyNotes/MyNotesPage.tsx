@@ -125,9 +125,13 @@ const MyNotes: React.FC = () => {
     setSearchQuery(event.target.value);
   };
 
-  const handleCreateNote = async (noteData: { title?: string; content: string }) => {
+  const handleCreateNote = async (noteData: { title?: string; content: string; summary?: string | null }) => {
     try {
-      await apiClient.createNote(noteData);
+      await apiClient.createNote({
+        title: noteData.title,
+        content: noteData.content,
+        summary: noteData.summary ?? undefined,
+      });
       setIsCreateModalOpen(false);
 
       // Navigate to page 1 to see the new note (newest first)
@@ -152,11 +156,15 @@ const MyNotes: React.FC = () => {
       setToastOpen(true);
     }
   };
-  const handleUpdateNote = async (noteData: { title?: string; content: string }) => {
+  const handleUpdateNote = async (noteData: { title?: string; content: string; summary?: string | null }) => {
     if (!selectedNoteId) return;
 
     try {
-      await apiClient.updateNote(selectedNoteId, noteData);
+      await apiClient.updateNote(selectedNoteId, {
+        title: noteData.title,
+        content: noteData.content,
+        summary: noteData.summary ?? undefined,
+      });
       setIsEditModalOpen(false);
       setSelectedNoteId(null);
 

@@ -28,7 +28,7 @@ const apiClient = new NotesApiClient();
 interface NoteFormProps {
   mode: 'create' | 'edit' | 'view';
   noteId?: string;
-  onSave?: (note: { id?: string; title?: string; content: string }) => void;
+  onSave?: (note: { id?: string; title?: string; content: string; summary?: string | null }) => void;
   onCancel?: () => void;
 }
 
@@ -38,6 +38,7 @@ interface NoteFormProps {
 const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [summary, setSummary] = useState('');
   const [createdAt, setCreatedAt] = useState<string>('');
   const [loading, setLoading] = useState(mode !== 'create');
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +62,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
           const noteData = await apiClient.getNote(noteId);
           setTitle(noteData.title);
           setContent(noteData.content);
+          setSummary((noteData as any).summary ?? '');
           setCreatedAt(noteData.createdAt);
           setError(null);
         } catch (err) {
@@ -89,11 +91,11 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
       let noteData;
       
       if (mode === 'edit' && noteId) {
-        // Edit mode: always include title and content
-        noteData = { id: noteId, title, content };
+        // Edit mode: always include title, content and summary
+        noteData = { id: noteId, title, content, summary };
       } else {
         // Create mode: include title (if provided) and content
-        noteData = title ? { title, content } : { content };
+        noteData = title ? { title, content, summary } : { content, summary };
       }
       
       onSave(noteData);
@@ -145,6 +147,41 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
       showToastMessage(errorMessage, 'error');
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  // Generate summary and title using AI endpoint
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+
+  const handleGenerateSummaryAndTitle = async () => {
+    if (!content || content.trim().length === 0) {
+      showToastMessage('Please enter content before generating a summary', 'error');
+      return;
+    }
+
+    setIsGeneratingSummary(true);
+    try {
+      const res = await fetch('/api/ai/generate-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Generation failed' }));
+        throw new Error(err?.error || 'Generation failed');
+      }
+
+      const data = await res.json();
+      if (data.title) setTitle(data.title);
+      if (data.summary) setSummary(data.summary);
+      showToastMessage('Summary and title generated');
+    } catch (err) {
+      console.error('Summary generation failed:', err);
+      const message = err instanceof Error ? err.message : 'Summary generation failed';
+      showToastMessage(message, 'error');
+    } finally {
+      setIsGeneratingSummary(false);
     }
   };
   // Show loading state
@@ -206,6 +243,20 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
               InputProps={{ readOnly: isReadOnly }}
               data-testid="note-title-input"
             />
+            {/* AI-generated summary display (optional) */}
+            <TextField
+              id="summary"
+              label="Summary (AI)"
+              fullWidth
+              margin="normal"
+              placeholder="AI-generated summary will appear here"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              InputProps={{ readOnly: isReadOnly }}
+              multiline
+              rows={2}
+              data-testid="note-summary-input"
+            />
             
             <TextField
               id="content"
@@ -224,20 +275,35 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
             />{' '}
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
               {/* AI Content Generation Button - only show in create mode when AI configured */}
-              {mode === 'create' && hasDigitalOceanGradientAIEnabled ? (
-                <Button
-                  variant="outlined"
-                  startIcon={isGenerating ? <CircularProgress size={16} /> : '✨'}
-                  onClick={handleGenerateContent}
-                  disabled={isGenerating}
-                  size="small"
-                  data-testid="generate-content-button"
-                >
-                  {isGenerating ? 'Generating...' : 'Generate Note with GradientAI'}
-                </Button>
-              ) : (
-                <Box /> // Empty box to maintain spacing
-              )}
+              <Box display="flex" gap={1} alignItems="center">
+                {/* Generate content button (create-only) */}
+                {mode === 'create' && hasDigitalOceanGradientAIEnabled ? (
+                  <Button
+                    variant="outlined"
+                    startIcon={isGenerating ? <CircularProgress size={16} /> : '✨'}
+                    onClick={handleGenerateContent}
+                    disabled={isGenerating}
+                    size="small"
+                    data-testid="generate-content-button"
+                  >
+                    {isGenerating ? 'Generating...' : 'Generate Note with GradientAI'}
+                  </Button>
+                ) : null}
+
+                {/* Generate summary & title button (create and edit) */}
+                {mode !== 'view' && hasDigitalOceanGradientAIEnabled ? (
+                  <Button
+                    variant="outlined"
+                    startIcon={isGeneratingSummary ? <CircularProgress size={16} /> : '📝'}
+                    onClick={handleGenerateSummaryAndTitle}
+                    disabled={isGeneratingSummary}
+                    size="small"
+                    data-testid="generate-summary-button"
+                  >
+                    {isGeneratingSummary ? 'Generating...' : 'Generate Summary & Title'}
+                  </Button>
+                ) : null}
+              </Box>
               
               <Box display="flex" gap={1}>
                 <Button onClick={onCancel} data-testid="note-cancel-button">
