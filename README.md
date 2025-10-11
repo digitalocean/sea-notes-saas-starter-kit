@@ -1,7 +1,7 @@
-# SeaNotes – SaaS Starter Kit built with DigitalOcean
+# SeaNotes – Advanced SaaS Starter Kit built with DigitalOcean
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791)](https://www.postgresql.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748)](https://www.prisma.io/)
@@ -12,7 +12,30 @@
 
 ![alt text](docs/images/starter_kit_integrations.png)
 
-**SeaNotes** is a SaaS Starter Kit — a simple, production-ready notes app built with modern tools and fully integrated with DigitalOcean services.
+**SeaNotes** is an Advanced SaaS Starter Kit — a production-ready notes app built with modern tools and fully integrated with DigitalOcean services. Now featuring advanced analytics, real-time collaboration, performance monitoring, and enhanced developer experience.
+
+## 🚀 New Advanced Features
+
+### 📊 Analytics & Monitoring
+- **Advanced Analytics Dashboard** - Real-time user metrics and performance insights
+- **Performance Monitoring** - Component render times and API call tracking  
+- **Cache Management** - LRU cache with TTL for optimal performance
+
+### 🔔 Real-time Features
+- **Live Notifications** - Real-time notification system with multiple types
+- **Collaboration Tools** - Multi-user editing with live cursors and presence
+- **Advanced Search** - Fuzzy search with filters and highlighting
+
+### 🛠️ Developer Experience
+- **Enhanced CI/CD** - Comprehensive GitHub Actions workflow
+- **Performance Testing** - Lighthouse CI integration
+- **Security Scanning** - Automated vulnerability detection
+- **Git Hooks** - Pre-commit linting and formatting
+
+### ⚡ Performance Optimizations
+- **Advanced Caching** - Multi-layer caching with intelligent eviction
+- **Docker Optimization** - Multi-stage builds for production
+- **Bundle Analysis** - Webpack bundle analyzer integration
 
 This repository gives you everything you need to build and launch a real SaaS app on DigitalOcean App Platform. It’s designed to help you get started fast — whether you’re developing locally or deploying to the cloud. SeaNotes includes a complete implementation of a notes app to show how common SaaS features like auth, billing, and storage come together using DO’s infrastructure.
 
