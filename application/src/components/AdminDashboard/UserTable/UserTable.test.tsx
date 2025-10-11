@@ -86,7 +86,7 @@ describe('<UserTable />', () => {
         handleEditClick={handleEditClick}
       />
     );
-    const switches = screen.getAllByRole('checkbox');
+    const switches = screen.getAllByRole('switch');
     fireEvent.click(switches[0]);
     expect(handleAdminSwitchChange).toHaveBeenCalled();
   });

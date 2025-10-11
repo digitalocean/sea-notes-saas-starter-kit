@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Box, Container } from '@mui/material';
 import TerminalMockup from 'components/Public/TerminalMockup/TerminalMockup';
+import EnvironmentSelector from 'components/Public/EnvironmentSelector/EnvironmentSelector';
 import CTAButtons from 'components/Public/CTAButtons/CTAButtons';
 import { DIMENSIONS } from 'constants/landing';
 
@@ -44,7 +45,7 @@ const HeroSection = () => {
                 width: '100%'
               }}
             >
-              SeaNotes
+              RPaaS
             </Typography>
             <Typography 
               variant="h3" 
@@ -56,7 +57,7 @@ const HeroSection = () => {
                 width: '100%'
               }}
             >
-              Build Your SaaS Faster Than Ever
+              Your Cloud Robotics Development Environment
             </Typography>
             <Typography 
               variant="h6" 
@@ -69,11 +70,12 @@ const HeroSection = () => {
                 width: '100%'
               }}
             >
-              Launch your SaaS product in record time with our powerful, ready-to-use template. Packed with modern technologies and essential integrations.
+              Launch your robotics development environment in record time with our powerful, ready-to-use platform. Packed with modern technologies and essential integrations.
             </Typography>
             <Box component="nav" aria-label="Primary actions">
               <CTAButtons />
             </Box>
+            <EnvironmentSelector />
           </Box>
         </Box>
       </Container>

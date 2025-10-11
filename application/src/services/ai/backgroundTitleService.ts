@@ -1,70 +1,70 @@
 /**
- * Background AI Title Generation Service
+ * Background AI Name Generation Service
  * 
- * Handles asynchronous AI title generation for notes without blocking note creation.
- * Updates titles in background and notifies frontend via SSE.
+ * Handles asynchronous AI name generation for environments without blocking environment creation.
+ * Updates names in background and notifies frontend via SSE.
  */
 
-import { generateTitleWithFallback } from './digitalOceanInferenceService';
+import { generateNameWithFallback } from './digitalOceanInferenceService';
 import { createDatabaseService } from '../database/databaseFactory';
 import { hasAIConfiguredServer } from '../../settings';
-import { broadcastTitleUpdate } from '../sse/eventManager';
+import { broadcastNameUpdate } from '../sse/eventManager';
 
 /**
- * Background service for generating and updating note titles
+ * Background service for generating and updating environment names
  */
-export class BackgroundTitleService {
+export class BackgroundNameService {
   /**
-   * Generate title for a note in the background and update it
-   * @param noteId - The ID of the note to update
-   * @param content - The content to generate title from
-   * @param userId - The ID of the user who owns the note
+   * Generate name for an environment in the background and update it
+   * @param environmentId - The ID of the environment to update
+   * @param content - The content to generate name from
+   * @param userId - The ID of the user who owns the environment
    */
-  static async generateTitleInBackground(noteId: string, content: string, userId: string): Promise<void> {
+  static async generateNameInBackground(environmentId: string, content: string, userId: string): Promise<void> {
     // Only proceed if AI is configured
     if (!hasAIConfiguredServer) {
       return;
     }
 
     try {
-      // Generate title using AI with fallback
-      const generatedTitle = await generateTitleWithFallback(content);
+      // Generate name using AI with fallback
+      const generatedName = await generateNameWithFallback(content);
       
-      // Update the note with the generated title
+      // Update the environment with the generated name
       const dbClient = await createDatabaseService();
-      await dbClient.note.update(noteId, {
-        title: generatedTitle,
+      await dbClient.environment.update(environmentId, {
+        name: generatedName,
       });
       
       // Broadcast SSE event to notify the frontend
-      broadcastTitleUpdate(noteId, generatedTitle, userId);
+      broadcastNameUpdate(environmentId, generatedName, userId);
     } catch (error) {
-      console.error(`Failed to generate title for note ${noteId}:`, error);
+      console.error(`Failed to generate name for environment ${environmentId}:`, error);
       // Note: We don't throw here because background processing should be non-blocking
-      // The note will keep its timestamp title if AI generation fails
+      // The environment will keep its timestamp name if AI generation fails
     }
   }
 
   /**
-   * Queue title generation for a note (fire-and-forget)
-   * @param noteId - The ID of the note to update
-   * @param content - The content to generate title from
-   * @param userId - The ID of the user who owns the note
+   * Queue name generation for an environment (fire-and-forget)
+   * @param environmentId - The ID of the environment to update
+   * @param content - The content to generate name from
+   * @param userId - The ID of the user who owns the environment
    */
-  static queueTitleGeneration(noteId: string, content: string, userId: string): void {
+  static queueNameGeneration(environmentId: string, content: string, userId: string): void {
     // Fire-and-forget: don't await this
-    this.generateTitleInBackground(noteId, content, userId).catch((error) => {
-      console.error(`Background title generation failed for note ${noteId}:`, error);
+    this.generateNameInBackground(environmentId, content, userId).catch((error) => {
+      console.error(`Background name generation failed for environment ${environmentId}:`, error);
     });
   }
 }
 
 /**
- * Convenience function to trigger background title generation
- * @param noteId - The ID of the note to update  
- * @param content - The content to generate title from
- * @param userId - The ID of the user who owns the note
+ * Convenience function to trigger background name generation
+ * @param environmentId - The ID of the environment to update  
+ * @param content - The content to generate name from
+ * @param userId - The ID of the user who owns the environment
  */
-export function triggerBackgroundTitleGeneration(noteId: string, content: string, userId: string): void {
-  BackgroundTitleService.queueTitleGeneration(noteId, content, userId);
+export function triggerBackgroundNameGeneration(environmentId: string, content: string, userId: string): void {
+  BackgroundNameService.queueNameGeneration(environmentId, content, userId);
 }

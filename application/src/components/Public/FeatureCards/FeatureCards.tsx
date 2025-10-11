@@ -13,14 +13,11 @@ import { FEATURES, DIMENSIONS } from 'constants/landing';
 
 const featureIcons = {
   'One-Click Deployment': <RocketLaunchIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[0].color }} />,
-  'DigitalOcean Spaces': <CloudIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[1].color }} />,
-  'DigitalOcean Gradient': <PsychologyIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[2].color }} />,
-  'PostgreSQL and Prisma ORM': <StorageIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[3].color }} />,
-  'Stripe Integration': <PaymentIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[4].color }} />,
-  'NextAuth Authentication': <SecurityIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[5].color }} />,
-  'Resend Email Service': <EmailIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[6].color }} />,
-  'Admin Dashboard': <AdminPanelSettingsIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[7].color }} />,
-  'System Health Monitoring': <MonitorHeartIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[8].color }} />,
+  'Cloud Robotics Environments': <CloudIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[1].color }} />,
+  'Subscription Management': <PaymentIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[2].color }} />,
+  'Secure Authentication': <SecurityIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[3].color }} />,
+  'Admin Dashboard': <AdminPanelSettingsIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[4].color }} />,
+  'System Health Monitoring': <MonitorHeartIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[5].color }} />,
 };
 
 /**

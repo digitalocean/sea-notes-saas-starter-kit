@@ -26,8 +26,8 @@ export const COLORS = {
 // External URLs
 export const URLS = {
   // Repository and Deployment
-  githubRepo: 'https://github.com/digitalocean/sea-notes-saas-starter-kit',
-  deployment: 'https://cloud.digitalocean.com/apps/new?repo=https://github.com/digitalocean/sea-notes-saas-starter-kit/tree/main',
+  githubRepo: 'https://github.com/Omar-Belghaouti/rpaas-starter',
+  deployment: 'https://cloud.digitalocean.com/apps/new?repo=https://github.com/Omar-Belghaouti/rpaas-starter/tree/main',
   
   // DigitalOcean Services
   appPlatform: 'https://www.digitalocean.com/products/app-platform',
@@ -86,8 +86,8 @@ export const DIMENSIONS = {
 // Terminal Commands
 export const TERMINAL = {
   commands: [
-    '$ git clone https://github.com/digitalocean/sea-notes-saas-starter-kit.git',
-    '$ cd sea-notes-saas-starter-kit', 
+    '$ git clone https://github.com/Omar-Belghaouti/rpaas-starter.git',
+    '$ cd rpaas-starter',
     '$ npm install',
     '$ npm run dev'
   ].join('\n'),
@@ -101,34 +101,19 @@ export const FEATURES = [
     color: COLORS.deployment,
   },
   {
-    title: 'DigitalOcean Spaces',
-    description: 'File storage and CDN integration using DigitalOcean Spaces.',
+    title: 'Cloud Robotics Environments',
+    description: 'On-demand Ubuntu desktop environments with ROS2 Humble and Isaac Lab pre-installed.',
     color: COLORS.cloud,
   },
   {
-    title: 'DigitalOcean Gradient',
-    description: 'AI-powered invoice generation using DigitalOcean\'s Serverless Inference API.',
-    color: COLORS.ai,
-  },
-  {
-    title: 'PostgreSQL and Prisma ORM',
-    description: 'Database used for efficient data management and scalability.',
-    color: COLORS.database,
-  },
-  {
-    title: 'Stripe Integration',
-    description: 'Used for subscription management.',
+    title: 'Subscription Management',
+    description: 'Stripe integration for handling monthly and yearly subscriptions.',
     color: COLORS.payment,
   },
   {
-    title: 'NextAuth Authentication',
-    description: 'Built-in authentication system for better user management.',
+    title: 'Secure Authentication',
+    description: 'Built-in authentication system for user management and environment access.',
     color: COLORS.security,
-  },
-  {
-    title: 'Resend Email Service',
-    description: 'Email service used for sending authentication emails as well as invoices.',
-    color: COLORS.email,
   },
   {
     title: 'Admin Dashboard',
@@ -137,7 +122,7 @@ export const FEATURES = [
   },
   {
     title: 'System Health Monitoring',
-    description: 'Real-time monitoring of all services including database, email, storage, and AI services.',
+    description: 'Real-time monitoring of all services including database, and environments.',
     color: COLORS.monitoring,
   },
 ] as const;

@@ -18,7 +18,7 @@ model User {
   createdAt      DateTime       @default(now())
 
   subscription   Subscription?  @relation("UserSubscription")
-  notes          Note[]
+  environments   Environment[]
 
   verificationToken String? // Token for email verification
   emailVerified     Boolean @default(false) // Email verification status
@@ -34,13 +34,15 @@ model Subscription {
   createdAt  DateTime @default(now())
 }
 
-model Note {
-  id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
-  title      String
-  content    String
-  createdAt  DateTime @default(now())
+model Environment {
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String
+  name            String
+  type            String   // e.g., 'ROS2_HUMBLE', 'ISAAC_LAB'
+  status          String   // e.g., 'STOPPED', 'RUNNING', 'STARTING'
+  connectionURL   String?
+  createdAt       DateTime @default(now())
 }
 
 model VerificationToken {

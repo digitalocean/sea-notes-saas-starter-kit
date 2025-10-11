@@ -52,7 +52,7 @@ describe('Sidebar', () => {
     render(<Sidebar />);
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('My Notes')).toBeInTheDocument();
+    expect(screen.getByText('My Environments')).toBeInTheDocument();
     expect(screen.getByText('Account Settings')).toBeInTheDocument();
     expect(screen.getByText('Billing')).toBeInTheDocument();
     expect(screen.getByText('Logout')).toBeInTheDocument();

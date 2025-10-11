@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
- * Fetches all notes for the authenticated user.
+ * Fetches all environments for the authenticated user.
  * @param request - The request object with pagination
  * @param user - The user object
- * @returns A NextResponse with properly typed note data
+ * @returns A NextResponse with properly typed environment data
  */
-export const getAllNotes = async (
+export const getAllEnvironments = async (
   request: NextRequest,
   user: { id: string; role: string }
 ): Promise<NextResponse> => {
@@ -27,14 +27,14 @@ export const getAllNotes = async (
       skip: number;
       take: number;
       search?: string;
-      orderBy: { title: 'asc' } | { createdAt: 'asc' | 'desc' };
+      orderBy: { name: 'asc' } | { createdAt: 'asc' | 'desc' }; // Changed from title
     } = {
       userId,
       skip,
       take: pageSize,
       orderBy:
-        sortBy === 'title'
-          ? { title: 'asc' as const }
+        sortBy === 'name' // Changed from title
+          ? { name: 'asc' as const } // Changed from title
           : sortBy === 'oldest'
             ? { createdAt: 'asc' as const }
             : { createdAt: 'desc' as const },
@@ -45,17 +45,17 @@ export const getAllNotes = async (
       findManyParams.search = search;
     }
 
-    // Get all notes for the user
-    const [notes, total] = await Promise.all([
-      dbClient.note.findMany(findManyParams),
-      dbClient.note.count(userId, search),
+    // Get all environments for the user
+    const [environments, total] = await Promise.all([
+      dbClient.environment.findMany(findManyParams),
+      dbClient.environment.count(userId, search),
     ]);
 
-    // Return both notes and total count
-    return NextResponse.json({ notes, total }, { status: HTTP_STATUS.OK });
+    // Return both environments and total count
+    return NextResponse.json({ environments, total }, { status: HTTP_STATUS.OK });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to fetch notes' },
+      { error: 'Failed to fetch environments' },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }

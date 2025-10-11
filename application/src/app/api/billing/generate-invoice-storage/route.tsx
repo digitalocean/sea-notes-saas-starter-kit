@@ -165,7 +165,7 @@ async function generateInvoiceStorageHandler(
     const fileName = `invoices/${user.id}/${invoiceData.invoiceNumber}.pdf`;
     
     // Convert Buffer to File-like object for storage service
-    const file = new File([pdfBuffer], `${invoiceData.invoiceNumber}.pdf`, {
+    const file = new File([new Uint8Array(pdfBuffer)], `${invoiceData.invoiceNumber}.pdf`, {
       type: 'application/pdf'
     });
 

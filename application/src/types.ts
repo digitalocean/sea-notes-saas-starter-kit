@@ -25,12 +25,14 @@ export interface Subscription {
   createdAt: Date;
 }
 
-// Note type
-export interface Note {
+// Environment type
+export interface Environment {
   id: string;
   userId: string;
-  title: string;
-  content: string;
+  name: string;
+  type: string;
+  status: string;
+  connectionURL?: string;
   createdAt: Date;
 }
 

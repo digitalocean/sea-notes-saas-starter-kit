@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Add, Search, List, GridView } from '@mui/icons-material';
 
-interface NotesHeaderProps {
+interface EnvironmentsHeaderProps {
   searchQuery: string;
   sortBy: string;
   viewMode: string;
@@ -21,41 +21,41 @@ interface NotesHeaderProps {
     child: React.ReactNode
   ) => void;
   onViewModeChange: (mode: string) => void;
-  onCreateNote: () => void;
+  onCreateEnvironment: () => void;
 }
 
 /**
- * Header component for notes page with search, sort, view mode controls, and create button.
- * Provides filtering and layout controls for the notes interface.
+ * Header component for environments page with search, sort, view mode controls, and create button.
+ * Provides filtering and layout controls for the environments interface.
  */
-const NotesHeader: React.FC<NotesHeaderProps> = ({
+const EnvironmentsHeader: React.FC<EnvironmentsHeaderProps> = ({
   searchQuery,
   sortBy,
   viewMode,
   onSearchChange,
   onSortChange,
   onViewModeChange,
-  onCreateNote,
+  onCreateEnvironment,
 }) => {
   return (
-    <Box data-testid="notes-header">
+    <Box data-testid="environments-header">
       {/* Header */}
       <Stack direction="row" justifyContent="right" sx={{ mb: 3 }}>
         <Button
           variant="contained"
           startIcon={<Add />}
-          onClick={onCreateNote}
+          onClick={onCreateEnvironment}
           size="small"
-          data-testid="notes-create-button"
+          data-testid="environments-create-button"
         >
-          Create Note
+          Create Environment
         </Button>
       </Stack>
       {/* Search and Filter Controls */}
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3 }} alignItems="center">
         {' '}
         <TextField
-          placeholder="Search notes..."
+          placeholder="Search environments..."
           value={searchQuery}
           onChange={onSearchChange}
           size="small"
@@ -67,7 +67,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             ),
           }}
           sx={{ flex: 1 }}
-          inputProps={{ 'data-testid': 'notes-search-input' }}
+          inputProps={{ 'data-testid': 'environments-search-input' }}
         />{' '}
         <FormControl sx={{ minWidth: 120 }}>
           <Select
@@ -75,11 +75,11 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             onChange={onSortChange}
             displayEmpty
             size="small"
-            data-testid="notes-sort-select"
+            data-testid="environments-sort-select"
           >
             <MenuItem value="newest">Newest</MenuItem>
             <MenuItem value="oldest">Oldest</MenuItem>
-            <MenuItem value="title">Title</MenuItem>
+            <MenuItem value="name">Name</MenuItem> {/* Changed from title */}
           </Select>
         </FormControl>{' '}
         <Stack direction="row" spacing={1}>
@@ -87,7 +87,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             variant={viewMode === 'list' ? 'contained' : 'outlined'}
             onClick={() => onViewModeChange('list')}
             size="small"
-            data-testid="notes-list-view-button"
+            data-testid="environments-list-view-button"
           >
             <List fontSize="small" />
           </Button>
@@ -95,7 +95,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             variant={viewMode === 'grid' ? 'contained' : 'outlined'}
             onClick={() => onViewModeChange('grid')}
             size="small"
-            data-testid="notes-grid-view-button"
+            data-testid="environments-grid-view-button"
           >
             <GridView fontSize="small" />
           </Button>
@@ -105,4 +105,4 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
   );
 };
 
-export default NotesHeader;
+export default EnvironmentsHeader;

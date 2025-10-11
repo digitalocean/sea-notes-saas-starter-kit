@@ -42,7 +42,7 @@ export class StripeBillingService extends BillingService {
     }
 
     this.stripe = new Stripe(serverConfig.Stripe.stripeSecretKey!, {
-      apiVersion: '2025-04-30.basil',
+      apiVersion: '2025-08-27.basil',
     });
   }
 

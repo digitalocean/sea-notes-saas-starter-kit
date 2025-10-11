@@ -1,4 +1,4 @@
-# SeaNotes – SaaS Starter Kit built with DigitalOcean
+# RPaaS – Robotics Platform as a Service Starter Kit
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
@@ -8,32 +8,30 @@
 [![Stripe](https://img.shields.io/badge/Stripe-Payment-6772e5)](https://stripe.com/)
 [![Resend](https://img.shields.io/badge/Resend-Email-24292F)](https://resend.com/)
 [![DigitalOcean](https://img.shields.io/badge/DigitalOcean-Ready-0080FF)](https://www.digitalocean.com/)
-[![DO Spaces](https://img.shields.io/badge/DO%20Spaces-Storage-0080FF)](https://www.digitalocean.com/products/spaces/)
 
 ![alt text](docs/images/starter_kit_integrations.png)
 
-**SeaNotes** is a SaaS Starter Kit — a simple, production-ready notes app built with modern tools and fully integrated with DigitalOcean services.
+**RPaaS** is a Robotics Platform as a Service Starter Kit — a simple, production-ready web application that allows users to launch and manage cloud-based robotics development environments. It's built with modern tools and fully integrated with DigitalOcean services.
 
-This repository gives you everything you need to build and launch a real SaaS app on DigitalOcean App Platform. It’s designed to help you get started fast — whether you’re developing locally or deploying to the cloud. SeaNotes includes a complete implementation of a notes app to show how common SaaS features like auth, billing, and storage come together using DO’s infrastructure.
+This repository gives you everything you need to build and launch a real SaaS app on DigitalOcean App Platform. It’s designed to help you get started fast — whether you’re developing locally or deploying to the cloud. RPaaS includes a complete implementation of a robotics environment management system to show how common SaaS features like auth, billing, and resource management come together using DO’s infrastructure.
 
-SeaNotes comes pre-integrated with:
+RPaaS comes pre-integrated with:
 - **Stripe** for subscription billing and payments
 - **Resend** for transactional emails
-- **DigitalOcean Spaces** for file storage
 - **PostgreSQL** for database
 - **One-click deployment** to DigitalOcean App Platform
 
-You can use SeaNotes in two ways:
-1. As a **starter kit** to build your own SaaS application by replacing the notes functionality with your business logic
+You can use RPaaS in two ways:
+1. As a **starter kit** to build your own robotics platform by extending the existing functionality.
 2. As a **reference app** by pointing your LLMs (like ChatGPT or Claude) to this codebase to understand how to implement similar features in your own projects
 
 ![alt text](docs/images/application-preview.png)
 
 ## Quick Deploy
 
-Want to try it out right away? Deploy SeaNotes to DigitalOcean App Platform in one click:
+Want to try it out right away? Deploy RPaaS to DigitalOcean App Platform in one click:
 
-[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/digitalocean/sea-notes-saas-starter-kit/tree/main)
+[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Omar-Belghaouti/rpaas-starter/tree/main)
 
 ## What's Included
 
@@ -43,20 +41,18 @@ This is a production-ready SaaS Starter Kit for developers who want to build and
 - ✅ Forgot password + magic link login  
 - ✅ Email notifications via Resend.com (with PDF invoice attachments)  
 - ✅ Stripe billing (upgrade/cancel plan)  
-- ✅ File uploads to DigitalOcean Spaces  
 - ✅ PostgreSQL via Prisma ORM  
 - ✅ Next.js + Material UI frontend  
-- ✅ DigitalOcean GradientAI Serverless Inference API 
 - ✅ Admin dashboard for managing users and subscriptions 
 - ✅ One-click deploy to DO App Platform
 
-SeaNotes is both a clean, flexible starting point for your own SaaS and a real-world example of best practices, and how all the core pieces fit together on DigitalOcean.
+RPaaS is both a clean, flexible starting point for your own SaaS and a real-world example of best practices, and how all the core pieces fit together on DigitalOcean.
 
-The included notes app functionality serves as a practical example of how to build business logic on top of this foundation. It also works really well with tools like ChatGPT or Claude. You can literally point your LLM at this repo and say:
+The included robotics environment management functionality serves as a practical example of how to build business logic on top of this foundation. It also works really well with tools like ChatGPT or Claude. You can literally point your LLM at this repo and say:
 
 > "Build me something like this, but for [my idea]"  
 
-....and it'll scaffold your app using similar patterns — auth, billing, storage, GradientAI Serverless Inference API, etc., all running on DigitalOcean.
+....and it'll scaffold your app using similar patterns — auth, billing, etc., all running on DigitalOcean.
 
 ## Technical Stack
 
@@ -67,9 +63,7 @@ The included notes app functionality serves as a practical example of how to bui
 - **Database**: PostgreSQL (via Prisma ORM)
 - **Authentication**: Next-Auth
 - **Email**: Resend.com
-- **File Storage**: DigitalOcean Spaces
 - **Payments**: Stripe
-- **AI**: DigitalOcean GradientAI Serverless Inference API
 - **Deployment**: DigitalOcean App Platform
 
 ## Who It's For
@@ -82,12 +76,11 @@ The included notes app functionality serves as a practical example of how to bui
 
 ## Get Started
 
-SeaNotes can be run [locally](#quick-start-local-development) or on [DigitalOcean App Platform](#part-5-deploy-to-digitalocean-app-platform). Follow the steps for each case below.
+RPaaS can be run [locally](#quick-start-local-development) or on [DigitalOcean App Platform](#part-5-deploy-to-digitalocean-app-platform). Follow the steps for each case below.
 
 > **Important**: The app works out of the box with basic authentication and signup. However, to enable full functionality:
 >
 > - Email features (verification emails, password reset, magic links) require [Resend configuration](#part-2-set-up-email-provider-resend)
-> - File uploads require [DigitalOcean Spaces setup](#part-3-set-up-file-storage-digitalocean-spaces)
 > - Subscription features require [Stripe configuration](#part-4-set-up-stripe-for-billing-and-subscriptions)
 
 ## Quick Start (Local Development)
@@ -99,9 +92,9 @@ We recommend **forking** this repository to your own GitHub account before cloni
 ```bash
 # 1. Fork the repo to your GitHub account (button in the top right on GitHub)
 # 2. Clone your fork locally:
-git clone https://github.com/<your-username>/sea-notes-saas-starter-kit.git
+git clone https://github.com/Omar-Belghaouti/rpaas-starter.git
 
-cd sea-notes-saas-starter-kit/application
+cd rpaas-starter/application
 npm install
 ```
 
@@ -113,7 +106,7 @@ Copy the example environment file to create your own configuration:
 cp env-example .env
 ```
 
-The `.env` file contains all the configuration settings for your application. The default values will work for basic local development, but you'll need to update them for additional features like email, file storage, and payments.
+The `.env` file contains all the configuration settings for your application. The default values will work for basic local development, but you'll need to update them for additional features like email and payments.
 
 ### Step 3: Set Up Your Database
 
@@ -190,7 +183,7 @@ Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## First Things to Try
 
-The basic version of SeaNotes is now set up locally on your computer! You can start exploring and playing around with the app right away:
+The basic version of RPaaS is now set up locally on your computer! You can start exploring and playing around with the app right away:
 
 1. **Sign up** for a new account
 
@@ -199,20 +192,20 @@ The basic version of SeaNotes is now set up locally on your computer! You can st
 
 2. **Log in** with your new credentials
 
-   - You'll see a dashboard. This starter kit is built as a simple note-taking app, so you can:
-     - **Create notes** (this is the main business logic included)
-     - Edit or delete your notes
+   - You'll see a dashboard. This starter kit is built as a simple robotics environment management app, so you can:
+     - **Create environments** (this is the main business logic included)
+     - Edit or delete your environments
    - Try toggling **dark mode/light mode**
    - Go to your **profile** and try updating your profile details
    - **Log out** and log back in
 
-3. **Create your first note**
+3. **Create your first environment**
 
-   - Navigate to the **My Notes** section in the dashboard
-   - Click the **Add Note** button
-   - Enter a title and content for your note
-   - Click **Save** to create your note
-   - Try editing or deleting the note you created
+   - Navigate to the **My Environments** section in the dashboard
+   - Click the **Add Environment** button
+   - Enter a name and type for your environment
+   - Click **Save** to create your environment
+   - Try editing or deleting the environment you created
 
 ![alt text](docs/images/saas_app_create_note_interface.png)
 
@@ -223,7 +216,7 @@ The basic version of SeaNotes is now set up locally on your computer! You can st
 
 ![alt text](docs/images/system_status_page_screenshot.png)
 
-> **Note:** Email and file storage are not set up by default. Configure these features using the documentation below.
+> **Note:** Email functionality is not set up by default. Configure this feature using the documentation below.
 
 ## Part 2: Set Up Email Provider (Resend)
 
@@ -296,84 +289,9 @@ The Resend integration supports:
    - You can also check the system status page to confirm Resend is connected
    ![alt text](docs/images/gmail_verify_email_screenshot.png)
 
-## Part 3: Set Up File Storage (DigitalOcean Spaces)
+## Part 3: Set Up Stripe for Billing and Subscriptions
 
-Most SaaS apps need a way to store user files—like profile images, uploads, or documents. SeaNotes uses DigitalOcean Spaces for file storage, which is a scalable, S3-compatible solution. For example, the profile image feature in this kit is designed to work with a Spaces bucket out of the box.
-
-To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and add your credentials to your `.env` file.
-
-### Steps:
-
-1. **Create a Spaces Bucket**
-   - Log in to your [DigitalOcean dashboard](https://cloud.digitalocean.com/)
-   - Click on **Spaces Object Storage**
-   - Click **Create a Spaces Bucket**
-   ![alt text](docs/images/digitalocean_spaces_object_storage.png)
-   - Choose a region close to your users (e.g., nyc3 for New York)
-   - Name your Space (e.g., `sea-notes-demo-bucket`)
-   - This will create your bucket available at a URL like `https://sea-notes-demo-bucket.nyc3.digitaloceanspaces.com`
-
-
-2. **Generate Access Keys**
-   - Open your Space, click **Settings**, and scroll down to **Access Keys**
-   - Click **Create Access Key** 
-   ![alt text](docs/images/digitalocean_spaces_storage_settings.png)
-   - Set permissions to **Full Access**, so your app can read, write, and delete files
-   - Name the key (e.g., `sea-notes-demo-access-key`) and click **Create Access Key**
-   - **Important:** Save the Access Key and Secret Key—this is the only time you'll see the Secret Key!
-   ![alt text](docs/images/digitalocean_create_access_key.png)
-
-3. **Get Your Spaces Values for Environment Variables**
-
-   After creating your Spaces bucket and access key, you'll need to add the following values to your `.env` file:
-
-   - **SPACES_REGION**: This is your selected datacenter region (e.g., nyc3, sfo2, etc.)
-
-   - **SPACES_BUCKET_NAME**: This is simply the name you gave your Spaces bucket when you created it
-
-   - **SPACES_KEY_ID**: This is the Access Key ID you received when creating your access key
-
-   - **SPACES_SECRET_KEY**: This is the Secret Access Key you received when creating your access key
-
-   The image below shows where to find the Access Key ID and Secret Access Key values after creating them:
-
-![Access Key Information](./docs/images/access_key_information_screenshot.png)
-
-4. **Update Your `.env` File**
-   Add these lines (replace with your actual values):
-
-   ```
-   SPACES_REGION=your-space-region (nyc3, sfo2, etc.)
-   SPACES_BUCKET_NAME=your-space-name
-   SPACES_KEY_ID=your-access-key
-   SPACES_SECRET_KEY=your-secret-key
-   ```
-
-   - The endpoint will match your region (e.g., `nyc3`, `sfo2`, etc.)
-
-5. **Restart Your Development Server**
-
-   - After updating your `.env`, restart the server:
-
-     ```bash
-     npm run dev
-     ```
-
-6. **Check the System Status Page**
-
-   - After setting up your Spaces credentials, visit [http://localhost:3000/system-status](http://localhost:3000/system-status) to confirm that file storage is correctly configured and connected
-
-7. **Try Uploading a Profile Image**
-
-   - Go to your profile/settings page in the app
-   - Try uploading a profile image to make sure everything is working as expected
-   - If you encounter any errors, check the system status page for more details and troubleshooting tips
-
-> For more details, see [DigitalOcean's Spaces documentation](https://docs.digitalocean.com/products/spaces/).
-
-## Part 4: Set Up Stripe for Billing and Subscriptions
-
-SeaNotes includes a complete subscription billing system powered by Stripe. Setting up Stripe allows you to:
+RPaaS includes a complete subscription billing system powered by Stripe. Setting up Stripe allows you to:
 
 - Offer free and paid subscription tiers
 - Process payments securely
@@ -418,104 +336,4 @@ SeaNotes includes a complete subscription billing system powered by Stripe. Sett
 
 > **Note:** For detailed instructions, including webhook setup, adding custom products, and troubleshooting, see the [Stripe Integration Guide](./docs/stripe-integration-guide.md).
 
-## Part 5: Set Up AI Features (DigitalOcean Inference API)
-
-SeaNotes includes AI-powered features that enhance the note-taking experience using DigitalOcean's Inference API. These features are completely optional - your app works perfectly without them, but they add intelligent automation when enabled.
-
-### AI Features Included:
-
-- **AI Integration Demo** - Users can click "Generate Note with AI" to see how DigitalOcean's Inference API works (demonstrates AI integration patterns)
-- **Automatic Title Generation** - When users create notes without titles, the system generates relevant titles in the background
-- **Graceful Fallbacks** - If AI services are unavailable, the app continues working normally with timestamp-based titles
-
-### Setup Steps:
-
-1. **Get Your DigitalOcean Inference API Key**
-
-   - Log in to your [DigitalOcean dashboard](https://cloud.digitalocean.com/)
-   - Navigate to **Agent Platform** in the left sidebar → click **Serverless Inference**
-   ![digitalocean_agent_platform_interface](docs/images/digitalocean_agent_platform_interface.png)
-   - Click the **"Create model access key"** button
-   - Give your key a descriptive name (e.g., "my-saas-app-ai-key")
-   ![add_model_access_key_screenshot](docs/images/add_model_access_key_screenshot.png)
-   - Click **Save** and copy the generated key immediately
-   ![alt text](docs/images/model_access_keys_digitalocean.png)
-   - Store this key securely - you'll need it for your environment configuration
-   
-
-   > **Note:** This single key provides access to all models in DigitalOcean's Serverless Inference service.
-
-2. **Update Your `.env` File**
-   
-   Update the following values in your `.env` file with your actual API key:
-
-   ```
-   DO_INFERENCE_API_KEY=your-digitalocean-inference-api-key
-   NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED=true
-   ```
-
-   - `DO_INFERENCE_API_KEY`: Your DigitalOcean Inference API key (server-side)
-   - `NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED`: Enables DigitalOcean Gradient AI features in the frontend (client-side)
-
-3. **Restart Your Development Server**
-
-   After updating your `.env`, restart the server:
-
-   ```bash
-   npm run dev
-   ```
-
-4. **Test the AI Features**
-
-   - **Content Generation**: When creating a new note, look for the "Generate Note with AI" button
-   - **Auto-Title Generation**: Create a note without a title and watch as an AI-generated title appears automatically
-   - **System Status**: Check [http://localhost:3000/system-status](http://localhost:3000/system-status) to confirm AI services are connected
-
-### How It Works:
-
-- **User-Triggered**: Content generation only happens when users click the AI button
-- **Background Processing**: Title generation happens automatically but doesn't block note creation
-- **Smart Fallbacks**: If AI generation fails, the app uses timestamp-based titles instead
-- **No Dependencies**: Your app continues to work normally even if AI features are disabled
-
-> **Note:** AI features use DigitalOcean's managed inference service, which provides reliable AI capabilities without the need to manage your own AI infrastructure.
-
-## Part 6: Deploy to DigitalOcean App Platform
-
-SeaNotes is designed to deploy seamlessly to DigitalOcean App Platform. You have two options for deployment:
-
-### Option A: Deploy with One-Click Deployment Button
-
-1. Click on the one-click deployment button below. If you are not currently logged in with your DigitalOcean account, this button prompts you to log in.
-
-[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/digitalocean/sea-notes-saas-starter-kit/tree/main)
-
-2. After deployment is complete, configure the environment variables under Settings -> saas-application.
-   - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
-
-> Note: Prisma migrations will run automatically
-
-3. Navigate to the site to verify your deployment
-
-### Option B: Manual Deployment
-
-1. **Prepare Your Application**
-
-   - Make sure all required environment variables are set
-   - Ensure your database is properly configured
-   - Test your application locally to confirm everything works
-
-2. **Deploy to DigitalOcean**
-
-   - Follow the detailed instructions in our [DigitalOcean Deployment Guide](docs/digitalocean-deployment-guide.md)
-   - The guide covers creating resources, configuring environment variables, and setting up your app
-
-3. **Verify Your Deployment**
-   - After deployment, check the system status page on your live site
-   - Test all features to ensure they're working correctly in production
-
-For detailed deployment instructions, see the [DigitalOcean Deployment Guide](docs/digitalocean-deployment-guide.md).
-
-## License
-
-This repository is covered under [The MIT License](LICENSE).
+## Part 3: Set Up Stripe for Billing and Subscriptions

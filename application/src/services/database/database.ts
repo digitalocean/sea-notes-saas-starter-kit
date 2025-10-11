@@ -1,4 +1,4 @@
-import { Note, Subscription, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
+import { Environment, Subscription, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
 import { ServiceConfigStatus, ConfigurableService } from '../status/serviceConfigStatus';
 
 export type DatabaseProvider = 'Postgres';
@@ -46,11 +46,11 @@ export abstract class DatabaseClient implements ConfigurableService {
     ) => Promise<Subscription>;
     delete: (id: string) => Promise<void>;
   };
-  abstract note: {
-    findById: (id: string) => Promise<Note | null>;
-    findByUserId: (userId: string) => Promise<Note[]>;
-    create: (note: Omit<Note, 'id' | 'createdAt'>) => Promise<Note>;
-    update: (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note>;
+  abstract environment: {
+    findById: (id: string) => Promise<Environment | null>;
+    findByUserId: (userId: string) => Promise<Environment[]>;
+    create: (environment: Omit<Environment, 'id' | 'createdAt'>) => Promise<Environment>;
+    update: (id: string, environment: Partial<Omit<Environment, 'id' | 'createdAt'>>) => Promise<Environment>;
     delete: (id: string) => Promise<void>;
     findMany: (args: {
       search?: string;
@@ -59,9 +59,9 @@ export abstract class DatabaseClient implements ConfigurableService {
       take: number;
       orderBy: {
         createdAt?: 'desc' | 'asc';
-        title?: 'asc';
+        name?: 'asc';
       };
-    }) => Promise<Note[]>;
+    }) => Promise<Environment[]>;
     count: (userId: string, search?: string) => Promise<number>;
   };
   abstract verificationToken: {

@@ -62,7 +62,7 @@ describe('NavBar', () => {
 
     const pricingLinks = screen.getAllByText('Pricing');
     expect(pricingLinks.length).toBeGreaterThan(0);
-    expect(screen.getAllByText('FAQ').length).toBeGreaterThan(0);
+    
     expect(screen.getAllByText('Log in').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Sign up').length).toBeGreaterThan(0);
   });

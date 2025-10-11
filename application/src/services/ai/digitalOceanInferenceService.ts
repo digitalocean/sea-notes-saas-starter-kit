@@ -11,6 +11,19 @@ import { serverConfig } from '../../settings';
 /**
  * DigitalOcean unified inference service for both title and content generation
  */
+/**
+ * DigitalOcean AI Inference Service
+ * 
+ * Provides AI-powered name and content generation using DigitalOcean's Inference API
+ * with OpenAI-compatible interface.
+ */
+
+import OpenAI from 'openai';
+import { serverConfig } from '../../settings';
+
+/**
+ * DigitalOcean unified inference service for both name and content generation
+ */
 export class DigitalOceanInferenceService {
   private client: OpenAI;
 
@@ -26,24 +39,24 @@ export class DigitalOceanInferenceService {
   }
 
   /**
-   * Generate a concise, descriptive title from note content using AI
-   * @param content - The note content to generate a title from
-   * @returns Promise that resolves to a 2-8 word title
+   * Generate a concise, descriptive name from environment content using AI
+   * @param content - The environment content to generate a name from
+   * @returns Promise that resolves to a 2-8 word name
    * @throws Error if content is empty or AI generation fails
    */
-  async generateTitle(content: string): Promise<string> {
+  async generateName(content: string): Promise<string> {
     if (!content || content.trim().length === 0) {
-      throw new Error('Content is required to generate a title');
+      throw new Error('Content is required to generate a name');
     }
 
     const messages = [
       {
         role: 'system' as const,
-        content: 'You are a helpful assistant that generates concise, descriptive titles for notes. Generate a title that is 2-8 words long and captures the main topic or purpose of the note content. Return only the title, no quotes or additional text.',
+        content: 'You are a helpful assistant that generates concise, descriptive names for environments. Generate a name that is 2-8 words long and captures the main topic or purpose of the environment content. Return only the name, no quotes or additional text.',
       },
       {
         role: 'user' as const,
-        content: `Generate a title for this note content: ${content}`,
+        content: `Generate a name for this environment content: ${content}`,
       },
     ];
 
@@ -51,7 +64,7 @@ export class DigitalOceanInferenceService {
   }
 
   /**
-   * Generate note content with AI
+   * Generate environment content with AI
    * @returns Promise that resolves to the generated content
    */
   async generateContent(): Promise<string> {
@@ -64,7 +77,7 @@ export class DigitalOceanInferenceService {
       },
       {
         role: 'user' as const,
-        content: 'Generate helpful note content based on the system prompt.',
+        content: 'Generate helpful environment content based on the system prompt.',
       },
     ];
     
@@ -139,9 +152,37 @@ export class DigitalOceanInferenceService {
    * @returns The prompt string for content generation
    */
   private getContentPrompt(): string {
-    return 'Write a one- or two-sentence random note in a casual-professional tone with an em dash and a short action takeaway. Do not include any titles, headings, formatting, preamble, or conclusion.';
+    return 'Write a one- or two-sentence random environment in a casual-professional tone with an em dash and a short action takeaway. Do not include any names, headings, formatting, preamble, or conclusion.';
   }
 }
+
+/**
+ * Generate a timestamp-based name as fallback
+ * @returns A name with current date
+ */
+export function generateTimestampName(): string {
+  return `Environment - ${new Date().toLocaleDateString()}`;
+}
+
+/**
+ * Generate name with AI and fallback to timestamp if fails
+ * @param content - The environment content to generate name from
+ * @returns Generated name or timestamp fallback
+ */
+export async function generateNameWithFallback(content: string): Promise<string> {
+  if (!serverConfig.GradientAI.doInferenceApiKey) {
+    throw new Error('AI name generation is not configured');
+  }
+
+  try {
+    const service = new DigitalOceanInferenceService();
+    return await service.generateName(content);
+  } catch (error) {
+    console.warn('AI name generation failed, using timestamp fallback:', error);
+    return generateTimestampName();
+  }
+}
+
 
 /**
  * Generate a timestamp-based title as fallback

@@ -1,7 +1,7 @@
 /**
- * NoteForm Component with AI Content Generation
+ * EnvironmentForm Component with AI Content Generation
  * 
- * Unified component for creating, editing, and viewing notes with optional AI features.
+ * Unified component for creating, editing, and viewing environments with optional AI features.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -20,24 +20,24 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import { NotesApiClient } from 'lib/api/notes';
+import { EnvironmentsApiClient } from 'lib/api/environments';
 import { hasDigitalOceanGradientAIEnabled } from '../../../settings';
 
-const apiClient = new NotesApiClient();
+const apiClient = new EnvironmentsApiClient();
 
-interface NoteFormProps {
+interface EnvironmentFormProps {
   mode: 'create' | 'edit' | 'view';
-  noteId?: string;
-  onSave?: (note: { id?: string; title?: string; content: string }) => void;
+  environmentId?: string;
+  onSave?: (environment: { id?: string; name?: string; type: string; content?: string }) => void;
   onCancel?: () => void;
 }
 
 /**
- * NoteForm component for creating, editing, and viewing notes
+ * EnvironmentForm component for creating, editing, and viewing environments
  */
-const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+const EnvironmentForm: React.FC<EnvironmentFormProps> = ({ mode, environmentId, onSave, onCancel }) => {
+  const [name, setName] = useState(''); // Changed from title
+  const [type, setType] = useState(''); // Changed from content
   const [createdAt, setCreatedAt] = useState<string>('');
   const [loading, setLoading] = useState(mode !== 'create');
   const [error, setError] = useState<string | null>(null);
@@ -49,36 +49,36 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState<'success' | 'error'>('success');
 
-  // Ref for content field to enable auto-focus
-  const contentFieldRef = useRef<HTMLInputElement>(null);
+  // Ref for type field to enable auto-focus
+  const typeFieldRef = useRef<HTMLInputElement>(null); // Changed from contentFieldRef
 
-  // Fetch note data for edit/view modes
+  // Fetch environment data for edit/view modes
   useEffect(() => {
-    if ((mode === 'edit' || mode === 'view') && noteId) {
-      const fetchNote = async () => {
+    if ((mode === 'edit' || mode === 'view') && environmentId) {
+      const fetchEnvironment = async () => {
         try {
           setLoading(true);
-          const noteData = await apiClient.getNote(noteId);
-          setTitle(noteData.title);
-          setContent(noteData.content);
-          setCreatedAt(noteData.createdAt);
+          const environmentData = await apiClient.getEnvironment(environmentId);
+          setName(environmentData.name); // Changed from title
+          setType(environmentData.type); // Changed from content
+          setCreatedAt(environmentData.createdAt);
           setError(null);
         } catch (err) {
-          console.error('Error fetching note:', err);
-          setError('Failed to load note. Please try again.');
+          console.error('Error fetching environment:', err);
+          setError('Failed to load environment. Please try again.');
         } finally {
           setLoading(false);
         }
       };
 
-      fetchNote();
+      fetchEnvironment();
     }
-  }, [mode, noteId]);
+  }, [mode, environmentId]);
 
-  // Auto-focus content field when in create mode
+  // Auto-focus type field when in create mode
   useEffect(() => {
-    if (mode === 'create' && contentFieldRef.current) {
-      contentFieldRef.current.focus();
+    if (mode === 'create' && typeFieldRef.current) { // Changed from contentFieldRef
+      typeFieldRef.current.focus();
     }
   }, [mode]);
 
@@ -86,17 +86,17 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
     e.preventDefault();
 
     if (onSave) {
-      let noteData;
+      let environmentData;
       
-      if (mode === 'edit' && noteId) {
-        // Edit mode: always include title and content
-        noteData = { id: noteId, title, content };
+      if (mode === 'edit' && environmentId) {
+        // Edit mode: always include name and type
+        environmentData = { id: environmentId, name, type }; // Changed from title, content
       } else {
-        // Create mode: include title (if provided) and content
-        noteData = title ? { title, content } : { content };
+        // Create mode: include name (if provided) and type
+        environmentData = name ? { name, type } : { type }; // Changed from title, content
       }
       
-      onSave(noteData);
+      onSave(environmentData);
     }
   };
 
@@ -108,8 +108,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
   };
 
   const handleGenerateContent = async () => {
-    // If content already exists, show confirmation dialog
-    if (content && content.trim().length > 0) {
+    // If type already exists, show confirmation dialog
+    if (type && type.trim().length > 0) { // Changed from content
       setShowConfirmDialog(true);
       return;
     }
@@ -137,7 +137,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
       }
 
       const { content: generatedContent } = await response.json();
-      setContent(generatedContent);
+      setType(generatedContent); // Changed from setContent
       showToastMessage('Content generated successfully!');
     } catch (error) {
       console.error('Content generation failed:', error);
@@ -155,7 +155,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
         justifyContent="center"
         alignItems="center"
         minHeight="50vh"
-        data-testid="note-loading-state"
+        data-testid="environment-loading-state" // Changed from note-loading-state
       >
         <CircularProgress />
       </Box>
@@ -165,12 +165,12 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
   // Show error message
   if (error) {
     return (
-      <Box textAlign="center" p={3} data-testid="note-error-state">
-        <Typography variant="h4" gutterBottom data-testid="note-error-message">
+      <Box textAlign="center" p={3} data-testid="environment-error-state"> // Changed from note-error-state
+        <Typography variant="h4" gutterBottom data-testid="environment-error-message"> // Changed from note-error-message
           {error}
         </Typography>
-        <Button onClick={onCancel} variant="contained" data-testid="note-error-back-button">
-          Back to Notes
+        <Button onClick={onCancel} variant="contained" data-testid="environment-error-back-button"> // Changed from note-error-back-button
+          Back to Environments
         </Button>
       </Box>
     );
@@ -187,40 +187,40 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
       )}{' '}
       <Card>
         <CardContent>
-          <Typography variant="h6" gutterBottom data-testid="note-form-title">
-            {mode === 'create' ? 'Create New Note' : mode === 'edit' ? 'Edit Note' : 'View Note'}
+          <Typography variant="h6" gutterBottom data-testid="environment-form-title">
+            {mode === 'create' ? 'Create New Environment' : mode === 'edit' ? 'Edit Environment' : 'View Environment'}
           </Typography>
           <form
             onSubmit={mode !== 'view' ? handleSubmit : (e) => e.preventDefault()}
-            data-testid="note-form"
+            data-testid="environment-form" // Changed from note-form
           >
             {' '}
             <TextField
-              id="title"
-              label="Title (optional)"
+              id="name" // Changed from title
+              label="Name (optional)" // Changed from Title
               fullWidth
               margin="normal"
-              placeholder="Enter note title (optional)"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter environment name (optional)" // Changed from note title
+              value={name} // Changed from title
+              onChange={(e) => setName(e.target.value)} // Changed from setTitle
               InputProps={{ readOnly: isReadOnly }}
-              data-testid="note-title-input"
+              data-testid="environment-name-input" // Changed from note-title-input
             />
             
             <TextField
-              id="content"
-              label="Content"
+              id="type" // Changed from content
+              label="Type" // Changed from Content
               fullWidth
               margin="normal"
               multiline
               rows={6}
-              placeholder="Enter note content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              placeholder="Enter environment type" // Changed from note content
+              value={type} // Changed from content
+              onChange={(e) => setType(e.target.value)} // Changed from setContent
               required
               InputProps={{ readOnly: isReadOnly }}
-              inputRef={contentFieldRef}
-              data-testid="note-content-input"
+              inputRef={typeFieldRef} // Changed from contentFieldRef
+              data-testid="environment-type-input" // Changed from note-content-input
             />{' '}
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
               {/* AI Content Generation Button - only show in create mode when AI configured */}
@@ -233,14 +233,14 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
                   size="small"
                   data-testid="generate-content-button"
                 >
-                  {isGenerating ? 'Generating...' : 'Generate Note with GradientAI'}
+                  {isGenerating ? 'Generating...' : 'Generate Environment with GradientAI'} // Changed from Note
                 </Button>
               ) : (
                 <Box /> // Empty box to maintain spacing
               )}
               
               <Box display="flex" gap={1}>
-                <Button onClick={onCancel} data-testid="note-cancel-button">
+                <Button onClick={onCancel} data-testid="environment-cancel-button">
                   {mode === 'view' ? 'Close' : 'Cancel'}
                 </Button>
                 {mode !== 'view' && (
@@ -248,9 +248,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
                     type="submit"
                     variant="contained"
                     color="primary"
-                    data-testid="note-save-button"
-                  >
-                    {mode === 'edit' ? 'Save Changes' : 'Save Note'}
+                    data-testid="environment-save-button">
+                    {mode === 'edit' ? 'Save Changes' : 'Save Environment'}
                   </Button>
                 )}
               </Box>
@@ -300,4 +299,4 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
   );
 };
 
-export default NoteForm;
+export default EnvironmentForm;

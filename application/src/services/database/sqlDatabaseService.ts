@@ -1,6 +1,6 @@
 import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
-import { Subscription, Note, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
+import { Subscription, Environment, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
 import { PrismaClient } from '@prisma/client';
 import { ServiceConfigStatus } from '../status/serviceConfigStatus';
 
@@ -11,7 +11,7 @@ export class SqlDatabaseService extends DatabaseClient {
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Database (PostgreSQL)';
   private description: string =
-    'The following features are impacted: overall app functionality, user, subscription and notes management';
+    'The following features are impacted: overall app functionality, user, subscription and environments management';
 
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
@@ -132,21 +132,21 @@ export class SqlDatabaseService extends DatabaseClient {
       await prisma.subscription.delete({ where: { id } });
     },
   };
-  note = {
-    findById: async (id: string): Promise<Note | null> => {
-      return prisma.note.findUnique({ where: { id } });
+  environment = {
+    findById: async (id: string): Promise<Environment | null> => {
+      return prisma.environment.findUnique({ where: { id } });
     },
-    findByUserId: async (userId: string): Promise<Note[]> => {
-      return prisma.note.findMany({ where: { userId } });
+    findByUserId: async (userId: string): Promise<Environment[]> => {
+      return prisma.environment.findMany({ where: { userId } });
     },
-    create: async (note: Omit<Note, 'id' | 'createdAt'>): Promise<Note> => {
-      return prisma.note.create({ data: note });
+    create: async (environment: Omit<Environment, 'id' | 'createdAt'>): Promise<Environment> => {
+      return prisma.environment.create({ data: environment });
     },
-    update: async (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>): Promise<Note> => {
-      return prisma.note.update({ where: { id }, data: note });
+    update: async (id: string, environment: Partial<Omit<Environment, 'id' | 'createdAt'>>): Promise<Environment> => {
+      return prisma.environment.update({ where: { id }, data: environment });
     },
     delete: async (id: string): Promise<void> => {
-      await prisma.note.delete({ where: { id } });
+      await prisma.environment.delete({ where: { id } });
     },
     findMany: async (args: {
       userId: string;
@@ -155,18 +155,18 @@ export class SqlDatabaseService extends DatabaseClient {
       take: number;
       orderBy: {
         createdAt?: 'desc' | 'asc';
-        title?: 'asc';
+        name?: 'asc';
       };
     }) => {
       const { userId, search, skip, take, orderBy } = args;
-      return prisma.note.findMany({
+      return prisma.environment.findMany({
         where: {
           userId,
           ...(search
             ? {
                 OR: [
-                  { title: { contains: search, mode: 'insensitive' } },
-                  { content: { contains: search, mode: 'insensitive' } },
+                  { name: { contains: search, mode: 'insensitive' } },
+                  { type: { contains: search, mode: 'insensitive' } },
                 ],
               }
             : {}),
@@ -177,14 +177,14 @@ export class SqlDatabaseService extends DatabaseClient {
       });
     },
     count: async (userId: string, search?: string) => {
-      return prisma.note.count({
+      return prisma.environment.count({
         where: {
           userId,
           ...(search
             ? {
                 OR: [
-                  { title: { contains: search, mode: 'insensitive' } },
-                  { content: { contains: search, mode: 'insensitive' } },
+                  { name: { contains: search, mode: 'insensitive' } },
+                  { type: { contains: search, mode: 'insensitive' } },
                 ],
               }
             : {}),
@@ -290,7 +290,7 @@ export class SqlDatabaseService extends DatabaseClient {
     return {
       name: SqlDatabaseService.serviceName,
       configured: true,
-      connected: true,
+      connected: true
     };
   }
 }

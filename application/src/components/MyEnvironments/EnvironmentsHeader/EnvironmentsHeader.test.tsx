@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import NotesHeader from './NotesHeader';
+import EnvironmentsHeader from './EnvironmentsHeader';
 
 const theme = createTheme();
 
@@ -16,67 +16,67 @@ const mockProps = {
   onSearchChange: jest.fn(),
   onSortChange: jest.fn(),
   onViewModeChange: jest.fn(),
-  onCreateNote: jest.fn(),
+  onCreateEnvironment: jest.fn(),
 };
 
-describe('NotesHeader', () => {
+describe('EnvironmentsHeader', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders the create note button correctly', () => {
+  it('renders the create environment button correctly', () => {
     render(
       <TestWrapper>
-        <NotesHeader {...mockProps} />
+        <EnvironmentsHeader {...mockProps} />
       </TestWrapper>
     );
 
-    expect(screen.getByTestId('notes-create-button')).toBeInTheDocument();
+    expect(screen.getByTestId('environments-create-button')).toBeInTheDocument();
   });
 
-  it('renders the create note button', () => {
+  it('renders the create environment button', () => {
     render(
       <TestWrapper>
-        <NotesHeader {...mockProps} />
+        <EnvironmentsHeader {...mockProps} />
       </TestWrapper>
     );
 
-    const createButton = screen.getByTestId('notes-create-button');
+    const createButton = screen.getByTestId('environments-create-button');
     expect(createButton).toBeInTheDocument();
   });
 
-  it('calls onCreateNote when create button is clicked', () => {
+  it('calls onCreateEnvironment when create button is clicked', () => {
     render(
       <TestWrapper>
-        <NotesHeader {...mockProps} />
+        <EnvironmentsHeader {...mockProps} />
       </TestWrapper>
     );
 
-    const createButton = screen.getByTestId('notes-create-button');
+    const createButton = screen.getByTestId('environments-create-button');
     fireEvent.click(createButton);
 
-    expect(mockProps.onCreateNote).toHaveBeenCalledTimes(1);
+    expect(mockProps.onCreateEnvironment).toHaveBeenCalledTimes(1);
   });
 
   it('renders search input with correct placeholder', () => {
     render(
       <TestWrapper>
-        <NotesHeader {...mockProps} />
+        <EnvironmentsHeader {...mockProps} />
       </TestWrapper>
     );
 
-    const searchInput = screen.getByTestId('notes-search-input');
+    const searchInput = screen.getByTestId('environments-search-input');
     expect(searchInput).toBeInTheDocument();
   });
 
   it('renders view mode toggle buttons', () => {
     render(
       <TestWrapper>
-        <NotesHeader {...mockProps} />
+        <EnvironmentsHeader {...mockProps} />
       </TestWrapper>
     );
 
-    expect(screen.getByTestId('notes-list-view-button')).toBeInTheDocument();
-    expect(screen.getByTestId('notes-grid-view-button')).toBeInTheDocument();
+    expect(screen.getByTestId('environments-list-view-button')).toBeInTheDocument();
+    expect(screen.getByTestId('environments-grid-view-button')).toBeInTheDocument();
   });
 });

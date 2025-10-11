@@ -88,7 +88,7 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
     <>
       <SidebarHeader justifyContent="space-between">
         <Typography variant="h5" fontWeight={600}>
-          🐳 SeaNotes
+          RPaaS
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>{getProfileIcon()}</Box>
       </SidebarHeader>
@@ -99,11 +99,11 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
             Dashboard
           </SidebarLink>
           <SidebarLink
-            href="/dashboard/my-notes"
+            href="/dashboard/my-environments"
             icon={<Receipt fontSize="small" />}
             onClick={onNavigate}
           >
-            My Notes
+            My Environments
           </SidebarLink>
         </List>
       </Box>

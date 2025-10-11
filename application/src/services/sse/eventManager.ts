@@ -11,11 +11,11 @@ export interface SSEEvent {
   timestamp?: number;
 }
 
-export interface TitleUpdatedEvent extends SSEEvent {
-  type: 'title_updated';
+export interface NameUpdatedEvent extends SSEEvent {
+  type: 'name_updated';
   data: {
-    noteId: string;
-    title: string;
+    environmentId: string;
+    name: string;
     userId: string;
   };
 }
@@ -25,20 +25,20 @@ export interface ConnectionEvent extends SSEEvent {
   message?: string;
 }
 
-export type NotesSSEEvent = TitleUpdatedEvent | ConnectionEvent;
+export type EnvironmentsSSEEvent = NameUpdatedEvent | ConnectionEvent;
 
 /**
- * Broadcast a title update event to the note owner
- * @param noteId - The ID of the note that was updated
- * @param title - The new title
- * @param userId - The user ID who owns the note
+ * Broadcast a name update event to the environment owner
+ * @param environmentId - The ID of the environment that was updated
+ * @param name - The new name
+ * @param userId - The user ID who owns the environment
  */
-export function broadcastTitleUpdate(noteId: string, title: string, userId: string): void {
-  const eventData: TitleUpdatedEvent = {
-    type: 'title_updated',
+export function broadcastNameUpdate(environmentId: string, name: string, userId: string): void {
+  const eventData: NameUpdatedEvent = {
+    type: 'name_updated',
     data: {
-      noteId,
-      title,
+      environmentId,
+      name,
       userId,
     },
     timestamp: Date.now(),
@@ -48,11 +48,13 @@ export function broadcastTitleUpdate(noteId: string, title: string, userId: stri
     const controller = global.sseConnections?.get(userId);
     
     if (controller) {
-      const event = `data: ${JSON.stringify(eventData)}\n\n`;
+      const event = `data: ${JSON.stringify(eventData)}
+
+`;
       controller.enqueue(new TextEncoder().encode(event));
     }
   } catch (error) {
-    console.error('Error broadcasting title update:', error);
+    console.error('Error broadcasting name update:', error);
   }
 }
 

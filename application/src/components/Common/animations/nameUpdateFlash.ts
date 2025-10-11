@@ -1,15 +1,15 @@
 /**
- * Shared animation utility for title update flash effect
- * Used across NotesListView and NotesGridView components
+ * Shared animation utility for name update flash effect
+ * Used across EnvironmentsListView and EnvironmentsGridView components
  */
 
 import { SxProps, Theme } from '@mui/material';
 
 /**
- * Returns the keyframes for the title update flash animation
+ * Returns the keyframes for the name update flash animation
  * @param withPadding - Whether to include padding in the animation (for grid view)
  */
-export const getTitleUpdateFlashKeyframes = (withPadding: boolean = false) => {
+export const getNameUpdateFlashKeyframes = (withPadding: boolean = false) => {
   const basePadding = withPadding ? { padding: '2px 4px' } : {};
   
   return {
@@ -27,16 +27,16 @@ export const getTitleUpdateFlashKeyframes = (withPadding: boolean = false) => {
 };
 
 /**
- * Returns the complete sx object for title update flash animation
+ * Returns the complete sx object for name update flash animation
  * @param isAnimating - Whether the animation should be active
  * @param withPadding - Whether to include padding in the animation (for grid view)
  */
-export const getTitleUpdateFlashAnimation = (
+export const getNameUpdateFlashAnimation = (
   isAnimating: boolean, 
   withPadding: boolean = false
 ): SxProps<Theme> => ({
-  animation: isAnimating ? 'titleUpdateFlash 3s ease-out' : 'none',
-  '@keyframes titleUpdateFlash': getTitleUpdateFlashKeyframes(withPadding),
+  animation: isAnimating ? 'nameUpdateFlash 3s ease-out' : 'none',
+  '@keyframes nameUpdateFlash': getNameUpdateFlashKeyframes(withPadding),
   '@media (prefers-reduced-motion: reduce)': {
     animation: 'none', // Disable animation for users who prefer reduced motion
   }
