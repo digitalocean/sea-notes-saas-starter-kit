@@ -141,7 +141,7 @@ If you prefer using Docker for your database, follow these steps:
    - Password: `postgres`
    - Port: `5432`
 
-   The Docker Compose configuration already includes these sensible defaults, so no changes are needed to the database configuration in your `.env` file for basic setup.
+   The Docker Compose configuration already includes these reasonable defaults, so no changes are needed to the database configuration in your `.env` file for basic setup.
 
    ![alt text](docs/images/docker_desktop_containers_view.png)
 
