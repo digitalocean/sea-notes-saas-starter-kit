@@ -1,4 +1,5 @@
 export interface Note {
+  [x: string]: string;
   id: string;
   userId: string;
   title: string;

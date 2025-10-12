@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
-import { DigitalOceanInferenceService } from '@/services/digitalOceanInferenceService';
+import { auth } from '../../../../../lib/auth/auth';
+import {prisma} from '../../../../../lib/prisma';
+import { DigitalOceanInferenceService } from '../../../../../services/ai/digitalOceanInferenceService';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -18,7 +17,7 @@ export async function POST(
       );
     }
 
-    const noteId = params.id;
+    const noteId = (await params).id;
 
     // Get the note and verify ownership
     const note = await prisma.note.findUnique({
@@ -69,7 +68,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session?.user?.email) {
       return NextResponse.json(

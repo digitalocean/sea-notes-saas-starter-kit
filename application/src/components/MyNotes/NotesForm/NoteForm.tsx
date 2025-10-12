@@ -274,7 +274,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
               data-testid="note-content-input"
             />{' '}
 
-            /* AI Summary Generation - show in edit/view modes when content exists */
+            {/* AI Summary Generation - show in edit/view modes when content exists */}
             {(mode === 'edit' || mode === 'view') && content && hasDigitalOceanGradientAIEnabled && (
               <Box mt={2}>
                 <Button
@@ -310,6 +310,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
                     </CardContent>
                   </Card>
                 )}
+              </Box>
+            )}
 
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
               {/* AI Content Generation Button - only show in create mode when AI configured */}
