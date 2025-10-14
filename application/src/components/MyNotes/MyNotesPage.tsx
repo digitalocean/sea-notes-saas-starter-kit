@@ -7,6 +7,7 @@ import NoteForm from './NotesForm/NoteForm';
 import NotesGridView from './NotesGridView/NotesGridView';
 import NotesListView from './NotesListView/NotesListView';
 import NotesHeader from './NotesHeader/NotesHeader';
+import NotesQA from './NotesQA/NotesQA';
 import PageContainer from '../Common/PageContainer/PageContainer';
 import ConfirmationDialog from './ConfirmationDialog/ConfirmationDialog';
 import Toast from '../Common/Toast/Toast';
@@ -125,9 +126,13 @@ const MyNotes: React.FC = () => {
     setSearchQuery(event.target.value);
   };
 
-  const handleCreateNote = async (noteData: { title?: string; content: string }) => {
+  const handleCreateNote = async (noteData: { title?: string; content: string; summary?: string | null }) => {
     try {
-      await apiClient.createNote(noteData);
+      await apiClient.createNote({
+        title: noteData.title,
+        content: noteData.content,
+        summary: noteData.summary ?? undefined,
+      });
       setIsCreateModalOpen(false);
 
       // Navigate to page 1 to see the new note (newest first)
@@ -152,11 +157,15 @@ const MyNotes: React.FC = () => {
       setToastOpen(true);
     }
   };
-  const handleUpdateNote = async (noteData: { title?: string; content: string }) => {
+  const handleUpdateNote = async (noteData: { title?: string; content: string; summary?: string | null }) => {
     if (!selectedNoteId) return;
 
     try {
-      await apiClient.updateNote(selectedNoteId, noteData);
+      await apiClient.updateNote(selectedNoteId, {
+        title: noteData.title,
+        content: noteData.content,
+        summary: noteData.summary ?? undefined,
+      });
       setIsEditModalOpen(false);
       setSelectedNoteId(null);
 
@@ -265,6 +274,9 @@ const MyNotes: React.FC = () => {
         onViewModeChange={setViewMode}
         onCreateNote={() => setIsCreateModalOpen(true)}
       />
+
+      {/* Notes QA - ask natural language questions over your notes */}
+      <NotesQA />
 
       {/* Notes Display */}
       {viewMode === 'list' ? (

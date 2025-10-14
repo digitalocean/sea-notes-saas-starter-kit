@@ -17,7 +17,7 @@ export const createNote = async (
 ): Promise<NextResponse> => {
   try {
     const userId = user.id;
-    const { title, content } = await request.json();
+  const { title, content, summary } = await request.json();
 
     if (!content) {
       return NextResponse.json(
@@ -33,9 +33,8 @@ export const createNote = async (
 
     // Save note immediately with timestamp title
     const note = await dbClient.note.create({
-      userId,
-      title: finalTitle,
-      content,
+      // Cast to any to allow optional summary field when typings are out-of-sync
+      ...( { userId, title: finalTitle, content, summary: summary ?? null } as any ),
     });
 
     // Trigger background title generation if no title provided and AI configured

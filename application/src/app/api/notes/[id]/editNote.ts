@@ -17,7 +17,7 @@ export const editNote = async (
   try {
     const { id: noteId } = await params;
     const userId = user.id;
-    const { title, content } = await request.json();
+  const { title, content, summary } = await request.json();
     const dbClient = await createDatabaseService();
 
     if (!title && !content) {
@@ -37,10 +37,9 @@ export const editNote = async (
       return NextResponse.json({ error: 'Unauthorized' }, { status: HTTP_STATUS.FORBIDDEN });
     }
 
-    const updatedNote = await dbClient.note.update(noteId, {
-      title,
-      content,
-    });
+    const updatedNote = await dbClient.note.update(noteId, (
+      { title, content, summary } as any
+    ));
 
     return NextResponse.json(updatedNote, { status: HTTP_STATUS.OK });
   } catch (error) {
