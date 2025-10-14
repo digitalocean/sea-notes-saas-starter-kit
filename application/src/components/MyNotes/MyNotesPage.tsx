@@ -7,6 +7,7 @@ import NoteForm from './NotesForm/NoteForm';
 import NotesGridView from './NotesGridView/NotesGridView';
 import NotesListView from './NotesListView/NotesListView';
 import NotesHeader from './NotesHeader/NotesHeader';
+import NotesQA from './NotesQA/NotesQA';
 import PageContainer from '../Common/PageContainer/PageContainer';
 import ConfirmationDialog from './ConfirmationDialog/ConfirmationDialog';
 import Toast from '../Common/Toast/Toast';
@@ -273,6 +274,9 @@ const MyNotes: React.FC = () => {
         onViewModeChange={setViewMode}
         onCreateNote={() => setIsCreateModalOpen(true)}
       />
+
+      {/* Notes QA - ask natural language questions over your notes */}
+      <NotesQA />
 
       {/* Notes Display */}
       {viewMode === 'list' ? (

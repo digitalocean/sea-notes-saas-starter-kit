@@ -91,4 +91,15 @@ export class NotesApiClient {
     const res = await fetch(`${this.baseURL}/${id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Failed to delete note');
   }
+
+  // Ask a question over the user's notes
+  async askQuestion(question: string): Promise<{ answer: string }> {
+    const res = await fetch(`${this.baseURL}/qa`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    if (!res.ok) throw new Error('Failed to ask question');
+    return res.json();
+  }
 }
