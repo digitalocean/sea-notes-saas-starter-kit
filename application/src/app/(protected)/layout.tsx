@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import Sidebar from 'components/Common/Sidebar/Sidebar';
-import MaterialThemeProvider from 'components/Theme/Theme';
 import { ThemePicker } from 'components/Theme/ThemePicker';
 import NavigationHandler from './NavigationHandler';
 
@@ -12,7 +11,7 @@ import NavigationHandler from './NavigationHandler';
  */
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
-    <MaterialThemeProvider>
+    <>
       <NavigationHandler />
       <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
         <Sidebar />
@@ -24,6 +23,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             position: 'relative',
           }}
         >
+          {/* Keep the existing ThemePicker for theme selection */}
           <Box
             sx={{
               position: 'absolute',
@@ -35,13 +35,15 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
           >
             <ThemePicker />
           </Box>
+          
           {/* Mobile theme picker renders itself with fixed positioning */}
-          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+          <Box sx={{ display: { xs: 'block', md: 'none' }, position: 'fixed', top: 70, right: 16 }}>
             <ThemePicker />
           </Box>
+          
           {children}
         </Box>
       </Box>
-    </MaterialThemeProvider>
+    </>
   );
 }

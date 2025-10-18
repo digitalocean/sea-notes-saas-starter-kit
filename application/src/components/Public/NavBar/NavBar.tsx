@@ -21,6 +21,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useSession, signOut } from 'next-auth/react';
 import ServiceWarningIndicator from 'components/Common/ServiceWarningIndicator/ServiceWarningIndicator';
 import { usePathname } from 'next/navigation';
+import { AnimatedThemeToggle } from 'components/Theme/AnimatedThemeToggle';
 
 /**
  * Main navigation bar of the application.
@@ -111,7 +112,7 @@ const NavBar = () => {
               <MenuIcon />
             </IconButton>
           ) : (
-            <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {!isSystemStatusPage ? <ServiceWarningIndicator /> : null}
               {navLinks.map(({ href, label, onClick }) => (
                 <Button
@@ -131,6 +132,14 @@ const NavBar = () => {
                   {label}
                 </Button>
               ))}
+              {/* Animated theme toggle positioned in the navbar */}
+              <AnimatedThemeToggle 
+                position="relative"
+                top="auto"
+                right="auto"
+                marginTop={0}
+                marginRight={0}
+              />
             </Box>
           )}
         </Toolbar>

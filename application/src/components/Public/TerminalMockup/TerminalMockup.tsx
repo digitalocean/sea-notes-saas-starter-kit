@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography, useTheme } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import { TERMINAL, DIMENSIONS } from 'constants/landing';
@@ -10,6 +10,7 @@ import { TERMINAL, DIMENSIONS } from 'constants/landing';
  * TerminalMockup component
  */
 const TerminalMockup = () => {
+  const theme = useTheme();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -39,6 +40,27 @@ const TerminalMockup = () => {
     }
   };
 
+  // Determine text color based on background for better contrast
+  const getTerminalTextColor = () => {
+    return theme.palette.mode === 'dark' 
+      ? theme.palette.grey[300]  // Light grey text on dark background
+      : theme.palette.grey[800];  // Dark grey text on light background
+  };
+
+  // Determine terminal background based on theme
+  const getTerminalBackground = () => {
+    return theme.palette.mode === 'dark' 
+      ? theme.palette.grey[900]   // Dark background
+      : theme.palette.common.white; // Light background
+  };
+
+  // Determine header background based on theme
+  const getHeaderBackground = () => {
+    return theme.palette.mode === 'dark' 
+      ? theme.palette.grey[800]   // Darker header
+      : '#f5f5f5';                // Light header
+  };
+
   return (
     <Box sx={{
       order: { xs: 1, lg: 2 },
@@ -47,16 +69,18 @@ const TerminalMockup = () => {
       flexShrink: 0
     }}>
       <Box sx={{
-        bgcolor: 'white',
+        bgcolor: getTerminalBackground(),
         borderRadius: 2,
         border: '1px solid',
         borderColor: 'divider',
         overflow: 'hidden',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        boxShadow: theme.palette.mode === 'dark' 
+          ? '0 8px 32px rgba(0, 0, 0, 0.3)' 
+          : '0 8px 32px rgba(0, 0, 0, 0.1)'
       }}>
         {/* Terminal header */}
         <Box sx={{
-          bgcolor: '#f5f5f5',
+          bgcolor: getHeaderBackground(),
           px: 2,
           py: 1,
           display: 'flex',
@@ -70,7 +94,15 @@ const TerminalMockup = () => {
             <Box sx={{ width: DIMENSIONS.terminalDot.width, height: DIMENSIONS.terminalDot.height, borderRadius: '50%', bgcolor: '#ffbd2e' }} />
             <Box sx={{ width: DIMENSIONS.terminalDot.width, height: DIMENSIONS.terminalDot.height, borderRadius: '50%', bgcolor: '#27ca3f' }} />
           </Box>
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              fontSize: '0.75rem',
+              color: theme.palette.mode === 'dark' 
+                ? theme.palette.grey[400] 
+                : 'text.secondary'
+            }}
+          >
             Terminal
           </Typography>
         </Box>
@@ -80,7 +112,7 @@ const TerminalMockup = () => {
             variant="body1" 
             sx={{ 
               fontFamily: 'monospace', 
-              color: 'text.primary', 
+              color: getTerminalTextColor(),
               mb: DIMENSIONS.spacing.small, 
               fontSize: '0.95rem',
               whiteSpace: 'pre-line'
@@ -94,12 +126,18 @@ const TerminalMockup = () => {
             startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
             onClick={handleCopy}
             sx={{
-              borderColor: 'grey.400',
-              color: 'text.primary',
+              borderColor: theme.palette.mode === 'dark' 
+                ? theme.palette.grey[600] 
+                : 'grey.400',
+              color: getTerminalTextColor(),
               '&:hover': {
-                borderColor: 'primary.main',
-                bgcolor: 'primary.main',
-                color: 'white'
+                borderColor: theme.palette.primary.main,
+                bgcolor: theme.palette.mode === 'dark' 
+                  ? theme.palette.primary.dark 
+                  : theme.palette.primary.main,
+                color: theme.palette.mode === 'dark' 
+                  ? theme.palette.common.white 
+                  : 'white'
               }
             }}
           >

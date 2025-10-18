@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Roboto, Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import { Providers } from 'context/Providers';
 import WithLoadingSpinner from 'components/Common/LoadingSpinner/LoadingSpinner';
+import Preloader from 'components/Common/Preloader/Preloader';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -51,6 +52,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
       className={`${geistSans.variable} ${geistMono.variable}`}
       style={{ margin: 0, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}
     >
+      <Preloader />
       <Providers>
         <WithLoadingSpinner>{children}</WithLoadingSpinner>
       </Providers>

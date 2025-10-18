@@ -1,12 +1,12 @@
-import LoginForm from 'components/Public/LoginForm/LoginForm';
+import EnhancedLoginForm from 'components/Public/LoginForm/EnhancedLoginForm';
 import React from 'react';
 
 /**
- * Public login page.
- * Render the login form with the corresponding layout.
+ * Public login page with enhanced social authentication options.
+ * Render the enhanced login form with social login buttons.
  */
 const LoginPage: React.FC = () => {
-  return <LoginForm />;
+  return <EnhancedLoginForm />;
 };
 
 export default LoginPage;

@@ -1,5 +1,8 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
+import MicrosoftEntraId from 'next-auth/providers/microsoft-entra-id';
 import type { Provider } from 'next-auth/providers';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { PrismaAdapter } from '@auth/prisma-adapter';
@@ -31,6 +34,29 @@ const verifyMagicLinkToken = async (token: string, email: string) => {
 };
 
 const providers: Provider[] = [
+  // Google OAuth Provider
+  Google({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    allowDangerousEmailAccountLinking: true,
+  }),
+  
+  // GitHub OAuth Provider
+  GitHub({
+    clientId: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    allowDangerousEmailAccountLinking: true,
+  }),
+  
+  // Microsoft OAuth Provider
+  MicrosoftEntraId({
+    clientId: process.env.MICROSOFT_CLIENT_ID,
+    clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
+    issuer: process.env.MICROSOFT_ISSUER,
+    allowDangerousEmailAccountLinking: true,
+  }),
+  
+  // Credentials Provider (existing)
   Credentials({
     credentials: {
       email: {},
