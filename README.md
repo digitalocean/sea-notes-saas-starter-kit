@@ -14,6 +14,22 @@
 
 **SeaNotes** is a SaaS Starter Kit — a simple, production-ready notes app built with modern tools and fully integrated with DigitalOcean services.
 
+## Table of Contents
+
+- [Quick Deploy](#quick-deploy)
+- [What's Included](#whats-included)
+- [Technical Stack](#technical-stack)
+- [Who It's For](#who-its-for)
+- [Get Started](#get-started)
+- [Quick Start (Local Development)](#quick-start-local-development)
+- [First Things to Try](#first-things-to-try)
+- [Part 2: Set Up Email Provider (Resend)](#part-2-set-up-email-provider-resend)
+- [Part 3: Set Up File Storage (DigitalOcean Spaces)](#part-3-set-up-file-storage-digitalocean-spaces)
+- [Part 4: Set Up Stripe for Billing and Subscriptions](#part-4-set-up-stripe-for-billing-and-subscriptions)
+- [Part 5: Set Up AI Features (DigitalOcean Inference API)](#part-5-set-up-ai-features-digitalocean-inference-api)
+- [Part 6: Deploy to DigitalOcean App Platform](#part-6-deploy-to-digitalocean-app-platform)
+- [License](#license)
+
 This repository gives you everything you need to build and launch a real SaaS app on DigitalOcean App Platform. It’s designed to help you get started fast — whether you’re developing locally or deploying to the cloud. SeaNotes includes a complete implementation of a notes app to show how common SaaS features like auth, billing, and storage come together using DO’s infrastructure.
 
 SeaNotes comes pre-integrated with:
@@ -39,16 +55,16 @@ Want to try it out right away? Deploy SeaNotes to DigitalOcean App Platform in o
 
 This is a production-ready SaaS Starter Kit for developers who want to build and launch real products quickly. It includes:
 
-- ✅ Built-in login/auth with NextAuth  
-- ✅ Forgot password + magic link login  
-- ✅ Email notifications via Resend.com (with PDF invoice attachments)  
-- ✅ Stripe billing (upgrade/cancel plan)  
-- ✅ File uploads to DigitalOcean Spaces  
-- ✅ PostgreSQL via Prisma ORM  
-- ✅ Next.js + Material UI frontend  
-- ✅ DigitalOcean GradientAI Serverless Inference API 
-- ✅ Admin dashboard for managing users and subscriptions 
-- ✅ One-click deploy to DO App Platform
+- 🔐 Built-in login/auth with NextAuth  
+- 🔑 Forgot password + magic link login  
+- 📧 Email notifications via Resend.com (with PDF invoice attachments)  
+- 💳 Stripe billing (upgrade/cancel plan)  
+- 📁 File uploads to DigitalOcean Spaces  
+- 🗄️ PostgreSQL via Prisma ORM  
+- ⚛️ Next.js + Material UI frontend  
+- 🤖 DigitalOcean GradientAI Serverless Inference API 
+- 👥 Admin dashboard for managing users and subscriptions 
+- 🚀 One-click deploy to DO App Platform
 
 SeaNotes is both a clean, flexible starting point for your own SaaS and a real-world example of best practices, and how all the core pieces fit together on DigitalOcean.
 
