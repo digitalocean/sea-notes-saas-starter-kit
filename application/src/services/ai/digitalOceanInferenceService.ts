@@ -78,12 +78,12 @@ export class DigitalOceanInferenceService {
    * @returns Promise that resolves to the generated text
    */
   private async makeCompletion(messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>, options: Record<string, unknown> = {}): Promise<string> {
-    const defaultOptions : Omit<OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming, "messages"> = {
+    const defaultOptions  = {
       model: 'anthropic-claude-3-opus',
       max_tokens: 100,
       temperature: 0.7,
       
-    };
+    } satisfies Omit<OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming, "messages">;
 
     try {
       const completion = await this.client.chat.completions.create({
