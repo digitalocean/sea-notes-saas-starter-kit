@@ -2,23 +2,27 @@
  * DigitalOcean AI Inference Service
  * 
  * Provides AI-powered title and content generation using DigitalOcean's Inference API
- * with OpenAI-compatible interface.
+ * with OpenAI-compatible interface
  */
 
+// OpenAI client import
 import OpenAI from 'openai';
 import { serverConfig } from '../../settings';
 
 /**
  * DigitalOcean unified inference service for both title and content generation
+ * Uses the OpenAI SDK to communicate with DigitalOcean's Inference API
  */
 export class DigitalOceanInferenceService {
   private client: OpenAI;
 
   constructor() {
+    // Make sure we have an API key configured
     if (!serverConfig.GradientAI.doInferenceApiKey) {
       throw new Error('DigitalOcean Inference API key is not configured');
     }
 
+    // Initialize the OpenAI client with DigitalOcean's endpoint
     this.client = new OpenAI({
       apiKey: serverConfig.GradientAI.doInferenceApiKey,
       baseURL: 'https://inference.do-ai.run/v1',
@@ -32,10 +36,12 @@ export class DigitalOceanInferenceService {
    * @throws Error if content is empty or AI generation fails
    */
   async generateTitle(content: string): Promise<string> {
+    // Validate that we have content to work with
     if (!content || content.trim().length === 0) {
       throw new Error('Content is required to generate a title');
     }
 
+    // Define the messages for the AI
     const messages = [
       {
         role: 'system' as const,
@@ -47,6 +53,7 @@ export class DigitalOceanInferenceService {
       },
     ];
 
+    // Make the completion request
     return this.makeCompletion(messages, { max_tokens: 50, temperature: 0.7 });
   }
 
@@ -55,8 +62,10 @@ export class DigitalOceanInferenceService {
    * @returns Promise that resolves to the generated content
    */
   async generateContent(): Promise<string> {
+    // Get the content generation prompt
     const systemPrompt = this.getContentPrompt();
     
+    // Define the messages for the AI
     const messages = [
       {
         role: 'system' as const,
@@ -68,6 +77,7 @@ export class DigitalOceanInferenceService {
       },
     ];
     
+    // Make the completion request
     return this.makeCompletion(messages, { max_tokens: 150, temperature: 0.8 });
   }
 
@@ -78,6 +88,7 @@ export class DigitalOceanInferenceService {
    * @returns Promise that resolves to the generated text
    */
   private async makeCompletion(messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>, options: Record<string, unknown> = {}): Promise<string> {
+    // Default options for the completion
     const defaultOptions = {
       model: 'anthropic-claude-3-opus',
       max_tokens: 100,
@@ -85,14 +96,17 @@ export class DigitalOceanInferenceService {
     };
 
     try {
+      // Make the completion request to the AI
       const completion = await this.client.chat.completions.create({
         ...defaultOptions,
         ...options,
         messages,
       });
 
+      // Parse and return the response
       return this.parseResponse(completion);
     } catch (error) {
+      // Log the error and rethrow
       console.error('Error with AI completion:', error);
       throw error;
     }
@@ -118,8 +132,10 @@ export class DigitalOceanInferenceService {
       response = completion as { choices?: Array<{ message?: { content?: string } }> };
     }
     
+    // Extract the content from the response
     const content = response?.choices?.[0]?.message?.content?.trim();
     
+    // Validate that we got content
     if (!content) {
       console.error('Failed to extract content. Response structure:', {
         hasChoices: !!response?.choices,
@@ -157,14 +173,17 @@ export function generateTimestampTitle(): string {
  * @returns Generated title or timestamp fallback
  */
 export async function generateTitleWithFallback(content: string): Promise<string> {
+  // Make sure AI is configured
   if (!serverConfig.GradientAI.doInferenceApiKey) {
     throw new Error('AI title generation is not configured');
   }
 
   try {
+    // Try to generate a title with AI
     const service = new DigitalOceanInferenceService();
     return await service.generateTitle(content);
   } catch (error) {
+    // If AI fails, use timestamp fallback
     console.warn('AI title generation failed, using timestamp fallback:', error);
     return generateTimestampTitle();
   }

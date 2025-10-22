@@ -2,6 +2,8 @@ import { Box } from '@mui/material';
 import Sidebar from 'components/Common/Sidebar/Sidebar';
 import { ThemePicker } from 'components/Theme/ThemePicker';
 import NavigationHandler from './NavigationHandler';
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
 /**
  * Dashboard layout wrapper.
@@ -9,7 +11,14 @@ import NavigationHandler from './NavigationHandler';
  *
  * @param children - Content of the pages inside the dashboard layout.
  */
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  const { userId } = await auth();
+  
+  // If the user is not authenticated, redirect to the auth page
+  if (!userId) {
+    redirect('/auth');
+  }
+
   return (
     <>
       <NavigationHandler />

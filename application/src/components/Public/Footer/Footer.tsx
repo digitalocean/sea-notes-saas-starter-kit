@@ -1,3 +1,4 @@
+// React and MUI imports
 import React from 'react';
 import Link from 'next/link';
 import { Box, Container, Typography, Stack, useTheme } from '@mui/material';
@@ -14,6 +15,7 @@ import ForumIcon from '@mui/icons-material/Forum';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import { URLS, DIMENSIONS } from 'constants/landing';
 
+// Define the structure for footer sections
 const footerSections = [
   {
     title: 'Product & Code',
@@ -44,8 +46,15 @@ const footerSections = [
 ];
 
 /**
- * Footer of the application.
- * Displays sections with links organized by categories and copyright.
+ * Footer of the application
+ * Displays sections with links organized by categories and copyright
+ * 
+ * The footer is divided into three sections:
+ * 1. Product & Code - links to GitHub, documentation, and demo
+ * 2. DigitalOcean Services - links to various DigitalOcean services used
+ * 3. Support & Community - links to support and community resources
+ * 
+ * The layout is responsive and changes based on screen size
  */
 export default function Footer() {
   const theme = useTheme();
@@ -60,6 +69,7 @@ export default function Footer() {
       }}
     >
       <Container maxWidth="lg">
+        {/* Footer content grid */}
         <Box
           sx={{
             display: 'grid',
@@ -72,17 +82,24 @@ export default function Footer() {
             mb: DIMENSIONS.spacing.container,
           }}
         >
+          {/* Map over footer sections and render each one */}
           {footerSections.map((section) => (
             <Box key={section.title}>
+              {/* Section title */}
               <Typography variant="h6" fontWeight={600} sx={{ color: 'text.primary', mb: DIMENSIONS.spacing.small }}>
                 {section.title}
               </Typography>
+              
+              {/* Section links */}
               <Stack spacing={DIMENSIONS.spacing.tiny}>
                 {section.links.map((link) => (
                   <Box key={link.label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {/* Link icon */}
                     <Box sx={{ color: 'text.secondary' }}>
                       {link.icon}
                     </Box>
+                    
+                    {/* Link text */}
                     <Typography
                       component={Link}
                       href={link.href}
@@ -107,6 +124,7 @@ export default function Footer() {
           ))}
         </Box>
         
+        {/* Copyright notice */}
         <Box sx={{ pt: DIMENSIONS.spacing.container, borderTop: `1px solid ${theme.palette.divider}`, textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
             © 2025 SeaNotes. Built with ❤️ using DigitalOcean services.

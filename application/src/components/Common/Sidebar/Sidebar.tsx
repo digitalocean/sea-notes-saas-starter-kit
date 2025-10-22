@@ -27,8 +27,8 @@ import {
   Menu as MenuIcon,
 } from '@mui/icons-material';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useUser, useAuth } from '@clerk/nextjs';
 import { USER_ROLES } from 'lib/auth/roles';
 
 interface SidebarLinkProps {
@@ -72,15 +72,18 @@ const SidebarHeader = styled(Box)(({ theme }) => ({
 }));
 
 const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
-  const { data: session } = useSession();
+  const { user } = useUser();
+  const { signOut } = useAuth();
+  const router = useRouter();
 
   const getProfileIcon = useCallback(() => {
-    const url = session?.user?.image ?? undefined;
+    const url = user?.imageUrl ?? undefined;
     return <Avatar src={url} alt="User Avatar" />;
-  }, [session]);
+  }, [user]);
 
-  const handleLogout = () => {
-    signOut({ callbackUrl: '/' });
+  const handleLogout = async () => {
+    await signOut();
+    router.push('/auth');
     onNavigate?.();
   };
 
@@ -112,7 +115,7 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
 
       <Box sx={{ p: 2 }}>
         <List sx={{ p: 0 }}>
-          {session?.user?.role === USER_ROLES.ADMIN && (
+          {user?.publicMetadata?.role === USER_ROLES.ADMIN && (
             <SidebarLink
               href="/admin/dashboard"
               icon={<Assessment fontSize="small" />}

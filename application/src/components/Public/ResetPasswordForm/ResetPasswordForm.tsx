@@ -1,46 +1,65 @@
 'use client';
 
+// React and MUI imports
 import React, { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Box, Card, CardContent, Typography, TextField, Stack, Button } from '@mui/material';
 
 /**
- * ResetPasswordForm renders a form for users to reset their password using a token from the URL.
- * Handles validation, API request, and displays success or error messages.
+ * ResetPasswordForm renders a form for users to reset their password using a token from the URL
+ * Handles validation, API request, and displays success or error messages
+ * 
+ * This component is used when users click on a password reset link from their email
  */
-const ResetPasswordForm: React.FC = () => {
+export default function ResetPasswordForm() {
+  // Get the token from URL parameters
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token') || '';
+  
+  // Form state
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  /**
+   * Handle form submission
+   * Validates passwords and sends reset request to API
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    
+    // Basic validation
     if (!password || !confirmPassword) {
       setError('Please fill in all fields.');
       return;
     }
+    
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
+    
     try {
+      // Send password reset request to API
       const res = await fetch('/api/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),
       });
+      
       const data = await res.json();
+      
+      // Handle API response
       if (!res.ok || data.error) {
         setError(data.error || 'Something went wrong.');
       } else {
         setSuccess(true);
       }
     } catch (err) {
+      // Handle network errors
       setError(
         'Something went wrong. Please try again later. ' +
           (err instanceof Error ? `: ${err.message}` : '')
@@ -48,6 +67,7 @@ const ResetPasswordForm: React.FC = () => {
     }
   };
 
+  // Show success message after password reset
   if (success) {
     return (
       <Box
@@ -76,6 +96,7 @@ const ResetPasswordForm: React.FC = () => {
     );
   }
 
+  // Show the password reset form
   return (
     <Box display="flex" minHeight="100vh" alignItems="center" justifyContent="center">
       <Card sx={{ width: '100%', maxWidth: 400 }}>
@@ -113,6 +134,4 @@ const ResetPasswordForm: React.FC = () => {
       </Card>
     </Box>
   );
-};
-
-export default ResetPasswordForm;
+}

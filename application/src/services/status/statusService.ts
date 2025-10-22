@@ -1,3 +1,4 @@
+// Service factory imports
 import { createStorageService } from '../storage/storageFactory';
 import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
@@ -7,7 +8,8 @@ import { createAuthService } from 'services/auth/authFactory';
 import { createInvoiceService } from 'services/invoice/invoiceFactory';
 
 /**
- * Interface for application health state.
+ * Interface for application health state
+ * Represents the overall health of the application and all its services
  */
 export interface HealthState {
   isHealthy: boolean;
@@ -16,18 +18,23 @@ export interface HealthState {
 }
 
 /**
- * Service for checking configuration and connectivity status of various services.
- * Now includes built-in health state caching for optimal performance.
+ * Service for checking configuration and connectivity status of various services
+ * Now includes built-in health state caching for optimal performance
+ * 
+ * This service is responsible for monitoring the health of all external services
+ * that the application depends on, such as database, email, storage, etc.
  */
 export class StatusService {
   private static cachedHealthState: HealthState | null = null;
   private static isInitialized = false;
 
   /**
-   * Initialize health checking at application startup.
-   * This should be called once during app initialization.
+   * Initialize health checking at application startup
+   * This should be called once during app initialization
+   * Sets up the initial health state and logs the results
    */
   static async initialize(): Promise<void> {
+    // Don't initialize multiple times
     if (this.isInitialized) {
       return;
     }
@@ -35,15 +42,18 @@ export class StatusService {
     console.log('🔍 Initializing application health checks...');
 
     try {
+      // Perform the initial health check
       await this.performHealthCheck();
       this.isInitialized = true;
 
+      // Log the results
       if (this.cachedHealthState?.isHealthy) {
         console.log('✅ All services are healthy');
       } else {
         console.log('⚠️ Some services have issues');
       }
     } catch (error) {
+      // Handle initialization errors
       console.error('❌ Failed to initialize health checks:', error);
       // Set unhealthy state as fallback
       this.cachedHealthState = {
@@ -56,8 +66,10 @@ export class StatusService {
   }
 
   /**
-   * Check if the application is healthy (all services are working).
-   * This is a fast, cached check suitable for middleware use.
+   * Check if the application is healthy (all services are working)
+   * This is a fast, cached check suitable for middleware use
+   * 
+   * @returns True if the application is healthy, false otherwise
    */
   static isApplicationHealthy(): boolean {
     if (!this.cachedHealthState) {
@@ -68,15 +80,19 @@ export class StatusService {
   }
 
   /**
-   * Get the current health state for detailed reporting.
+   * Get the current health state for detailed reporting
+   * 
+   * @returns The current health state or null if not initialized
    */
   static getHealthState(): HealthState | null {
     return this.cachedHealthState;
   }
 
   /**
-   * Force a fresh health check (bypasses cache).
-   * Use this for the system status page refresh button.
+   * Force a fresh health check (bypasses cache)
+   * Use this for the system status page refresh button
+   * 
+   * @returns The updated health state
    */
   static async forceHealthCheck(): Promise<HealthState> {
     await this.performHealthCheck();
@@ -84,24 +100,29 @@ export class StatusService {
   }
 
   /**
-   * Performs the actual health check and updates the cached state.
+   * Performs the actual health check and updates the cached state
+   * This is the core method that checks all services and determines overall health
    */
   private static async performHealthCheck(): Promise<void> {
     try {
+      // Check the status of all services
       const serviceStatuses = await this.checkAllServices();
 
-      // Determine if the application is healthy - only required services matter for overall health
+      // Determine if the application is healthy
+      // Only required services matter for overall health
       const requiredServices = serviceStatuses.filter((service) => service.required);
       const isHealthy = requiredServices.every(
         (service) => service.configured && service.connected
       );
 
+      // Update the cached health state
       this.cachedHealthState = {
         isHealthy,
         lastChecked: new Date(),
         services: serviceStatuses,
       };
     } catch (error) {
+      // Handle errors during health check
       console.error('Failed to perform health check:', error);
 
       // Set unhealthy state on error
@@ -122,13 +143,14 @@ export class StatusService {
   }
 
   /**
-   * Checks the status of storage service configuration and connectivity.
-   * Uses the StorageService interface to check the current storage provider.
+   * Checks the status of storage service configuration and connectivity
+   * Uses the StorageService interface to check the current storage provider
    *
-   * @returns {Promise<ServiceStatus>} The status of the storage service.
+   * @returns The status of the storage service
    */
   static async checkStorageStatus(): Promise<ServiceStatus> {
     try {
+      // Get the storage service instance
       const storageService = await createStorageService();
 
       // Get configuration status from the service and add required classification
@@ -138,6 +160,7 @@ export class StatusService {
         required: storageService.isRequired(),
       };
     } catch (error) {
+      // Handle storage service initialization errors
       return {
         name: 'Storage Service',
         configured: false,
@@ -152,13 +175,14 @@ export class StatusService {
   }
 
   /**
-   * Checks the configuration and connectivity status of the email service.
-   * Uses the EmailService interface to check the current email provider.
+   * Checks the configuration and connectivity status of the email service
+   * Uses the EmailService interface to check the current email provider
    *
-   * @returns {Promise<ServiceStatus>} The status of the email service.
+   * @returns The status of the email service
    */
   static async checkEmailStatus(): Promise<ServiceStatus> {
     try {
+      // Get the email service instance
       const emailService = await createEmailService();
 
       // Get configuration status from the service and add required classification
@@ -168,6 +192,7 @@ export class StatusService {
         required: emailService.isRequired(),
       };
     } catch (error) {
+      // Handle email service initialization errors
       return {
         name: 'Email Service',
         configured: false,
@@ -182,13 +207,14 @@ export class StatusService {
   }
 
   /**
-   * Checks the configuration and connectivity status of the database service.
-   * Uses the DatabaseClient interface to check the current database provider.
+   * Checks the configuration and connectivity status of the database service
+   * Uses the DatabaseClient interface to check the current database provider
    *
-   * @returns {Promise<ServiceStatus>} The status of the database service.
+   * @returns The status of the database service
    */
   static async checkDatabaseStatus(): Promise<ServiceStatus> {
     try {
+      // Get the database service instance
       const databaseService = await createDatabaseService();
 
       // Get configuration status from the service and add required classification
@@ -198,6 +224,7 @@ export class StatusService {
         required: databaseService.isRequired(),
       };
     } catch (error) {
+      // Handle database service initialization errors
       return {
         name: 'Database Service',
         configured: false,
@@ -212,13 +239,14 @@ export class StatusService {
   }
 
   /**
-   * Checks the configuration and connectivity status of the billing service.
-   * Uses the BillingService interface to check the current billing provider.
+   * Checks the configuration and connectivity status of the billing service
+   * Uses the BillingService interface to check the current billing provider
    *
-   * @returns {Promise<ServiceStatus>} The status of the billing service.
+   * @returns The status of the billing service
    */
   static async checkBillingStatus(): Promise<ServiceStatus> {
     try {
+      // Get the billing service instance
       const billingService = await createBillingService();
 
       // Get configuration status from the service and add required classification
@@ -228,6 +256,7 @@ export class StatusService {
         required: billingService.isRequired(),
       };
     } catch (error) {
+      // Handle billing service initialization errors
       return {
         name: 'Billing Service',
         configured: false,
@@ -242,13 +271,14 @@ export class StatusService {
   }
 
   /**
-   * Checks the configuration and connectivity status of the auth service.
-   * Uses the AuthService interface to check the current auth provider.
+   * Checks the configuration and connectivity status of the auth service
+   * Uses the AuthService interface to check the current auth provider
    *
-   * @returns {Promise<ServiceStatus>} The status of the auth service.
+   * @returns The status of the auth service
    */
   static async checkAuthStatus(): Promise<ServiceStatus> {
     try {
+      // Get the auth service instance
       const authService = await createAuthService();
 
       // Get configuration status from the service and add required classification
@@ -258,6 +288,7 @@ export class StatusService {
         required: authService.isRequired(),
       };
     } catch (error) {
+      // Handle auth service initialization errors
       return {
         name: 'Auth Service',
         configured: false,
@@ -272,13 +303,14 @@ export class StatusService {
   }
 
   /**
-   * Checks the configuration and connectivity status of the invoice service.
-   * Uses the InvoiceService interface to check the current invoice provider.
+   * Checks the configuration and connectivity status of the invoice service
+   * Uses the InvoiceService interface to check the current invoice provider
    *
-   * @returns {Promise<ServiceStatus>} The status of the invoice service.
+   * @returns The status of the invoice service
    */
   static async checkInvoiceStatus(): Promise<ServiceStatus> {
     try {
+      // Get the invoice service instance
       const invoiceService = await createInvoiceService();
 
       // Get configuration status from the service and add required classification
@@ -288,6 +320,7 @@ export class StatusService {
         required: invoiceService.isRequired(),
       };
     } catch (error) {
+      // Handle invoice service initialization errors
       return {
         name: 'Invoice Service',
         configured: false,
@@ -302,10 +335,10 @@ export class StatusService {
   }
 
   /**
-   * Checks the status of all configured services.
-   * This method will automatically check all available services.
+   * Checks the status of all configured services
+   * This method will automatically check all available services
    *
-   * @returns {Promise<ServiceStatus[]>} The status of all services.
+   * @returns The status of all services
    */
   static async checkAllServices(): Promise<ServiceStatus[]> {
     const services: ServiceStatus[] = [];
@@ -322,9 +355,11 @@ export class StatusService {
     const databaseStatus = await this.checkDatabaseStatus();
     services.push(databaseStatus);
 
+    // Check billing service
     const billingStatus = await this.checkBillingStatus();
     services.push(billingStatus);
 
+    // Check auth service
     const authStatus = await this.checkAuthStatus();
     services.push(authStatus);
 

@@ -1,3 +1,4 @@
+// React and MUI imports
 import React from 'react';
 import { Typography, Box, Container, Stack, Card, CardContent } from '@mui/material';
 import StorageIcon from '@mui/icons-material/Storage';
@@ -11,6 +12,7 @@ import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import { FEATURES, DIMENSIONS } from 'constants/landing';
 
+// Map feature titles to their corresponding icons
 const featureIcons = {
   'One-Click Deployment': <RocketLaunchIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[0].color }} />,
   'DigitalOcean Spaces': <CloudIcon sx={{ fontSize: DIMENSIONS.iconSize.large, color: FEATURES[1].color }} />,
@@ -25,17 +27,25 @@ const featureIcons = {
 
 /**
  * FeatureCards component
+ * This component displays a grid of feature cards highlighting the key features
+ * of the SeaNotes SaaS template
+ * 
+ * The cards are arranged in a responsive grid that changes based on screen size
+ * Each card has an icon, title, and description
  */
-const FeatureCards = () => {
+export default function FeatureCards() {
   return (
     <Box component="section" py={DIMENSIONS.spacing.section} bgcolor="background.default" aria-labelledby="features-title">
       <Container maxWidth="lg">
         <Stack spacing={DIMENSIONS.spacing.card}>
+          {/* Section header */}
           <Box component="header">
             <Typography variant="h4" component="h3" id="features-title" fontWeight="bold" textAlign="center">
               What&apos;s included
             </Typography>
           </Box>
+          
+          {/* Feature cards grid */}
           <Box
             role="grid"
             sx={{
@@ -48,10 +58,12 @@ const FeatureCards = () => {
               gap: DIMENSIONS.spacing.stack,
             }}
           >
+            {/* Map over features and create a card for each one */}
             {FEATURES.map((feature, idx) => (
               <Card component="article" key={idx} role="gridcell" sx={{ height: '100%' }}>
                 <CardContent>
                   <Stack spacing={DIMENSIONS.spacing.stack} alignItems="center" textAlign="center">
+                    {/* Feature icon in a container */}
                     <Box sx={{ 
                       display: 'flex', 
                       alignItems: 'center', 
@@ -65,11 +77,15 @@ const FeatureCards = () => {
                     }}>
                       {featureIcons[feature.title as keyof typeof featureIcons]}
                     </Box>
+                    
+                    {/* Feature title */}
                     <Box component="header">
                       <Typography variant="h6" component="h4" fontWeight="bold">
                         {feature.title}
                       </Typography>
                     </Box>
+                    
+                    {/* Feature description */}
                     <Typography variant="body2" color="text.secondary">
                       {feature.description}
                     </Typography>
@@ -82,6 +98,4 @@ const FeatureCards = () => {
       </Container>
     </Box>
   );
-};
-
-export default FeatureCards;
+}

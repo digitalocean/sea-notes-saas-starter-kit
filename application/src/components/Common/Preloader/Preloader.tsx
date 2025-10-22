@@ -1,10 +1,12 @@
 'use client';
 
+// React and MUI imports
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, keyframes } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 // Keyframes for the whale animation
+// Makes the whale float up and down gently
 const float = keyframes`
   0% {
     transform: translateY(0px);
@@ -18,6 +20,7 @@ const float = keyframes`
 `;
 
 // Keyframes for the ripple effect
+// Creates expanding circles behind the whale
 const ripple = keyframes`
   0% {
     transform: scale(0.8);
@@ -30,6 +33,7 @@ const ripple = keyframes`
 `;
 
 // Keyframes for the pulse effect
+// Makes the loading text gently fade in and out
 const pulse = keyframes`
   0% {
     opacity: 0.6;
@@ -44,20 +48,25 @@ const pulse = keyframes`
 
 /**
  * Animated preloader component that displays while the app is loading
+ * Shows a whale icon with floating animation and ripple effects
+ * Automatically hides after 2 seconds or when the app is ready
  */
-const Preloader = () => {
+export default function Preloader() {
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(true);
 
+  // Hide the preloader after 2 seconds
+  // In a real app, this might be triggered by an "app ready" event
   useEffect(() => {
-    // Hide the preloader after 2 seconds or when the app is ready
     const timer = setTimeout(() => {
       setIsVisible(false);
     }, 2000);
 
+    // Clean up the timer if component unmounts
     return () => clearTimeout(timer);
   }, []);
 
+  // Don't render if we're not visible
   if (!isVisible) return null;
 
   return (
@@ -76,7 +85,7 @@ const Preloader = () => {
         zIndex: 9999,
       }}
     >
-      {/* Ripple effect */}
+      {/* Ripple effect - three concentric circles that expand and fade */}
       <Box
         sx={{
           position: 'absolute',
@@ -142,6 +151,4 @@ const Preloader = () => {
       </Typography>
     </Box>
   );
-};
-
-export default Preloader;
+}

@@ -1,3 +1,7 @@
+/**
+ * Server configuration interface
+ * Defines the shape of our server configuration object
+ */
 export interface ServerConfig {
   databaseProvider: string;
   storageProvider: string;
@@ -32,6 +36,11 @@ export interface ServerConfig {
   };
 }
 
+/**
+ * Server configuration object
+ * Reads configuration from environment variables
+ * Provides default values where appropriate
+ */
 export const serverConfig: ServerConfig = {
   databaseProvider: process.env.DATABASE_PROVIDER || 'Postgres',
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
@@ -68,11 +77,14 @@ export const serverConfig: ServerConfig = {
   },
 };
 
-
-// Client-side flag for DigitalOcean Gradient AI content generation (available in browser)
-// Controls visibility of "Generate Note with AI" button in note creation
+/**
+ * Client-side flag for DigitalOcean Gradient AI content generation
+ * Controls visibility of "Generate Note with AI" button in note creation
+ */
 export const hasDigitalOceanGradientAIEnabled = process.env.NEXT_PUBLIC_DIGITALOCEAN_GRADIENTAI_ENABLED === 'true';
 
-// Server-side check for GradientAI configuration
-// Used by API routes and background services that require AI functionality
+/**
+ * Server-side check for GradientAI configuration
+ * Used by API routes and background services that require AI functionality
+ */
 export const hasAIConfiguredServer = !!serverConfig.GradientAI.doInferenceApiKey;

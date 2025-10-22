@@ -1,3 +1,4 @@
+// Next.js and utility imports
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { HTTP_STATUS } from 'lib/api/http';
@@ -7,8 +8,8 @@ import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButton
 import { serverConfig } from 'settings';
 
 /**
- * API endpoint to send a magic link for user login.
- * Accepts an email address, generates a verification token, and sends an email with the login link.
+ * API endpoint to send a magic link for user login
+ * Accepts an email address, generates a verification token, and sends an email with the login link
  *
  * Request body:
  *   - email: string (required)
@@ -18,11 +19,15 @@ import { serverConfig } from 'settings';
  *   - 400: { error: string }
  *   - 404: { error: 'User not found' }
  *   - 500: { error: string }
+ * 
+ * This endpoint is called when a user requests a magic link for passwordless authentication
  */
 export async function POST(request: NextRequest) {
   try {
+    // Get email service
     const emailService = await createEmailService();
 
+    // Check if email service is enabled
     if (!emailService.isEmailEnabled()) {
       return NextResponse.json(
         { error: 'Email feature is disabled' },
@@ -30,8 +35,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check email service configuration
     const emailStatus = await emailService.checkConfiguration();
 
+    // Make sure email is properly configured and connected
     if (!emailStatus.configured || !emailStatus.connected) {
       console.error('Magic link email not configured');
       return NextResponse.json(
@@ -40,24 +47,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Parse email from request body
     const { email } = await request.json();
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
+    // Get database client
     const db = await createDatabaseService();
+    
+    // Check if user exists
     const user = await db.user.findByEmail(email);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: HTTP_STATUS.NOT_FOUND });
     }
 
-    // Generate a random token and expiry
+    // Generate a random token that expires in 1 hour
     const token = uuidv4();
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    
     // Store the token in the verificationToken table
     await db.verificationToken.create({ identifier: email, token, expires });
 
+    // Generate the magic link URL
     const verifyUrl = `${serverConfig.baseURL}/magic-link?token=${token}&email=${encodeURIComponent(email)}`;
+    
+    // Send the magic link email to the user
     await emailService.sendReactEmail(
       user.email,
       'Login to your account',
@@ -71,8 +86,10 @@ export async function POST(request: NextRequest) {
       />
     );
 
+    // Return success response with token
     return NextResponse.json({ ok: true, token });
   } catch (error) {
+    // Return error response
     return NextResponse.json(
       { error: (error as Error).message || 'Internal server error' },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }

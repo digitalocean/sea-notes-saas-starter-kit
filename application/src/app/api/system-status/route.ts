@@ -1,17 +1,20 @@
+// Next.js imports
 import { NextResponse } from 'next/server';
 import { StatusService } from 'services/status/statusService';
 import { HTTP_STATUS } from 'lib/api/http';
 
 /**
- * Handles GET requests for the system status endpoint.
- * Uses cached health state for performance, with option to force fresh check.
+ * Handles GET requests for the system status endpoint
+ * Uses cached health state for performance, with option to force fresh check
  * This endpoint is completely service-agnostic and will work with any services
- * configured in the StatusService.
+ * configured in the StatusService
  *
- * @returns {Promise<NextResponse>} JSON response with the status of all services and system info.
+ * @returns JSON response with the status of all services and system info
+ * This endpoint is used by the system status page to show the health of all services
  */
-export const GET = async (request: Request) => {
+export async function GET(request: Request) {
   try {
+    // Parse URL to check for refresh parameter
     const url = new URL(request.url);
     const forceRefresh = url.searchParams.get('refresh') === 'true';
 
@@ -23,6 +26,7 @@ export const GET = async (request: Request) => {
       ? await StatusService.forceHealthCheck()
       : StatusService.getHealthState();
 
+    // Handle case where health state is null (shouldn't happen after initialization)
     if (!healthState) {
       // This shouldn't happen after initialization, but handle gracefully
       console.warn('Health state is null after initialization');
@@ -39,7 +43,9 @@ export const GET = async (request: Request) => {
         },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       );
-    } // No need to map services - we can use them directly
+    }
+    
+    // Get service statuses
     const services = healthState.services;
 
     // Add system information
@@ -49,6 +55,7 @@ export const GET = async (request: Request) => {
       lastHealthCheck: healthState.lastChecked.toISOString(),
     };
 
+    // Return the system status information
     return NextResponse.json(
       {
         services,
@@ -63,6 +70,7 @@ export const GET = async (request: Request) => {
       }
     );
   } catch (error) {
+    // Log error and return generic error response
     console.error('Error checking system status:', error);
     return NextResponse.json(
       {
@@ -73,4 +81,4 @@ export const GET = async (request: Request) => {
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
-};
+}

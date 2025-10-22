@@ -1,5 +1,6 @@
 'use client';
 
+// React and MUI imports
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
@@ -24,26 +25,39 @@ import { usePathname } from 'next/navigation';
 import { AnimatedThemeToggle } from 'components/Theme/AnimatedThemeToggle';
 
 /**
- * Main navigation bar of the application.
- * Dynamically changes links according to the session state (log in / log out).
+ * Main navigation bar of the application
+ * Dynamically changes links according to the session state (log in / log out)
+ * 
+ * This navbar shows different links depending on whether the user is logged in
+ * It also shows a service warning indicator when there are system issues
+ * On mobile, it uses a drawer for navigation links
  */
-const NavBar = () => {
+export default function NavBar() {
+  // Get session information
   const { data: session } = useSession();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
+  // Check if we're on the system status page
   const isSystemStatusPage = pathname === '/system-status';
 
+  /**
+   * Toggle the mobile drawer open/closed
+   */
   const handleDrawerToggle = () => {
     setMobileOpen((prev) => !prev);
   };
 
+  /**
+   * Handle user logout
+   */
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });
   };
 
+  // Define navigation links based on session state
   const navLinks = session
     ? [
         { href: '/pricing', label: 'Pricing' },
@@ -54,6 +68,8 @@ const NavBar = () => {
         { href: '/login', label: 'Log in' },
         { href: '/signup', label: 'Sign up' },
       ];
+      
+  // Define the mobile drawer content
   const drawer = (
     <Box
       sx={{
@@ -65,8 +81,10 @@ const NavBar = () => {
       onClick={handleDrawerToggle}
     >
       <List disablePadding>
+        {/* Show service warning indicator except on system status page */}
         {!isSystemStatusPage ? <ServiceWarningIndicator /> : null}
 
+        {/* Render navigation links */}
         {navLinks.map(({ href, label, onClick }) => (
           <ListItem
             key={label}
@@ -83,6 +101,8 @@ const NavBar = () => {
       </List>
     </Box>
   );
+  
+  // Render the navbar
   return (
     <>
       <AppBar
@@ -96,6 +116,7 @@ const NavBar = () => {
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
+          {/* App logo/name */}
           <Link href="/" style={{ textDecoration: 'none' }}>
             <Typography
               variant="h5"
@@ -107,13 +128,18 @@ const NavBar = () => {
             </Typography>
           </Link>
 
+          {/* Mobile view - show hamburger menu */}
           {isMobile ? (
             <IconButton edge="end" color="inherit" onClick={handleDrawerToggle}>
               <MenuIcon />
             </IconButton>
           ) : (
+            // Desktop view - show navigation links
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {/* Show service warning indicator except on system status page */}
               {!isSystemStatusPage ? <ServiceWarningIndicator /> : null}
+              
+              {/* Render navigation links */}
               {navLinks.map(({ href, label, onClick }) => (
                 <Button
                   key={label}
@@ -132,6 +158,7 @@ const NavBar = () => {
                   {label}
                 </Button>
               ))}
+              
               {/* Animated theme toggle positioned in the navbar */}
               <AnimatedThemeToggle 
                 position="relative"
@@ -145,6 +172,7 @@ const NavBar = () => {
         </Toolbar>
       </AppBar>
 
+      {/* Mobile drawer for navigation */}
       <Drawer
         anchor="right"
         open={mobileOpen}
@@ -161,6 +189,4 @@ const NavBar = () => {
       </Drawer>
     </>
   );
-};
-
-export default NavBar;
+}

@@ -1,12 +1,16 @@
 'use client';
 
+// React and MUI imports
 import React, { useState, useEffect } from 'react';
 import { useThemeMode } from './Theme';
 import { styled, keyframes } from '@mui/material/styles';
 import { Box, Tooltip } from '@mui/material';
 import { LightMode, DarkMode } from '@mui/icons-material';
 
-// Keyframes for the sun rays animation
+/**
+ * Keyframes for the sun rays animation
+ * Makes the sun icon gently rotate and pulse
+ */
 const sunRays = keyframes`
   0% {
     transform: rotate(0deg);
@@ -30,7 +34,10 @@ const sunRays = keyframes`
   }
 `;
 
-// Keyframes for the moon craters animation
+/**
+ * Keyframes for the moon craters animation
+ * Makes the moon icon gently pulse
+ */
 const moonCraters = keyframes`
   0% {
     transform: scale(1);
@@ -46,7 +53,10 @@ const moonCraters = keyframes`
   }
 `;
 
-// Keyframes for the toggle switch animation
+/**
+ * Keyframes for the toggle switch animation
+ * Makes the switch gently bounce
+ */
 const toggleSwitch = keyframes`
   0% {
     transform: translateX(0);
@@ -128,6 +138,7 @@ const IconContainer = styled(Box)(() => ({
   fontSize: '0.8rem',
 }));
 
+// Define props for the component
 interface AnimatedThemeToggleProps {
   position?: 'fixed' | 'absolute' | 'relative';
   top?: number | string;
@@ -138,18 +149,26 @@ interface AnimatedThemeToggleProps {
 
 /**
  * Animated theme toggle button that switches between light and dark modes
- * with smooth animations and visual effects.
+ * with smooth animations and visual effects
+ * 
+ * This toggle provides a visually appealing way for users to switch between
+ * light and dark themes with animated icons and smooth transitions
  */
-export const AnimatedThemeToggle: React.FC<AnimatedThemeToggleProps> = ({
+export function AnimatedThemeToggle({
   position = 'absolute',
   top = 'auto',
   right = '16px',
   marginTop = '16px',
   marginRight = '16px',
-}) => {
+}: AnimatedThemeToggleProps) {
+  // Get current theme mode and toggle function
   const { mode, toggleMode } = useThemeMode();
   const [isAnimating, setIsAnimating] = useState(false);
 
+  /**
+   * Handle toggle click
+   * Triggers the theme change and animation
+   */
   const handleToggle = () => {
     setIsAnimating(true);
     toggleMode();
@@ -160,7 +179,9 @@ export const AnimatedThemeToggle: React.FC<AnimatedThemeToggleProps> = ({
     }, 400);
   };
 
-  // Apply animation class when mode changes
+  /**
+   * Apply animation when mode changes
+   */
   useEffect(() => {
     setIsAnimating(true);
     const timer = setTimeout(() => {
@@ -169,6 +190,7 @@ export const AnimatedThemeToggle: React.FC<AnimatedThemeToggleProps> = ({
     return () => clearTimeout(timer);
   }, [mode]);
 
+  // Render the theme toggle
   return (
     <Tooltip title={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
       <Box
@@ -229,6 +251,6 @@ export const AnimatedThemeToggle: React.FC<AnimatedThemeToggleProps> = ({
       </Box>
     </Tooltip>
   );
-};
+}
 
 export default AnimatedThemeToggle;

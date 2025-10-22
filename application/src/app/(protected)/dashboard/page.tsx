@@ -1,16 +1,25 @@
-import { auth } from 'lib/auth/auth';
+import React from 'react';
+import { redirect } from 'next/navigation';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import DashboardPageClient from './DashboardPageClient';
 
 /**
- * Main dashboard page protected by authentication.
- * Displays a personalized message to the logged in user.
- *
- * @returns Page with centered greeting and session data.
+ * Dashboard page - protected route that requires authentication
  */
-export default async function DashboardPage() {
-  const session = await auth();
-  return <DashboardPageClient 
-    userEmail={session?.user.email ?? ''} 
-    userName={session?.user.name ?? ''} 
-  />;
-}
+const DashboardPage: React.FC = async () => {
+  const { userId } = await auth();
+  
+  // If the user is not authenticated, redirect to the auth page
+  if (!userId) {
+    redirect('/auth');
+  }
+
+  // Get user information from Clerk
+  const user = await currentUser();
+  const userEmail = user?.emailAddresses[0]?.emailAddress || '';
+  const userName = user?.firstName || '';
+
+  return <DashboardPageClient userEmail={userEmail} userName={userName} />;
+};
+
+export default DashboardPage;

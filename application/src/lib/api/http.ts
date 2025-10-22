@@ -1,11 +1,15 @@
+// Define the shape of error responses
 export type ErrorResponse = {
   error: string;
 };
 
+// Define the shape of successful responses
 export type SuccessResponse<T> = {
   data: T;
 };
 
+// HTTP status codes we use throughout the application
+// Having these as constants makes it easier to maintain consistency
 export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
@@ -20,4 +24,5 @@ export const HTTP_STATUS = {
   INTERNAL_SERVER_ERROR: 500,
 } as const;
 
+// Type for HTTP status codes
 export type HttpStatusCode = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];

@@ -1,21 +1,30 @@
 'use client';
 
+// React and MUI imports
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Button } from '@mui/material';
 import FormButton from 'components/Public/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 
 /**
- * Forgot Password form.
- * Handles sending email for password reset and passwordless authentication.
+ * Forgot Password form
+ * Handles sending email for password reset and passwordless authentication (magic link)
+ * 
+ * This form allows users to either reset their password via email link
+ * or sign in using a magic link sent to their email
  */
-const ForgotPasswordForm: React.FC = () => {
+export default function ForgotPasswordForm() {
+  // Form state
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [magicLinkSuccess, setMagicLinkSuccess] = useState<string | null>(null);
   const { setNavigating } = useNavigating();
 
+  /**
+   * Handle password reset form submission
+   * Sends a password reset email to the user
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     setNavigating(true);
     e.preventDefault();
@@ -23,18 +32,23 @@ const ForgotPasswordForm: React.FC = () => {
     setSuccess(null);
 
     try {
+      // Send password reset request to API
       const res = await fetch('/api/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+      
       const data = await res.json();
+      
+      // Handle API response
       if (!res.ok || data.error) {
         setError(data.error || 'Something went wrong, please try again later.');
       } else {
         setSuccess('If your email exists in our system, a reset link has been sent.');
       }
     } catch (err) {
+      // Handle network errors
       setError(
         'Something went wrong, please try again later.' +
           (err instanceof Error ? `: ${err.message}` : '')
@@ -44,23 +58,33 @@ const ForgotPasswordForm: React.FC = () => {
     }
   };
 
+  /**
+   * Handle magic link form submission
+   * Sends a passwordless authentication link to the user
+   */
   const handleMagicLink = async (e: React.FormEvent) => {
     setNavigating(true);
     e.preventDefault();
     setMagicLinkSuccess(null);
+    
     try {
+      // Send magic link request to API
       const res = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+      
       const data = await res.json();
+      
+      // Handle API response
       if (!res.ok || data.error) {
         setError(data.error || 'Something went wrong, please try again later.');
       } else {
         setMagicLinkSuccess('Magic link sent! Please check your email inbox.');
       }
     } catch (err) {
+      // Handle network errors
       setError(
         'Something went wrong, please try again later.' +
           (err instanceof Error ? `: ${err.message}` : '')
@@ -70,6 +94,7 @@ const ForgotPasswordForm: React.FC = () => {
     }
   };
 
+  // Render the form
   return (
     <Box display="flex" flexGrow={1} minHeight="100vh" justifyContent="center" alignItems="center">
       <Card sx={{ width: '100%', maxWidth: 400 }}>
@@ -101,6 +126,7 @@ const ForgotPasswordForm: React.FC = () => {
               </Box>
             </Box>
 
+            {/* Error and success messages */}
             {error && (
               <Typography color="error" fontSize={14} mt={2}>
                 {error}
@@ -117,6 +143,7 @@ const ForgotPasswordForm: React.FC = () => {
               </Typography>
             )}
 
+            {/* Action buttons */}
             <Box mt={3} display="flex" flexDirection="column" gap={2}>
               <FormButton>Reset Password</FormButton>
               <Button
@@ -135,6 +162,4 @@ const ForgotPasswordForm: React.FC = () => {
       </Card>
     </Box>
   );
-};
-
-export default ForgotPasswordForm;
+}

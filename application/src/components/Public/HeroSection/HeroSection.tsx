@@ -1,3 +1,4 @@
+// React and MUI imports
 import React from 'react';
 import { Typography, Box, Container } from '@mui/material';
 import TerminalMockup from 'components/Public/TerminalMockup/TerminalMockup';
@@ -6,8 +7,14 @@ import { DIMENSIONS } from 'constants/landing';
 
 /**
  * HeroSection component
+ * This is the main landing page hero section that introduces the product
+ * It shows a terminal mockup and call-to-action buttons
+ * 
+ * The layout is responsive and changes based on screen size
+ * On mobile, the terminal mockup appears above the text
+ * On desktop, the terminal mockup appears to the right of the text
  */
-const HeroSection = () => {
+export default function HeroSection() {
   return (
     <Box component="section" bgcolor="background.default" py={DIMENSIONS.spacing.section} aria-labelledby="hero-title">
       <Container maxWidth="lg">
@@ -18,12 +25,12 @@ const HeroSection = () => {
           alignItems: { xs: 'center', lg: 'flex-start' },
           gap: DIMENSIONS.spacing.container
         }}>
-          {/* Code example */}
+          {/* Code example - terminal mockup */}
           <Box component="aside" aria-label="Code example" sx={{ order: { xs: 1, lg: 2 } }}>
             <TerminalMockup />
           </Box>
           
-          {/* Main hero content */}
+          {/* Main hero content - text and buttons */}
           <Box component="header" sx={{ 
             order: { xs: 2, lg: 1 },
             flex: 1,
@@ -34,6 +41,7 @@ const HeroSection = () => {
             alignItems: 'center',
             gap: DIMENSIONS.spacing.container
           }}>
+            {/* Main title */}
             <Typography 
               variant="h1" 
               component="h1" 
@@ -46,6 +54,8 @@ const HeroSection = () => {
             >
               SeaNotes
             </Typography>
+            
+            {/* Subtitle */}
             <Typography 
               variant="h3" 
               component="h2" 
@@ -58,6 +68,8 @@ const HeroSection = () => {
             >
               Build Your SaaS Faster Than Ever
             </Typography>
+            
+            {/* Description */}
             <Typography 
               variant="h6" 
               component="p" 
@@ -71,6 +83,8 @@ const HeroSection = () => {
             >
               Launch your SaaS product in record time with our powerful, ready-to-use template. Packed with modern technologies and essential integrations.
             </Typography>
+            
+            {/* Call to action buttons */}
             <Box component="nav" aria-label="Primary actions">
               <CTAButtons />
             </Box>
@@ -79,6 +93,4 @@ const HeroSection = () => {
       </Container>
     </Box>
   );
-};
-
-export default HeroSection;
+}

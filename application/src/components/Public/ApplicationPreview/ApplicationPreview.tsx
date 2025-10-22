@@ -1,49 +1,63 @@
+// This component shows a preview of what the actual app looks like
+// It's meant to give visitors a feel for the UI before they sign up
 'use client';
 
 import React from 'react';
 import { Typography, Box, Container, Stack, Card, useTheme } from '@mui/material';
+// Button is imported separately because we use it less frequently than other components
 import { Button } from '@mui/material';
 import { DIMENSIONS } from 'constants/landing';
 
-/**
- * ApplicationPreview component
- */
+// Simple preview of the main application interface
+// Not a functional component, just a visual mockup
 const ApplicationPreview = () => {
+  // We need the theme to handle light/dark mode properly
   const theme = useTheme();
   
-  // Determine text color for terminal header based on theme
+  // These helper functions might seem a bit verbose, but they make it much easier
+  // to manage theme-specific colors throughout the component
+  
+  // Text color for the terminal header - slightly different in light vs dark mode
   const getTerminalHeaderTextColor = () => {
+    // In dark mode, we use a lighter grey, in light mode we stick with the default
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[400] 
       : 'grey.400';
   };
   
-  // Determine background colors based on theme
+  
+  // Background color for the top bar of our mock terminal
   const getTerminalBackground = () => {
+    // Darker in dark mode, obviously
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[900] 
       : '#1a1a1a';
   };
   
+  // Main content area background - a bit lighter than the terminal
   const getContentBackground = () => {
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[800] 
       : '#f8f9fa';
   };
   
+  // Sidebar background - white in light mode, dark grey in dark mode
   const getSidebarBackground = () => {
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[900] 
       : 'white';
   };
   
+  // Card hover effect - subtle but noticeable
   const getCardHoverBackground = () => {
+    // Slightly lighter on hover in dark mode, barely visible change in light mode
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[700] 
       : 'grey.50';
   };
-
-  return (
+  // End of helper functions
+  
+  // Now for the actual component render
     <Box component="section" py={DIMENSIONS.spacing.section} bgcolor="background.default" aria-labelledby="preview-title">
       <Container maxWidth="lg">
         <Stack spacing={DIMENSIONS.spacing.card} textAlign="center">

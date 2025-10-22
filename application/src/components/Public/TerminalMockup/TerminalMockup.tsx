@@ -1,5 +1,6 @@
 'use client';
 
+// React and MUI imports
 import React, { useState } from 'react';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -8,13 +9,24 @@ import { TERMINAL, DIMENSIONS } from 'constants/landing';
 
 /**
  * TerminalMockup component
+ * This component displays a terminal-like interface with example commands
+ * It includes a copy button to copy the commands to the clipboard
+ * The appearance changes based on the current theme (light/dark)
+ * 
+ * This is used in the hero section to show how easy it is to get started
  */
-const TerminalMockup = () => {
+export default function TerminalMockup() {
   const theme = useTheme();
   const [copied, setCopied] = useState(false);
 
+  /**
+   * Handle copy button click
+   * Copies the terminal commands to the clipboard
+   * Shows a "Copied!" confirmation for 2 seconds
+   */
   const handleCopy = async () => {
     try {
+      // Try using the modern clipboard API first
       await navigator.clipboard.writeText(TERMINAL.commands);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -40,27 +52,34 @@ const TerminalMockup = () => {
     }
   };
 
-  // Determine text color based on background for better contrast
+  /**
+   * Determine text color based on background for better contrast
+   */
   const getTerminalTextColor = () => {
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[300]  // Light grey text on dark background
       : theme.palette.grey[800];  // Dark grey text on light background
   };
 
-  // Determine terminal background based on theme
+  /**
+   * Determine terminal background based on theme
+   */
   const getTerminalBackground = () => {
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[900]   // Dark background
       : theme.palette.common.white; // Light background
   };
 
-  // Determine header background based on theme
+  /**
+   * Determine header background based on theme
+   */
   const getHeaderBackground = () => {
     return theme.palette.mode === 'dark' 
       ? theme.palette.grey[800]   // Darker header
       : '#f5f5f5';                // Light header
   };
 
+  // Render the terminal mockup
   return (
     <Box sx={{
       order: { xs: 1, lg: 2 },
@@ -78,7 +97,7 @@ const TerminalMockup = () => {
           ? '0 8px 32px rgba(0, 0, 0, 0.3)' 
           : '0 8px 32px rgba(0, 0, 0, 0.1)'
       }}>
-        {/* Terminal header */}
+        {/* Terminal header with window controls */}
         <Box sx={{
           bgcolor: getHeaderBackground(),
           px: 2,
@@ -89,11 +108,13 @@ const TerminalMockup = () => {
           borderBottom: '1px solid',
           borderColor: 'divider'
         }}>
+          {/* Window control buttons (red, yellow, green) */}
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ width: DIMENSIONS.terminalDot.width, height: DIMENSIONS.terminalDot.height, borderRadius: '50%', bgcolor: '#ff5f56' }} />
             <Box sx={{ width: DIMENSIONS.terminalDot.width, height: DIMENSIONS.terminalDot.height, borderRadius: '50%', bgcolor: '#ffbd2e' }} />
             <Box sx={{ width: DIMENSIONS.terminalDot.width, height: DIMENSIONS.terminalDot.height, borderRadius: '50%', bgcolor: '#27ca3f' }} />
           </Box>
+          {/* Terminal title */}
           <Typography 
             variant="caption" 
             sx={{ 
@@ -106,7 +127,8 @@ const TerminalMockup = () => {
             Terminal
           </Typography>
         </Box>
-        {/* Terminal content */}
+        
+        {/* Terminal content with commands */}
         <Box sx={{ p: DIMENSIONS.spacing.stack }}>
           <Typography 
             variant="body1" 
@@ -120,6 +142,8 @@ const TerminalMockup = () => {
           >
             {TERMINAL.commands}
           </Typography>
+          
+          {/* Copy button */}
           <Button
             variant="outlined"
             size="small"
@@ -147,6 +171,4 @@ const TerminalMockup = () => {
       </Box>
     </Box>
   );
-};
-
-export default TerminalMockup;
+}

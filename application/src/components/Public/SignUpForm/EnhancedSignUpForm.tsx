@@ -1,5 +1,6 @@
 'use client';
 
+// React and MUI imports
 import React, { useState } from 'react';
 import {
   Card,
@@ -12,76 +13,51 @@ import {
   Link as MuiLink,
   Divider,
   IconButton,
-  Checkbox,
-  FormControlLabel,
+  Alert,
 } from '@mui/material';
+
+// Next.js components and hooks
 import Link from 'next/link';
 import FormButton from 'components/Public/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
-import { USER_ROLES } from 'lib/auth/roles';
-import { signIn } from 'next-auth/react';
 import { Google, GitHub, Microsoft } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 /**
- * Enhanced user registration form with social authentication options
+ * Enhanced user registration form that redirects to Clerk auth
+ * We're using Clerk for auth now, so this just redirects to the main auth page
+ * Keeping this for backward compatibility
  */
-const EnhancedSignUpForm: React.FC = () => {
+export default function EnhancedSignUpForm() {
+  const router = useRouter();
   const { setNavigating } = useNavigating();
 
+  // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
+  // Handle form submission - just redirect to Clerk auth
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setSuccess(null);
-
-    if (!acceptTerms) {
-      setError('You must accept the terms and conditions.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
     setNavigating(true);
+
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name: USER_ROLES.USER }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setError(data.error || 'Something went wrong');
-      } else {
-        setSuccess(data.message || 'Account created successfully!');
-      }
-    } catch (err) {
-      console.error('Signup error:', err);
-      setError('Something went wrong during signup. Please try again later.');
+      // Redirect to the main Clerk auth page
+      // We're not using this form anymore, but keeping it for backward compatibility
+      router.push('/auth');
+    } catch (error) {
+      setNavigating(false);
+      setError('Authentication service unavailable');
+      console.error('Navigation error:', error);
     }
-    setNavigating(false);
   };
 
-  const handleSocialLogin = async (provider: string) => {
-    setNavigating(true);
-    setError(null);
-    
-    const res = await signIn(provider, {
-      callbackUrl: '/dashboard/my-notes',
-    });
-    
-    if (res?.error) {
-      setNavigating(false);
-      setError(res.error);
-    }
+  // Handle social login buttons - also redirect to Clerk auth
+  const handleSocialLogin = async () => {
+    router.push('/auth');
   };
 
   return (
@@ -97,7 +73,7 @@ const EnhancedSignUpForm: React.FC = () => {
         <Card sx={{ width: '100%', maxWidth: 450, mx: 'auto', borderRadius: 3 }}>
           <CardContent>
             <Stack spacing={4}>
-              {/* Header */}
+              {/* Header with sign up message */}
               <Stack spacing={1.5} textAlign="center">
                 <Typography variant="h4" component="h1" fontWeight={700}>
                   Create Account
@@ -107,11 +83,16 @@ const EnhancedSignUpForm: React.FC = () => {
                 </Typography>
               </Stack>
 
-              {/* Social Login Buttons */}
+              {/* Info message about the new auth system */}
+              <Alert severity="info">
+                We&apos;ve upgraded our authentication system. Please use the new authentication page.
+              </Alert>
+
+              {/* Social login buttons that redirect to Clerk */}
               <Stack spacing={2}>
                 <Stack direction="row" spacing={2}>
                   <IconButton
-                    onClick={() => handleSocialLogin('google')}
+                    onClick={handleSocialLogin}
                     sx={{
                       flex: 1,
                       py: 1.5,
@@ -129,7 +110,7 @@ const EnhancedSignUpForm: React.FC = () => {
                   </IconButton>
                   
                   <IconButton
-                    onClick={() => handleSocialLogin('github')}
+                    onClick={handleSocialLogin}
                     sx={{
                       flex: 1,
                       py: 1.5,
@@ -147,7 +128,7 @@ const EnhancedSignUpForm: React.FC = () => {
                   </IconButton>
                   
                   <IconButton
-                    onClick={() => handleSocialLogin('microsoft-entra-id')}
+                    onClick={handleSocialLogin}
                     sx={{
                       flex: 1,
                       py: 1.5,
@@ -172,122 +153,89 @@ const EnhancedSignUpForm: React.FC = () => {
                 </Divider>
               </Stack>
 
-              {/* Show success message OR form, not both */}
-              {success ? (
-                <Stack spacing={3} textAlign="center">
-                  <Typography color="success.main" variant="body1" textAlign="center">
-                    {success}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    You can now{' '}
-                    <MuiLink component={Link} href="/login" variant="body2" sx={{ fontWeight: 600 }}>
-                      sign in
-                    </MuiLink>{' '}
-                    to your account.
-                  </Typography>
-                </Stack>
-              ) : (
-                <Box
-                  component="form"
-                  onSubmit={handleSubmit}
-                  data-testid="signup-form"
-                  autoComplete="on"
-                >
-                  <Stack spacing={3}>
-                    <Stack spacing={1}>
-                      <Typography variant="body2" fontWeight={500} color="text.primary">
-                        Email
-                      </Typography>
-                      <TextField
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        fullWidth
-                        autoComplete="email"
-                        variant="outlined"
-                        inputProps={{ 'data-testid': 'signup-email-input' }}
-                      />
-                    </Stack>
-
-                    <Stack spacing={1}>
-                      <Typography variant="body2" fontWeight={500} color="text.primary">
-                        Password
-                      </Typography>
-                      <TextField
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        fullWidth
-                        autoComplete="new-password"
-                        variant="outlined"
-                        inputProps={{ 'data-testid': 'signup-password-input' }}
-                      />
-                    </Stack>
-
-                    <Stack spacing={1}>
-                      <Typography variant="body2" fontWeight={500} color="text.primary">
-                        Confirm Password
-                      </Typography>
-                      <TextField
-                        id="confirm-password"
-                        name="confirmPassword"
-                        type="password"
-                        placeholder="Confirm your password"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        fullWidth
-                        autoComplete="new-password"
-                        variant="outlined"
-                        inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
-                      />
-                    </Stack>
-
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={acceptTerms}
-                          onChange={(e) => setAcceptTerms(e.target.checked)}
-                          color="primary"
-                        />
-                      }
-                      label={
-                        <Typography variant="body2" color="text.secondary">
-                          I accept the{' '}
-                          <MuiLink href="#" variant="body2" sx={{ fontWeight: 600 }}>
-                            Terms and Conditions
-                          </MuiLink>
-                        </Typography>
-                      }
+              {/* Email/password form that also redirects */}
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                data-testid="signup-form"
+                autoComplete="on"
+              >
+                <Stack spacing={3}>
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Email
+                    </Typography>
+                    <TextField
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      fullWidth
+                      autoComplete="email"
+                      variant="outlined"
+                      inputProps={{ 'data-testid': 'signup-email-input' }}
                     />
-
-                    {error && (
-                      <Typography
-                        color="error"
-                        variant="body2"
-                        textAlign="center"
-                        data-testid="signup-error-message"
-                      >
-                        {error}
-                      </Typography>
-                    )}
-
-                    <Box mt={1}>
-                      <FormButton fullWidth>Create Account</FormButton>
-                    </Box>
                   </Stack>
-                </Box>
-              )}
 
-              {/* Links */}
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Password
+                    </Typography>
+                    <TextField
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      autoComplete="new-password"
+                      variant="outlined"
+                      inputProps={{ 'data-testid': 'signup-password-input' }}
+                    />
+                  </Stack>
+
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Confirm Password
+                    </Typography>
+                    <TextField
+                      id="confirm-password"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="Confirm your password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      fullWidth
+                      autoComplete="new-password"
+                      variant="outlined"
+                      inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
+                    />
+                  </Stack>
+
+                  {error && (
+                    <Typography
+                      color="error"
+                      variant="body2"
+                      textAlign="center"
+                      data-testid="signup-error-message"
+                    >
+                      {error}
+                    </Typography>
+                  )}
+
+                  <Box mt={1}>
+                    <FormButton>Create Account</FormButton>
+                  </Box>
+                </Stack>
+              </Box>
+
+              {/* Link to sign in page, redirects to auth page */}
               <Stack spacing={2} alignItems="center">
                 <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
                   <Typography variant="body2" color="text.secondary">
@@ -295,7 +243,7 @@ const EnhancedSignUpForm: React.FC = () => {
                   </Typography>
                   <MuiLink 
                     component={Link} 
-                    href="/login" 
+                    href="/auth" 
                     variant="body2" 
                     sx={{ fontWeight: 600 }}
                   >
@@ -309,6 +257,4 @@ const EnhancedSignUpForm: React.FC = () => {
       </Box>
     </Container>
   );
-};
-
-export default EnhancedSignUpForm;
+}
