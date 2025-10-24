@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -19,13 +19,29 @@ export default function AISummarySettings() {
   const [summariesEnabled, setSummariesEnabled] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
+  useEffect(() => {
+  const loadPreference = async () => {
+    try {
+      const response = await fetch('/api/users/preferences');
+      if (response.ok) {
+        const data = await response.json();
+        setSummariesEnabled(data.summariesEnabled ?? true);
+      }
+    } catch (error) {
+      console.error('Failed to load preference:', error);
+    }
+  };
+  
+  loadPreference();
+}, []);
+
   const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked;
     setSummariesEnabled(newValue);
     setIsSaving(true);
 
     try {
-      const response = await fetch('/api/user/preferences', {
+      const response = await fetch('/api/users/preferences', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ summariesEnabled: newValue }),

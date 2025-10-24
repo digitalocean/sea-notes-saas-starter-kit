@@ -18,14 +18,14 @@ export async function PUT(request: NextRequest) {
     // Update user preferences
     // Note: This assumes a preferences field exists on User model
     // If not, maintainers will need to add it
-    await prisma.user.update({
-      where: { email: session.user.email },
-      data: {
+    //await prisma.user.update({
+      //where: { email: session.user.email },
+      //data: {
         // Store in a JSON field or separate table
         // For now, we'll just acknowledge the request
         // Maintainers will implement proper storage
-      },
-    });
+      //},
+    //});
 
     return NextResponse.json({
       success: true,
