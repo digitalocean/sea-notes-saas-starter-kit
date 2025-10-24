@@ -25,7 +25,7 @@ export default function AccountSettings() {
         <UpdatePasswordForm />
       </Box>
 
-      /** AI Settings - Full width below other settings */
+      {/** AI Settings - Full width below other settings */}
       <Box sx={{ mt: { xs: 2, sm: 3 } }}>
         <AISummarySettings />
       </Box>

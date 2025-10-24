@@ -257,6 +257,40 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
               InputProps={{ readOnly: isReadOnly }}
               data-testid="note-title-input"
             />
+
+            {/*Summary Box*/}
+
+            {summary && (
+              <Card sx={{ mt: 2, mb: 2, bgcolor: 'action.hover' }}>
+                <CardContent>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                    <Typography variant="subtitle2" color="primary">
+                      TL;DR Summary
+                    </Typography>
+                    <Box display="flex" gap={1}>
+                      <Button
+                        size="small"
+                        startIcon="🔄"
+                        onClick={handleGenerateSummary}
+                        disabled={isGeneratingSummary}
+                      >
+                        Regenerate
+                      </Button>
+                      <Button
+                        size="small"
+                        startIcon="✕"
+                        onClick={handleClearSummary}
+                      >
+                        Clear
+                      </Button>
+                    </Box>
+                  </Box>
+                  <Typography variant="body2">
+                    {summary}
+                  </Typography>
+                </CardContent>
+              </Card>
+            )}
             
             <TextField
               id="content"
@@ -288,28 +322,6 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
                   {isGeneratingSummary ? 'Generating Summary...' : 'Generate Summary'}
                 </Button>
                 
-                {summary && (
-                  <Card sx={{ mt: 2, bgcolor: 'action.hover' }}>
-                    <CardContent>
-                      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                        <Typography variant="subtitle2" color="primary">
-                          TL;DR Summary
-                        </Typography>
-                        <Button
-                          size="small"
-                          startIcon="✕"
-                          onClick={handleClearSummary}
-                          data-testid="clear-summary-button"
-                        >
-                          Clear
-                        </Button>
-                      </Box>
-                      <Typography variant="body2">
-                        {summary}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                )}
               </Box>
             )}
 

@@ -87,6 +87,13 @@ export class NotesApiClient {
   // Delete a note
   async deleteNote(id: string): Promise<void> {
     const res = await fetch(`${this.baseURL}/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to delete note');
+    
+    
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error('Failed to delete note');
+    }
+    
+    const data = await res.json();
   }
 }
