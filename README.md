@@ -17,11 +17,11 @@
 This repository gives you everything you need to build and launch a real SaaS app on DigitalOcean App Platform. It’s designed to help you get started fast — whether you’re developing locally or deploying to the cloud. SeaNotes includes a complete implementation of a notes app to show how common SaaS features like auth, billing, and storage come together using DO’s infrastructure.
 
 SeaNotes comes pre-integrated with:
-- **Stripe** for subscription billing and payments
-- **Resend** for transactional emails
-- **DigitalOcean Spaces** for file storage
-- **PostgreSQL** for database
-- **One-click deployment** to DigitalOcean App Platform
+- **[Stripe](https://stripe.com/)** for subscription billing and payments
+- **[Resend](https://resend.com/)** for transactional emails
+- **[DigitalOcean Spaces](https://www.digitalocean.com/)** for file storage
+- **[PostgreSQL](https://www.postgresql.org/)** for database
+- **One-click deployment** to [DigitalOcean App Platform](https://www.digitalocean.com/products/app-platform/)
 
 You can use SeaNotes in two ways:
 1. As a **starter kit** to build your own SaaS application by replacing the notes functionality with your business logic
