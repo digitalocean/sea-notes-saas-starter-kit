@@ -20,10 +20,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["*"],
       "settings": ["settings.ts"]
-    },
-    "types": ["next-auth"]
+    }
   },
   "include": [
     "next-env.d.ts",
