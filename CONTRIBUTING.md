@@ -51,10 +51,17 @@ Before contributing, please:
    # Edit .env with your configuration
    ```
 
+   Windows PowerShell alternative:
+   ```powershell
+   Copy-Item env-example .env
+   ```
+
 4. **Database Setup**
    ```bash
    # Option A: Use Docker
    docker-compose up -d
+   # or (newer Compose):
+   docker compose up -d
    
    # Option B: Use DigitalOcean Managed PostgreSQL database
    # Update DATABASE_URL in .env
@@ -62,6 +69,11 @@ Before contributing, please:
    # Initialize database
    npx prisma generate
    npx prisma migrate deploy
+   ```
+
+   If you changed the Prisma schema locally, prefer:
+   ```bash
+   npx prisma migrate dev
    ```
 
 5. **Start Development Server**
@@ -86,7 +98,25 @@ See the [README.md](README.md) for detailed setup instructions for each service.
 - Maintain good test coverage
 - Use descriptive test names
 - Test both success and error cases
-- Mock external dependencies appropriately
+- Mock external dependencies appropriately (Resend/Stripe/Spaces/AI)
+
+Common commands:
+```bash
+# Run unit tests (JSDOM)
+npm test
+
+# Server-side tests
+npm run test:server
+
+# All tests
+npm run test:all
+
+# Watch mode
+npm run test -- --watch
+
+# Coverage
+npm run test -- --coverage
+```
 
 ## Pull Request Process
 
@@ -108,6 +138,20 @@ See the [README.md](README.md) for detailed setup instructions for each service.
    ```
 
 4. **Commit your changes**
+### Pre-PR Checks
+
+Run these before opening a PR (from `application/`):
+```bash
+npm run lint
+npx tsc --noEmit
+npm run test:all
+npm run build
+```
+If you updated Prisma schema:
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
    ```bash
    git add .
    git commit -m "feat: add your feature description"
@@ -156,9 +200,11 @@ docs(readme): update deployment instructions
 
 3. **PR Checklist**
    - [ ] Code follows project standards
-   - [ ] Tests pass
-   - [ ] Documentation updated
-   - [ ] No console errors
+   - [ ] Lint, type-check, and tests pass
+   - [ ] Documentation updated (README/docs, screenshots if UI)
+   - [ ] Prisma migrations included (if schema changed)
+   - [ ] Backward compatibility considered
+   - [ ] Links issues (e.g., Fixes #123)
 
 ## Issue Guidelines
 

@@ -62,6 +62,9 @@ const MyNotes: React.FC = () => {
       setError(null);
     } catch {
       setError('Failed to load notes. Please try again later.');
+      setToastMessage('Failed to load notes');
+      setToastSeverity('error');
+      setToastOpen(true);
     } finally {
       setIsLoading(false);
     }
@@ -70,6 +73,10 @@ const MyNotes: React.FC = () => {
   useEffect(() => {
     fetchNotes();
   }, [fetchNotes]);
+
+  const handleRetryFetch = () => {
+    fetchNotes();
+  };
 
   // Handle real-time title updates via SSE
   const handleTitleUpdate = useCallback((noteId: string, newTitle: string) => {
@@ -126,27 +133,50 @@ const MyNotes: React.FC = () => {
   };
 
   const handleCreateNote = async (noteData: { title?: string; content: string }) => {
+    // Optimistically insert a temporary note at the top
+    const tempId = `temp-${Date.now()}`;
+    const tempNote: Note = {
+      id: tempId,
+      userId: '',
+      title: noteData.title || '',
+      content: noteData.content,
+      createdAt: new Date().toISOString(),
+    };
+
+    // If not on first page, navigate to page 1 so the new note is visible
+    if (page !== 1) {
+      setPage(1);
+    }
+
+    // Insert optimistically if we are already on page 1
+    if (page === 1) {
+      setNotes((prev) => [tempNote, ...prev]);
+      setTotalNotes((prev) => prev + 1);
+    }
+
     try {
-      await apiClient.createNote(noteData);
+      const created = await apiClient.createNote(noteData);
       setIsCreateModalOpen(false);
 
-      // Navigate to page 1 to see the new note (newest first)
-      if (page !== 1) {
-        setPage(1);
-        // fetchNotes() will be called automatically by useEffect when page changes
+      if (page === 1) {
+        // Replace temporary note with the real one
+        setNotes((prev) => prev.map((n) => (n.id === tempId ? created : n)));
       } else {
-        // Already on page 1, manually fetch to see the new note
+        // We navigated to page 1; fetch to reflect server state
         await fetchNotes();
       }
 
-      // Show success toast
       setToastMessage('Note created successfully');
       setToastSeverity('success');
       setToastOpen(true);
     } catch (err) {
       console.error('Error creating note:', err);
+      // Revert optimistic insert if applied
+      if (page === 1) {
+        setNotes((prev) => prev.filter((n) => n.id !== tempId));
+        setTotalNotes((prev) => Math.max(0, prev - 1));
+      }
       setError('Failed to create note. Please try again.');
-      // Show error toast
       setToastMessage('Failed to create note');
       setToastSeverity('error');
       setToastOpen(true);
@@ -184,27 +214,27 @@ const MyNotes: React.FC = () => {
   const handleConfirmDelete = async () => {
     if (noteToDelete) {
       try {
+        // Optimistically remove from UI
+        const previousNotes = notes;
+        setNotes((prev) => prev.filter((n) => n.id !== noteToDelete));
+        setTotalNotes((prev) => Math.max(0, prev - 1));
+
         await apiClient.deleteNote(noteToDelete);
 
-        // Refetch current page to handle cases where:
-        // 1. Page becomes empty and should show previous page
-        // 2. Notes from next page should fill current page
-        await fetchNotes();
-
-        // Check if current page is now empty and we're not on page 1
+        // Adjust pagination if needed
         const newTotalPages = Math.ceil((totalNotes - 1) / pageSize);
         if (page > newTotalPages && newTotalPages > 0) {
           setPage(newTotalPages);
         }
 
-        // Show success toast
         setToastMessage('Note deleted successfully');
         setToastSeverity('success');
         setToastOpen(true);
       } catch (err) {
         console.error('Error deleting note:', err);
+        // Revert optimistic removal
+        setNotes((prev) => prev);
         setError('Failed to delete note. Please try again.');
-        // Show error toast
         setToastMessage('Failed to delete note');
         setToastSeverity('error');
         setToastOpen(true);
@@ -276,6 +306,8 @@ const MyNotes: React.FC = () => {
           onEditNote={handleEditNote}
           onDeleteNote={handleDeleteNote}
           recentlyUpdatedTitles={recentlyUpdatedTitles}
+          onCreateNote={() => setIsCreateModalOpen(true)}
+          onRetry={handleRetryFetch}
         />
       ) : (
         <NotesGridView
@@ -286,6 +318,8 @@ const MyNotes: React.FC = () => {
           onEditNote={handleEditNote}
           onDeleteNote={handleDeleteNote}
           recentlyUpdatedTitles={recentlyUpdatedTitles}
+          onCreateNote={() => setIsCreateModalOpen(true)}
+          onRetry={handleRetryFetch}
         />
       )}
 
