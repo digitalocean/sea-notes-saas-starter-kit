@@ -33,7 +33,7 @@
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "next": "15.4.4",
-    "next-auth": "^5.0.0-beta.28",
+    "next-auth": "^5.0.0-beta.30",
     "puppeteer": "^24.10.2",
     "openai": "^5.9.0",
     "react": "^19.0.0",
