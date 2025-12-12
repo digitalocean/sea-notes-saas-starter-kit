@@ -27,7 +27,7 @@ spec:
         # You can check the documentation about variable binding here:
         # https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/#using-bindable-variables-within-environment-variables
         - key: "DATABASE_URL"
-          value: "${${DB_NAME}.DATABASE_URL}"
+          value: "${sea-notes-saas-starter-kit-db.DATABASE_URL}"
           type: "SECRET"
         - key: "SPACES_KEY_ID"
           value: "${SPACES_KEY_ID}"
