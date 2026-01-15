@@ -64,7 +64,7 @@ export const serverConfig: ServerConfig = {
     portalConfigId: process.env.STRIPE_PORTAL_CONFIG_ID,
   },
   GradientAI: {
-    doInferenceApiKey: process.env.DO_INFERENCE_API_KEY,
+    doInferenceApiKey: process.env.GRADIENT_AI_INFERENCE_KEY,
   },
 };
 

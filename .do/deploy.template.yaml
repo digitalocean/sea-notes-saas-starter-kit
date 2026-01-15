@@ -69,7 +69,7 @@ spec:
           value: "${APP_URL}"
         - key: "ENABLE_EMAIL_INTEGRATION"
           value: "false"
-        - key: "DO_INFERENCE_API_KEY"
+        - key: "GRADIENT_AI_INFERENCE_KEY"
           value: ""
           type: "SECRET"
 
