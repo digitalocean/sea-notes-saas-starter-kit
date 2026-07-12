@@ -4,7 +4,7 @@
  */
 
 import { ConfigurableService, ServiceConfigStatus } from '../status/serviceConfigStatus';
-import { serverConfig } from '../../settings';
+import { getEmailSender, serverConfig } from '../../settings';
 import OpenAI from 'openai';
 
 export interface InvoiceData {
@@ -424,7 +424,7 @@ Return the response as a JSON object with html, text, and subject fields.`;
             <div class="support-section">
               <p>Thank you for your subscription!</p>
               <p>If you have any questions about this invoice, please contact our support team.</p>
-              <a href="mailto:${serverConfig.Resend.fromEmail}" class="contact-button">
+              <a href="mailto:${getEmailSender()}" class="contact-button">
                 Contact Support
               </a>
             </div>

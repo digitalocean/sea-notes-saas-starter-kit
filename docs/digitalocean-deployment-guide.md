@@ -10,7 +10,7 @@ Before you begin, make sure you have:
 - Your SaaS Starter Kit application code with any customizations you've made
 - A GitHub repo for **SeaNotes** (either forked or your own copy)
 - [Stripe setup](./stripe-integration-guide.md) completed (if using billing features)
-- [Resend setup](../README.md#part-2-set-up-email-provider-resend) completed (if using email features)
+- [Email provider setup](../README.md#part-2-set-up-email-provider) completed (if using email features)
 - [Spaces setup](../README.md#part-3-set-up-file-storage-digitalocean-spaces) completed (if using file storage)
 
 ## Deployment Steps
@@ -93,7 +93,9 @@ The App Spec is a YAML file that defines how your application should be deployed
 > - `SPACES_KEY_ID`, `SPACES_SECRET_KEY`, `SPACES_BUCKET_NAME`, `SPACES_REGION`: Your Spaces storage 
 configuration
 > - `AUTH_SECRET`: Secret string for Auth.js
-> - `RESEND_API_KEY`, `RESEND_EMAIL_SENDER`: Your email service configuration
+> - `RESEND_API_KEY`, `RESEND_EMAIL_SENDER`: Resend email configuration (when `EMAIL_PROVIDER=Resend`)
+> - `MAILTRAP_API_TOKEN`, `MAILTRAP_EMAIL_SENDER`: Mailtrap email configuration (when `EMAIL_PROVIDER=Mailtrap`)
+> - `MAILTRAP_SANDBOX`, `MAILTRAP_TEST_INBOX_ID`: Optional Mailtrap sandbox settings for testing
 > - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_FREE_PRICE_ID`, `STRIPE_PRO_PRICE_ID`, `STRIPE_PRO_GIFT_PRICE_ID`, `STRIPE_PORTAL_CONFIG_ID`: Your Stripe configuration
 > - `BASE_URL`: Will be set after deployment (used for callbacks)
 

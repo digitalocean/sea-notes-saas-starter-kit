@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import { serverConfig } from '../../../settings';
+import { getEmailSender, serverConfig } from '../../../settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
 import { SubscriptionUpdatedEmail } from 'services/email/templates/SubscriptionUpdatedEmail';
@@ -100,7 +100,7 @@ export const handleSubscriptionUpdated = async (json: any) => {
                 planName={currentPlan.name}
                 amount={currentPlan.amount}
                 invoiceNumber={invoiceData.invoiceNumber}
-                fromEmail={serverConfig.Resend.fromEmail || 'support@seanotes.com'}
+                fromEmail={getEmailSender() || 'support@seanotes.com'}
               />
             );
             

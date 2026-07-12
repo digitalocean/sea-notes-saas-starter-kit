@@ -5,7 +5,8 @@ jest.mock('axios');
 import mockAxios from 'axios';
 
 // Mock serverConfig
-const mockServerConfig: {
+// Use var so jest.mock hoisting can reference it safely
+var mockServerConfig: {
   GradientAI: {
     doInferenceApiKey?: string;
   };
@@ -17,6 +18,7 @@ const mockServerConfig: {
 
 jest.mock('../../settings', () => ({
   serverConfig: mockServerConfig,
+  getEmailSender: () => 'support@seanotes.com',
 }));
 
 describe('InvoiceService', () => {

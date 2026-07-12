@@ -17,11 +17,11 @@ Before setting up invoice generation, ensure you have:
 
 - [DigitalOcean account](https://cloud.digitalocean.com/registrations/new) for Serverless Inference
 - [Stripe setup](./stripe-integration-guide.md) completed for billing
-- [Resend setup](../README.md#part-2-set-up-email-provider-resend) completed for email delivery
+- [email provider setup](../README.md#part-2-set-up-email-provider) completed for email delivery
 
 ## Part 1: Set Up DigitalOcean Serverless Inference
 
-The invoice generation feature uses DigitalOcean's [GradientAI Serverless Inference API](https://docs.digitalocean.com/products/gradientai-platform/how-to/use-serverless-inference/) to create professional, AI-generated invoices. Since the system emails invoices to users, you'll need Resend configured for email delivery.
+The invoice generation feature uses DigitalOcean's [GradientAI Serverless Inference API](https://docs.digitalocean.com/products/gradientai-platform/how-to/use-serverless-inference/) to create professional, AI-generated invoices. Since the system emails invoices to users, you'll need an email provider (Resend or Mailtrap) configured for email delivery.
 
 ### Step 1: Access DigitalOcean Agent Platform
 
@@ -207,7 +207,7 @@ If the AI service is unavailable, the system gracefully falls back to:
 **Problem**: Invoice generated but not received
 
 **Solutions**:
-1. Verify Resend configuration
+1. Verify email provider configuration
 2. Check spam/junk folders
 3. Ensure email service is enabled (`ENABLE_EMAIL_INTEGRATION=true`)
 4. Review email service logs
