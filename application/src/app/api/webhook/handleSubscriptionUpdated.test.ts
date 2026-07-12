@@ -45,6 +45,7 @@ jest.mock('settings', () => ({
       freePriceId: 'free_price_id',
     },
   },
+  getEmailSender: jest.fn(() => 'support@seanotes.com'),
 }));
 
 describe('handleSubscriptionUpdated', () => {

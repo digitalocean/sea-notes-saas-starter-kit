@@ -126,8 +126,8 @@ export const FEATURES = [
     color: COLORS.security,
   },
   {
-    title: 'Resend Email Service',
-    description: 'Email service used for sending authentication emails as well as invoices.',
+    title: 'Email Service',
+    description: 'Transactional email via Resend or Mailtrap for authentication and invoices.',
     color: COLORS.email,
   },
   {

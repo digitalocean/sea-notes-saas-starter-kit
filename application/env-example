@@ -56,14 +56,25 @@ SPACES_REGION=nyc3                # Your selected datacenter region (e.g., nyc3,
 SPACES_BUCKET_NAME=my-app-bucket  # Name of your Spaces bucket 
 
 # ====================
-# EMAIL CONFIGURATION (Resend)
+# EMAIL CONFIGURATION
 # ====================
 # Email is used for verification, password reset, and subscription notifications
-# Resend is a modern email API that's easy to integrate
-# In the app: Used by src/services/email/resendEmailService.ts
+# Supported providers: Resend (default) or Mailtrap
+# In the app: Used by src/services/email/emailFactory.ts
 EMAIL_PROVIDER=Resend
+
+# --- Resend (EMAIL_PROVIDER=Resend) ---
+# In the app: Used by src/services/email/resendEmailService.ts
 RESEND_API_KEY=your-resend-api-key
 RESEND_EMAIL_SENDER=your-email-sender-address  # Format: name@yourdomain.com
+
+# --- Mailtrap (EMAIL_PROVIDER=Mailtrap) ---
+# In the app: Used by src/services/email/mailtrapEmailService.ts
+MAILTRAP_API_TOKEN=your-mailtrap-api-token
+MAILTRAP_EMAIL_SENDER=your-email-sender-address  # Format: name@yourdomain.com
+# Optional sandbox mode captures mail in a Mailtrap test inbox instead of delivering
+MAILTRAP_SANDBOX=false
+MAILTRAP_TEST_INBOX_ID=  # Required when MAILTRAP_SANDBOX=true
 
 # Set to false during development to skip email verification
 # Set to true in production to require email verification

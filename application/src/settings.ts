@@ -22,6 +22,12 @@ export interface ServerConfig {
     apiKey?: string;
     fromEmail?: string;
   };
+  Mailtrap: {
+    apiToken?: string;
+    fromEmail?: string;
+    sandbox?: boolean;
+    testInboxId?: string;
+  };
   Stripe: {
     stripeSecretKey?: string;
     freePriceId?: string;
@@ -55,6 +61,14 @@ export const serverConfig: ServerConfig = {
     apiKey: process.env.RESEND_API_KEY,
     fromEmail: process.env.RESEND_EMAIL_SENDER,
   },
+  Mailtrap: {
+    apiToken: process.env.MAILTRAP_API_TOKEN,
+    fromEmail: process.env.MAILTRAP_EMAIL_SENDER,
+    sandbox: process.env.MAILTRAP_SANDBOX
+      ? process.env.MAILTRAP_SANDBOX === 'true'
+      : false,
+    testInboxId: process.env.MAILTRAP_TEST_INBOX_ID,
+  },
   Stripe: {
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
     freePriceId: process.env.STRIPE_FREE_PRICE_ID,
@@ -76,3 +90,16 @@ export const hasDigitalOceanGradientAIEnabled = process.env.NEXT_PUBLIC_DIGITALO
 // Server-side check for GradientAI configuration
 // Used by API routes and background services that require AI functionality
 export const hasAIConfiguredServer = !!serverConfig.GradientAI.doInferenceApiKey;
+
+/**
+ * Returns the configured from-email for the active email provider.
+ */
+export function getEmailSender(): string | undefined {
+  switch (serverConfig.emailProvider) {
+    case 'Mailtrap':
+      return serverConfig.Mailtrap.fromEmail;
+    case 'Resend':
+    default:
+      return serverConfig.Resend.fromEmail;
+  }
+}

@@ -7,6 +7,7 @@
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748)](https://www.prisma.io/)
 [![Stripe](https://img.shields.io/badge/Stripe-Payment-6772e5)](https://stripe.com/)
 [![Resend](https://img.shields.io/badge/Resend-Email-24292F)](https://resend.com/)
+[![Mailtrap](https://img.shields.io/badge/Mailtrap-Email-22D3EE)](https://mailtrap.io/)
 [![DigitalOcean](https://img.shields.io/badge/DigitalOcean-Ready-0080FF)](https://www.digitalocean.com/)
 [![DO Spaces](https://img.shields.io/badge/DO%20Spaces-Storage-0080FF)](https://www.digitalocean.com/products/spaces/)
 
@@ -18,7 +19,7 @@ This repository gives you everything you need to build and launch a real SaaS ap
 
 SeaNotes comes pre-integrated with:
 - **Stripe** for subscription billing and payments
-- **Resend** for transactional emails
+- **Resend** or **Mailtrap** for transactional emails
 - **DigitalOcean Spaces** for file storage
 - **PostgreSQL** for database
 - **One-click deployment** to DigitalOcean App Platform
@@ -41,7 +42,7 @@ This is a production-ready SaaS Starter Kit for developers who want to build and
 
 - ✅ Built-in login/auth with NextAuth  
 - ✅ Forgot password + magic link login  
-- ✅ Email notifications via Resend.com (with PDF invoice attachments)  
+- ✅ Email notifications via Resend or Mailtrap (with PDF invoice attachments)  
 - ✅ Stripe billing (upgrade/cancel plan)  
 - ✅ File uploads to DigitalOcean Spaces  
 - ✅ PostgreSQL via Prisma ORM  
@@ -66,7 +67,7 @@ The included notes app functionality serves as a practical example of how to bui
 - **Backend**: Next.js API routes
 - **Database**: PostgreSQL (via Prisma ORM)
 - **Authentication**: Next-Auth
-- **Email**: Resend.com
+- **Email**: Resend.com or Mailtrap
 - **File Storage**: DigitalOcean Spaces
 - **Payments**: Stripe
 - **AI**: DigitalOcean GradientAI Serverless Inference API
@@ -86,7 +87,7 @@ SeaNotes can be run [locally](#quick-start-local-development) or on [DigitalOcea
 
 > **Important**: The app works out of the box with basic authentication and signup. However, to enable full functionality:
 >
-> - Email features (verification emails, password reset, magic links) require [Resend configuration](#part-2-set-up-email-provider-resend)
+> - Email features (verification emails, password reset, magic links) require [email provider configuration](#part-2-set-up-email-provider)
 > - File uploads require [DigitalOcean Spaces setup](#part-3-set-up-file-storage-digitalocean-spaces)
 > - Subscription features require [Stripe configuration](#part-4-set-up-stripe-for-billing-and-subscriptions)
 
@@ -225,22 +226,22 @@ The basic version of SeaNotes is now set up locally on your computer! You can st
 
 > **Note:** Email and file storage are not set up by default. Configure these features using the documentation below.
 
-## Part 2: Set Up Email Provider (Resend)
+## Part 2: Set Up Email Provider
 
 By default, email functionality is disabled for local development, allowing you to sign up and log in without setting up an email provider. However, features like password reset and magic links won't work until email is configured.
 
-This starter kit comes with [Resend](https://resend.com) integration built-in. All you need to do is get your API key and a verified sender email address from Resend, and add them to your `.env` file.
+SeaNotes supports **Resend** (default) or **Mailtrap**. Set `EMAIL_PROVIDER` to `Resend` or `Mailtrap` in your `.env` file.
 
 ### Email Features
 
-The Resend integration supports:
+Both providers support:
 - **Transactional emails**: Signup verification, password reset, magic links
 - **Invoice generation with PDF attachments**: Automatically generates and attaches PDF invoices to billing emails
 - **React-based email templates**: Consistent styling using React Email components
 
 > **Note on Attachments**: The email service uses local (in-memory) attachments. PDFs and other files are generated on-the-fly as Buffer objects and attached directly to emails. Files are not saved to disk or fetched from external URLs. This approach ensures fast, secure attachment handling without requiring external storage.
 
-### Steps:
+### Option A: Resend
 
 1. **Create a Resend Account**
 
@@ -257,13 +258,13 @@ The Resend integration supports:
 
 3. **Configure Sender Address (Two Options)**
 
-   **Option A: Use Resend Test Address (Quick Start)**
+   **Use Resend Test Address (Quick Start)**
 
    - Use `delivered@resend.dev` as your sender address
    - Note: This only allows sending emails to the account that created the API key
    - Perfect for initial testing but not for production use
 
-   **Option B: Add and Verify Your Own Domain (Recommended for Production)**
+   **Add and Verify Your Own Domain (Recommended for Production)**
 
    - In the Resend dashboard, go to the [Domains](https://resend.com/domains) section
    - Click "Add Domain" and enter your domain name
@@ -277,11 +278,47 @@ The Resend integration supports:
 
    ```
    ENABLE_EMAIL_INTEGRATION=true
+   EMAIL_PROVIDER=Resend
    RESEND_API_KEY=your-resend-api-key
    RESEND_EMAIL_SENDER=delivered@resend.dev  # Or your verified domain email
    ```
 
-5. **Restart Your Development Server**
+### Option B: Mailtrap
+
+1. **Create a Mailtrap Account**
+
+   - Go to [Mailtrap](https://mailtrap.io/) and sign up for a free account
+
+2. **Get Your API Token**
+
+   - In the Mailtrap dashboard, open **Settings → API Tokens**
+   - Create a token with sending permissions and copy it
+
+3. **Configure Sender Address**
+
+   - For production delivery, verify a sending domain in Mailtrap and use an address on that domain
+   - For local development, enable sandbox mode to capture messages in a test inbox instead of delivering them
+
+4. **Update Your `.env` File**
+   Add these lines (replace with your actual values):
+
+   ```
+   ENABLE_EMAIL_INTEGRATION=true
+   EMAIL_PROVIDER=Mailtrap
+   MAILTRAP_API_TOKEN=your-mailtrap-api-token
+   MAILTRAP_EMAIL_SENDER=noreply@yourdomain.com
+   ```
+
+   Optional sandbox mode (recommended for local development):
+
+   ```
+   MAILTRAP_SANDBOX=true
+   MAILTRAP_TEST_INBOX_ID=12345
+   ```
+
+### Finish Email Setup
+
+1. **Restart Your Development Server**
 
    - After updating your `.env`, restart the server:
 
@@ -289,11 +326,11 @@ The Resend integration supports:
      npm run dev
      ```
 
-6. **Test Email Sending**
+2. **Test Email Sending**
 
    - Try signing up for a new account or using the password reset feature
-   - Check your inbox for the verification or reset email
-   - You can also check the system status page to confirm Resend is connected
+   - Check your inbox (or Mailtrap sandbox inbox) for the verification or reset email
+   - You can also check the system status page to confirm the email provider is connected
    ![alt text](docs/images/gmail_verify_email_screenshot.png)
 
 ## Part 3: Set Up File Storage (DigitalOcean Spaces)
